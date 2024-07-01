@@ -9,8 +9,8 @@
 	</parent>
 	<groupId>eu.arrowhead</groupId>
 	<artifactId>arrowhead-common</artifactId>
-	<version>5.0.0</version>
-	<packaging>jar</packaging>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
 	<name>ah5-common-java-spring</name>
 	<description>Arrowhead 5Gen Core Common using Spring Boot</description>
 
@@ -18,11 +18,18 @@
 	<!-- TODO: License -->
   	
 	<properties>
+		<base.version>5.0.0</base.version>
+		<revision>${base.version}</revision>
 		<java.version>21</java.version>
 		<mvn.compiler.version>3.8.1</mvn.compiler.version>
 		<mvn.compile.target>21</mvn.compile.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
+	<modules>
+		<module>data-transfer-objects</module>
+		<module>common-utils</module>
+	</modules>
 
 	<dependencies>
 		<dependency>
@@ -48,9 +55,17 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+		<dependency>
 		    <groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-configuration-processor</artifactId>
     		<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -68,11 +83,6 @@
 		<defaultGoal>clean install</defaultGoal>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			
-	      	<plugin>
 	        	<artifactId>maven-compiler-plugin</artifactId>
 	        	<version>${mvn.compiler.version}</version>
 	        	<configuration>
