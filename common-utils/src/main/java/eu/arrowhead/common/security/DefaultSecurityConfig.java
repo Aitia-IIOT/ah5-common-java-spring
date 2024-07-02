@@ -1,10 +1,17 @@
 package eu.arrowhead.common.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
+
+import eu.arrowhead.common.Constants;
+import eu.arrowhead.common.http.filter.InboundDebugFilter;
+import eu.arrowhead.common.http.filter.OutboundDebugFilter;
 
 @Configuration
 public class DefaultSecurityConfig {
@@ -14,9 +21,9 @@ public class DefaultSecurityConfig {
 
 //	@Value(SentinelConstants.$SERVER_SSL_ENABLED_WD)
 //	protected boolean sslEnabled;
-//	
-//	@Value(SentinelConstants.$LOG_ALL_REQUEST_AND_RESPONSE_WD)
-//	protected boolean debugMode;
+	
+	@Value(Constants.$LOG_ALL_REQUEST_AND_RESPONSE_WD)
+	protected boolean debugMode;
 	
 	//-------------------------------------------------------------------------------------------------
 	@Bean
@@ -29,10 +36,10 @@ public class DefaultSecurityConfig {
 //    		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
 //    	}
 //    	
-//    	if (debugMode) {
-//    		http.addFilterBefore(new OutboundDebugFilter(), ChannelProcessingFilter.class);
-//    		http.addFilterAfter(new InboundDebugFilter(), X509AuthenticationFilter.class);
-//    	}
+    	if (debugMode) {
+    		http.addFilterBefore(new OutboundDebugFilter(), ChannelProcessingFilter.class);
+    		http.addFilterAfter(new InboundDebugFilter(), X509AuthenticationFilter.class);
+    	}
     	
     	return http.build();
 	}
