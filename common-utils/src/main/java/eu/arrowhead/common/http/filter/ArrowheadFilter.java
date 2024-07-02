@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,11 +16,11 @@ import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.dto.ErrorMessageDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public abstract class ArrowheadFilter extends GenericFilterBean {
+public abstract class ArrowheadFilter extends OncePerRequestFilter {
 	
 	//=================================================================================================
 	// members
@@ -29,22 +29,20 @@ public abstract class ArrowheadFilter extends GenericFilterBean {
 	protected final ObjectMapper mapper = new ObjectMapper();
 	
 	//=================================================================================================
-	// methods
-	
-	//-------------------------------------------------------------------------------------------------
-	@Override
-	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-		chain.doFilter(request, response);
-	}
-	
-	//=================================================================================================
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	protected ArrowheadFilter() {
 		log.info("{} is active", this.getClass().getSimpleName());
 	}
+	
 
+	//-------------------------------------------------------------------------------------------------
+	@Override
+	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
+		chain.doFilter(request, response);
+	}
+	
 	//-------------------------------------------------------------------------------------------------
 	protected void handleException(final ArrowheadException ex, final ServletResponse response) throws IOException {
 		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
