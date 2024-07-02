@@ -4,11 +4,9 @@
 	<parent>
 		<groupId>eu.arrowhead</groupId>
 		<artifactId>arrowhead-common</artifactId>
-		<version>${revision}</version>
+		<version>5.0.0</version>
 	</parent>
-	<groupId>eu.arrowhead</groupId>
 	<artifactId>arrowhead-common-utils</artifactId>
-	<version>${revision}</version>
 	<packaging>jar</packaging>
 	<name>Arrowhead Common Utils</name>
 	<description>Arrowhead utils</description>
