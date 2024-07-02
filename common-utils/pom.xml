@@ -12,4 +12,12 @@
 	<description>Arrowhead utils</description>
 
 	<url>https://github.com/Aitia-IIOT/ah5-common-java-spring</url>
+	
+	<dependencies>
+		<dependency>
+			<groupId>eu.arrowhead</groupId>
+			<artifactId>arrowhead-data-transfer-objects</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+	</dependencies>
 </project>
