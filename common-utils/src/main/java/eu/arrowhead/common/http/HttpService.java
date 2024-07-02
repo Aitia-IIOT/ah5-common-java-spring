@@ -37,7 +37,6 @@ import org.springframework.web.util.UriComponents;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.arrowhead.common.Constants;
-import eu.arrowhead.common.HttpUtilities;
 import eu.arrowhead.common.SSLProperties;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;

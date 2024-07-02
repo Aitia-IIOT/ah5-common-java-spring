@@ -15,6 +15,7 @@ public class Constants {
 	public static final String HTTPS = "https";
 	public static final String HTTP = "http";
 	public static final String UNKNOWN = "<unknown>";
+	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
 	
 	// System related
 	

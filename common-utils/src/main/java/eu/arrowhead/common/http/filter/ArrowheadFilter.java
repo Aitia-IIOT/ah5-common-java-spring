@@ -11,8 +11,8 @@ import org.springframework.web.filter.GenericFilterBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.arrowhead.common.Constants;
-import eu.arrowhead.common.HttpUtilities;
 import eu.arrowhead.common.exception.ArrowheadException;
+import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.dto.ErrorMessageDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
