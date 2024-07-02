@@ -21,7 +21,7 @@
 		<base.version>5.0.0</base.version>
 		<revision>${base.version}</revision>
 		<java.version>21</java.version>
-		<mvn.compiler.version>3.8.1</mvn.compiler.version>
+		<mvn.compiler.version>3.13.0</mvn.compiler.version>
 		<mvn.compile.target>21</mvn.compile.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
