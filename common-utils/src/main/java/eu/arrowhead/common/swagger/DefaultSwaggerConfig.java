@@ -1,0 +1,64 @@
+package eu.arrowhead.common.swagger;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+
+public abstract class DefaultSwaggerConfig implements WebMvcConfigurer {
+	
+	//=================================================================================================
+	// members
+
+	private final String systemName;
+	
+	//=================================================================================================
+	// methods
+	
+	//-------------------------------------------------------------------------------------------------
+	public DefaultSwaggerConfig(final String systemName) {
+		this.systemName = systemName;
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	@Bean
+	OpenAPI customOpenAPI() {
+        return new OpenAPI().info(apiInfo());
+	}
+	
+	//=================================================================================================
+	// assistant methods
+	
+	//-------------------------------------------------------------------------------------------------
+	protected Info apiInfo() {
+        return new Info()
+                .title(systemName + " System API")
+                .description("This page shows the REST interfaces offered by the " + systemName + " System.")
+                .version(getVersion())
+                .contact(apiContact())
+                .license(apiLicence());
+    }
+
+    //-------------------------------------------------------------------------------------------------
+	protected License apiLicence() {
+        return new License()
+                .name("Licence: TODO")
+                .url("");
+    }
+
+    //-------------------------------------------------------------------------------------------------
+	protected Contact apiContact() {
+        return new Contact()
+                .name("AITIA International Inc.")
+                .email("iiot[at]aitia.ai")
+                .url("https://www.aitia.ai");
+    }
+	
+	//-------------------------------------------------------------------------------------------------
+	protected String getVersion() {
+		return "5.0.0";
+	}
+}
