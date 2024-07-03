@@ -31,7 +31,6 @@ public class SelfDeclaredFilter extends ArrowheadFilter {
 			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, systemName);
 			
 			chain.doFilter(request, response);
-			
 		} catch (final ArrowheadException ex) {
 			handleException(ex, response);
 		}

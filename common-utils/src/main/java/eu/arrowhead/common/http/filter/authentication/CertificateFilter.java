@@ -24,7 +24,7 @@ public class CertificateFilter extends ArrowheadFilter {
 		// check if valid and in the cloud
 		// get <system-name> from the CN
 		// put <system-name> to request attribute "arrowhead.authenticated"
-		super.doFilterInternal(request, response, chain);
+		chain.doFilter(request, response);
 	}
 
 }

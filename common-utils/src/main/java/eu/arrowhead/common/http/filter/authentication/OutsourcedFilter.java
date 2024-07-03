@@ -17,11 +17,11 @@ public class OutsourcedFilter extends ArrowheadFilter {
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		// TODO
-		// get token from authorization header with the following format AUTHORIZATION_TOKEN <token>
+		// get token from authorization header with the following format Bearer IDENTITY-TOKEN//<token>
 		// check <token> with remote server
 		// get <system-name> from the response of the remote server
 		// put <system-name> to request attribute "arrowhead.authenticated"
-		super.doFilterInternal(request, response, chain);
+		chain.doFilter(request, response);
 	}
 
 }
