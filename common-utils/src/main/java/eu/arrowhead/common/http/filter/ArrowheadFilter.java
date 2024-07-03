@@ -43,6 +43,15 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 		chain.doFilter(request, response);
 	}
 	
+	
+	//-------------------------------------------------------------------------------------------------
+	@Override
+	protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
+		final String path = request.getRequestURI();
+	    return path.startsWith(Constants.SWAGGER_API_DOCS_URI) || path.startsWith(Constants.SWAGGER_UI_URI);
+	}
+
+
 	//-------------------------------------------------------------------------------------------------
 	protected void handleException(final ArrowheadException ex, final ServletResponse response) throws IOException {
 		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);

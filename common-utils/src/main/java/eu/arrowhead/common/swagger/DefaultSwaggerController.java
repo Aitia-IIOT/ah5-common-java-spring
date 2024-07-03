@@ -17,6 +17,6 @@ public class DefaultSwaggerController {
 	 */
 	@GetMapping(path = "/")
 	public String redirectDefaultSwaggerUI() {
-		return "redirect:" + Constants.SWAGGER_UI_URI;
+		return "redirect:" + Constants.SWAGGER_UI_INDEX_HTML;
 	}
 }

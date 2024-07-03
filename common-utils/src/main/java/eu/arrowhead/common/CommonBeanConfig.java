@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authentication.CertificateFilter;
-import eu.arrowhead.common.http.filter.authentication.NoneFilter;
+import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
 import eu.arrowhead.common.http.filter.authentication.OutsourcedFilter;
 
 
@@ -32,7 +32,7 @@ public class CommonBeanConfig {
 		switch (policy) {
 		case CERTIFICATE: return new CertificateFilter();
 		case OUTSOURCED: return new OutsourcedFilter();
-		case NONE: return new NoneFilter();
+		case DECLARED: return new SelfDeclaredFilter();
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}

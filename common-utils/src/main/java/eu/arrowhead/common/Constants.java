@@ -37,6 +37,7 @@ public class Constants {
 	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8843}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
+	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
 
 	// SSL related
 	
@@ -66,6 +67,13 @@ public class Constants {
 	public static final String HTTP_STATUS_NOT_FOUND = "404";
 	public static final String HTTP_STATUS_INTERNAL_SERVER_ERROR = "500";
 	
+	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
+	public static final String HTTP_HEADER_AUTHORIZATION_DELIMITER = "//";
+	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
+	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
+	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
+	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	
 	public static final String HTTP_CLIENT_CONNECTION_TIMEOUT = "http.client.connection.timeout";
 	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":30000}";
 	public static final String HTTP_CLIENT_SOCKET_TIMEOUT = "http.client.socket.timeout";
@@ -75,7 +83,9 @@ public class Constants {
 
 	// Swagger
 	
-	public static final String SWAGGER_UI_URI = "/swagger-ui/index.html";
+	public static final String SWAGGER_API_DOCS_URI = "/v3/api-docs";
+	public static final String SWAGGER_UI_URI = "/swagger-ui";
+	public static final String SWAGGER_UI_INDEX_HTML = SWAGGER_UI_URI + "/index.html";
 	public static final String SWAGGER_HTTP_200_MESSAGE = "Service is available";
 	public static final String SWAGGER_HTTP_201_MESSAGE = "Created";
 	public static final String SWAGGER_HTTP_400_MESSAGE = "Bad request";
