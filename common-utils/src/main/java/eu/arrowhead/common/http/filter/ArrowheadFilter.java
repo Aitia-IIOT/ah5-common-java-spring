@@ -48,7 +48,7 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
 		final String path = request.getRequestURI();
-	    return path.startsWith(Constants.SWAGGER_API_DOCS_URI) || path.startsWith(Constants.SWAGGER_UI_URI);
+	    return path.equals("/") || path.startsWith(Constants.SWAGGER_API_DOCS_URI) || path.startsWith(Constants.SWAGGER_UI_URI);
 	}
 
 
