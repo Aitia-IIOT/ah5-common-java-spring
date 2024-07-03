@@ -93,6 +93,27 @@
 	         		<target>${mvn.compile.target}</target>
 	        	</configuration>
 	      	</plugin>
+			<plugin>
+			 	<groupId>org.apache.maven.plugins</groupId>
+			 	<artifactId>maven-checkstyle-plugin</artifactId>
+			 	<version>3.4.0</version>
+		 		<configuration>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<configLocation>checkstyle/aitia_checks.xml</configLocation>
+					<suppressionsLocation>checkstyle/aitia_suppressions.xml</suppressionsLocation>
+					<suppressionsFileExpression>aitia_suppressions.xml</suppressionsFileExpression>
+					<failOnViolation>fail</failOnViolation>
+				</configuration>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
