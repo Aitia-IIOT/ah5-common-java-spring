@@ -10,16 +10,16 @@ import eu.arrowhead.common.Constants;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-	
+
 	//=================================================================================================
 	// members
-	
+
 	@Value(Constants.$CORS_ORIGIN_PATTERNS_WD)
 	private String[] originPatterns;
-	
+
 	//=================================================================================================
 	// methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public void addCorsMappings(final CorsRegistry registry) {

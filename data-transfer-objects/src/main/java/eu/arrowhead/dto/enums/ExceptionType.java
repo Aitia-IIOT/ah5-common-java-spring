@@ -9,11 +9,11 @@ public enum ExceptionType {
 	TIMEOUT(408),
 	INTERNAL_SERVER_ERROR(500),
 	EXTERNAL_SERVER_ERROR(503);
-	
+
 	//=================================================================================================
 	// members
-	
-	final int errorCode;
+
+	private final int errorCode;
 
 	//=================================================================================================
 	// assistant methods
@@ -24,6 +24,7 @@ public enum ExceptionType {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public int getErrorCode() { return errorCode; }
+	public int getErrorCode() {
+		return errorCode;
+	}
 }
-

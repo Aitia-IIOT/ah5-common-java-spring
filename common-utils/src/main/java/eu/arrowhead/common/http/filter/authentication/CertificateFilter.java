@@ -12,10 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Order(15)
 public class CertificateFilter extends ArrowheadFilter {
-	
+
 	//=================================================================================================
 	// assistant methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {

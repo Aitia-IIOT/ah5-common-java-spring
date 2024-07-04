@@ -13,26 +13,28 @@ import eu.arrowhead.common.http.filter.authentication.CertificateFilter;
 import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
 import eu.arrowhead.common.http.filter.authentication.OutsourcedFilter;
 
-
 @Configuration
 public class CommonBeanConfig {
 
 	//=================================================================================================
 	// methods
-	
-    //-------------------------------------------------------------------------------------------------
-    @Bean(Constants.ARROWHEAD_CONTEXT)
-    Map<String, Object> getArrowheadContext() {
-        return new ConcurrentHashMap<>();
-    }
-    
-    //-------------------------------------------------------------------------------------------------
-    @Bean
-	ArrowheadFilter authenticationPolicyFilter(@Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy ) {
+
+	// -------------------------------------------------------------------------------------------------
+	@Bean(Constants.ARROWHEAD_CONTEXT)
+	Map<String, Object> getArrowheadContext() {
+		return new ConcurrentHashMap<>();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Bean
+	ArrowheadFilter authenticationPolicyFilter(@Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
 		switch (policy) {
-		case CERTIFICATE: return new CertificateFilter();
-		case OUTSOURCED: return new OutsourcedFilter();
-		case DECLARED: return new SelfDeclaredFilter();
+		case CERTIFICATE:
+			return new CertificateFilter();
+		case OUTSOURCED:
+			return new OutsourcedFilter();
+		case DECLARED:
+			return new SelfDeclaredFilter();
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}

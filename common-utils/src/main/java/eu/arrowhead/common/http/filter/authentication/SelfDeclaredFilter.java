@@ -17,42 +17,42 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Order(15)
 public class SelfDeclaredFilter extends ArrowheadFilter {
-	
+
 	//=================================================================================================
 	// assistant methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		try {
 			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, Constants.UNKNOWN);
-			
-			final String systemName = processAuthHeader(request);			
+
+			final String systemName = processAuthHeader(request);
 			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, systemName);
-			
+
 			chain.doFilter(request, response);
 		} catch (final ArrowheadException ex) {
 			handleException(ex, response);
 		}
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private String processAuthHeader(final HttpServletRequest request) {
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		if (Utilities.isEmpty(authHeader)) {
 			throw new AuthException("No authorization header has been provided");
 		}
-		
+
 		String[] split = authHeader.trim().split(" ");
 		if (split.length != 2 || !split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA)) {
 			throw new AuthException("Invalid authorization header");
 		}
-		
+
 		split = split[1].split(Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER);
 		if (split.length != 2 || !split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM)) {
 			throw new AuthException("Invalid authorization header");
 		}
-		
+
 		return split[1];
 	}
 }

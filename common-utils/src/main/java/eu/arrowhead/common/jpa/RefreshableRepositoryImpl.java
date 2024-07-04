@@ -8,13 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 
-public class RefreshableRepositoryImpl<T,ID extends Serializable> extends SimpleJpaRepository<T,ID> implements RefreshableRepository<T,ID> {
-	
+public class RefreshableRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements RefreshableRepository<T, ID> {
+
 	//=================================================================================================
 	// members
 
 	private final EntityManager entityManager;
-	
+
 	//=================================================================================================
 	// methods
 

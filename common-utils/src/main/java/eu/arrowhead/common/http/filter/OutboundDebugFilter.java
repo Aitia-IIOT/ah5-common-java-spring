@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class OutboundDebugFilter extends ArrowheadFilter {
-	
+
 	//=================================================================================================
 	// assistant methods
 
@@ -24,7 +24,7 @@ public class OutboundDebugFilter extends ArrowheadFilter {
 		if (response.getCharacterEncoding() == null) {
 			response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		}
-		
+
 		final ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper((HttpServletResponse) response);
 		try {
 			chain.doFilter(httpRequest, responseWrapper);
