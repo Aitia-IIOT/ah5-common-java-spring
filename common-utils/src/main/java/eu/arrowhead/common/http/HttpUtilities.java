@@ -1,10 +1,18 @@
 package eu.arrowhead.common.http;
 
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import eu.arrowhead.common.Constants;
+import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.AuthException;
 import eu.arrowhead.common.exception.DataNotFoundException;
@@ -89,6 +97,67 @@ public final class HttpUtilities {
 			logger.error("Unknown exception type: {}", dto.exceptionType());
 			return new ArrowheadException(dto.errorMessage(), dto.origin());
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	/**
+	 * @param scheme       default: http
+	 * @param host         default: 127.0.0.1
+	 * @param port         default: 80
+	 * @param queryParams  default: null
+	 * @param path         default: null
+	 * @param pathSegments default: null
+	 */
+	public static UriComponents createURI(final String scheme, final String host, final int port, final MultiValueMap<String, String> queryParams, final String path, final String... pathSegments) {
+		final UriComponentsBuilder builder = UriComponentsBuilder.newInstance();
+		builder.scheme(Utilities.isEmpty(scheme) ? Constants.HTTP : scheme.trim())
+				.host(Utilities.isEmpty(host) ? Constants.LOCALHOST : host.trim())
+				.port(port <= 0 ? Constants.HTTP_PORT : port);
+
+		if (queryParams != null) {
+			builder.queryParams(queryParams);
+		}
+
+		if (pathSegments != null && pathSegments.length > 0) {
+			builder.pathSegment(pathSegments);
+		}
+
+		if (!Utilities.isEmpty(path)) {
+			builder.path(path);
+		}
+
+		return builder.build();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static UriComponents createURI(final String scheme, final String host, final int port, final String path) {
+		return createURI(scheme, host, port, null, path, (String[]) null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static UriComponents createURI(final String scheme, final String host, final int port, final String path, final String... queryParams) {
+		if (queryParams == null || queryParams.length == 0) {
+			return createURI(scheme, host, port, path);
+		}
+		if (queryParams.length % 2 != 0) {
+			throw new InvalidParameterException("queryParams variable arguments conatins a key without value");
+		}
+
+		final LinkedMultiValueMap<String, String> query = new LinkedMultiValueMap<>();
+
+		int count = 1;
+		String key = "";
+		for (final String vararg : queryParams) {
+			if (count % 2 != 0) {
+				query.putIfAbsent(vararg, new ArrayList<>());
+				key = vararg;
+			} else {
+				query.get(key).add(vararg);
+			}
+			count++;
+		}
+
+		return createURI(scheme, host, port, query, path);
 	}
 
 	//=================================================================================================
