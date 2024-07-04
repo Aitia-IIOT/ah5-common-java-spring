@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,13 +22,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class ArrowheadFilter extends OncePerRequestFilter {
-	
+
 	//=================================================================================================
 	// members
-	
+
+	@Autowired
+	protected ObjectMapper mapper;
+
 	protected final Logger log = LogManager.getLogger(getClass());
-	protected final ObjectMapper mapper = new ObjectMapper();
-	
+
 	//=================================================================================================
 	// assistant methods
 
@@ -35,22 +38,19 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 	protected ArrowheadFilter() {
 		log.info("{} is active", this.getClass().getSimpleName());
 	}
-	
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		chain.doFilter(request, response);
 	}
-	
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
 		final String path = request.getRequestURI();
-	    return path.equals("/") || path.startsWith(Constants.SWAGGER_API_DOCS_URI) || path.startsWith(Constants.SWAGGER_UI_URI);
+		return path.equals("/") || path.startsWith(Constants.SWAGGER_API_DOCS_URI) || path.startsWith(Constants.SWAGGER_UI_URI);
 	}
-
 
 	//-------------------------------------------------------------------------------------------------
 	protected void handleException(final ArrowheadException ex, final ServletResponse response) throws IOException {

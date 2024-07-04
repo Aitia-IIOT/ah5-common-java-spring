@@ -97,9 +97,17 @@
 			 	<groupId>org.apache.maven.plugins</groupId>
 			 	<artifactId>maven-checkstyle-plugin</artifactId>
 			 	<version>3.4.0</version>
+			 	<dependencies>
+		            <dependency>
+		              <groupId>com.puppycrawl.tools</groupId>
+		              <artifactId>checkstyle</artifactId>
+		              <version>10.17.0</version>
+		            </dependency>
+		        </dependencies>
 		 		<configuration>
+					<consoleOutput>true</consoleOutput>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
-					<configLocation>checkstyle/aitia_checks.xml</configLocation>
+					<configLocation>https://raw.githubusercontent.com/Aitia-IIOT/aitia-java-styling/master/aitia_checkstyle_checks.xml</configLocation>
 					<failOnViolation>false</failOnViolation>
 				</configuration>
 				<executions>

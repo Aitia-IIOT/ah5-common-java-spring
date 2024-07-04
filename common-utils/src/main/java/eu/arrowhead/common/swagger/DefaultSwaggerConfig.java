@@ -10,60 +10,56 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
-@SecurityScheme(
-        name = "Authorization",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer"
-)
+@SecurityScheme(name = "Authorization", type = SecuritySchemeType.HTTP, scheme = "bearer")
 public abstract class DefaultSwaggerConfig implements WebMvcConfigurer {
-	
+
 	//=================================================================================================
 	// members
 
 	private final String systemName;
-	
+
 	//=================================================================================================
 	// methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public DefaultSwaggerConfig(final String systemName) {
 		this.systemName = systemName;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Bean
 	OpenAPI customOpenAPI() {
-        return new OpenAPI().info(apiInfo());
+		return new OpenAPI().info(apiInfo());
 	}
-	
+
 	//=================================================================================================
 	// assistant methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	protected Info apiInfo() {
-        return new Info()
-                .title(systemName + " System API")
-                .description("This page shows the REST interfaces offered by the " + systemName + " System.")
-                .version(getVersion())
-                .contact(apiContact())
-                .license(apiLicence());
-    }
+		return new Info()
+				.title(systemName + " System API")
+				.description("This page shows the REST interfaces offered by the " + systemName + " System.")
+				.version(getVersion())
+				.contact(apiContact())
+				.license(apiLicence());
+	}
 
-    //-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
 	protected License apiLicence() {
-        return new License()
-                .name("Licence: TODO")
-                .url("");
-    }
+		return new License()
+				.name("Licence: TODO")
+				.url("");
+	}
 
-    //-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
 	protected Contact apiContact() {
-        return new Contact()
-                .name("AITIA International Inc.")
-                .email("iiot[at]aitia.ai")
-                .url("https://www.aitia.ai");
-    }
-	
+		return new Contact()
+				.name("AITIA International Inc.")
+				.email("iiot[at]aitia.ai")
+				.url("https://www.aitia.ai");
+	}
+
 	//-------------------------------------------------------------------------------------------------
 	protected String getVersion() {
 		return "5.0.0";

@@ -12,35 +12,35 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import eu.arrowhead.common.exception.ArrowheadException;
 
-public class Utilities {
-	
+public final class Utilities {
+
 	//=================================================================================================
 	// members
-	
+
 	private static final ObjectMapper mapper = new ObjectMapper();
-	
+
 	static {
 		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 	}
-	
+
 	//=================================================================================================
 	// methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public static boolean isEmpty(final String str) {
 		return str == null || str.isBlank();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
-	public static boolean isEmpty(final Map<?,?> map) {
+	public static boolean isEmpty(final Map<?, ?> map) {
 		return map == null || map.isEmpty();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public static boolean isEmpty(final Collection<?> collection) {
 		return collection == null || collection.isEmpty();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
 	public static String toJson(final Object object) {
@@ -62,13 +62,13 @@ public class Utilities {
 			return null;
 		}
 
-	    try {
-	    	return mapper.readValue(json, parsedClass);
-	    } catch (final IOException ex) {
-	      throw new ArrowheadException("The specified string cannot be converted to a(n) " + parsedClass.getSimpleName() + " object.", ex);
-	    }
+		try {
+			return mapper.readValue(json, parsedClass);
+		} catch (final IOException ex) {
+			throw new ArrowheadException("The specified string cannot be converted to a(n) " + parsedClass.getSimpleName() + " object.", ex);
+		}
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
 	public static <T> T fromJson(final String json, final com.fasterxml.jackson.core.type.TypeReference<T> reference) {
@@ -76,13 +76,13 @@ public class Utilities {
 			return null;
 		}
 
-	    try {
-	    	return mapper.readValue(json, reference);
-	    } catch (final IOException ex) {
-	      throw new ArrowheadException("The specified string cannot be converted to a(n) " + reference.getType() + " object.", ex);
-	    }
+		try {
+			return mapper.readValue(json, reference);
+		} catch (final IOException ex) {
+			throw new ArrowheadException("The specified string cannot be converted to a(n) " + reference.getType() + " object.", ex);
+		}
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
 	public static String toPrettyJson(final String jsonString) {
@@ -97,21 +97,21 @@ public class Utilities {
 					return mapper.writeValueAsString(tempObj);
 				}
 			}
-	    } catch (final IOException ex) {
-	    	// it seems it is not a JSON string, so we just return untouched
-	    }
+		} catch (final IOException ex) {
+			// it seems it is not a JSON string, so we just return untouched
+		}
 
-	    return jsonString;
+		return jsonString;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
 	public static String stripEndSlash(final String uri) {
-	    if (uri != null && uri.endsWith("/")) {
-	    	return uri.substring(0, uri.length() - 1);
-	    }
+		if (uri != null && uri.endsWith("/")) {
+			return uri.substring(0, uri.length() - 1);
+		}
 
-	    return uri;
+		return uri;
 	}
 
 	//=================================================================================================

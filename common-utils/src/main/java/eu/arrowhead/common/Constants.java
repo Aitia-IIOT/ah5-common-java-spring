@@ -1,13 +1,12 @@
 package eu.arrowhead.common;
 
-public class Constants {
+public final class Constants {
 
-	
 	//=================================================================================================
 	// members
-	
+
 	// Global
-	
+
 	public static final String LOCALHOST = "localhost";
 	public static final String PKCS12 = "PKCS12";
 	public static final String APPLICATION_PROPERTIES = "application.properties";
@@ -16,13 +15,13 @@ public class Constants {
 	public static final String HTTP = "http";
 	public static final String UNKNOWN = "<unknown>";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
-	
+
 	// System related
-	
+
 	public static final String DATABASE_URL = "spring.datasource.url";
 	public static final String DATABASE_USER = "spring.datasource.username";
-	public static final String DATABASE_PASSWORD = "spring.datasource.password";  
-	public static final String DATABASE_DRIVER_CLASS = "spring.datasource.driver-class-name"; 
+	public static final String DATABASE_PASSWORD = "spring.datasource.password";
+	public static final String DATABASE_DRIVER_CLASS = "spring.datasource.driver-class-name";
 	public static final String SERVER_ADDRESS = "server.address";
 	public static final String $SERVER_ADDRESS = "${" + SERVER_ADDRESS + ":}";
 	public static final String SERVER_PORT = "server.port";
@@ -40,40 +39,40 @@ public class Constants {
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
 
 	// SSL related
-	
+
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
 	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":false}";
 	public static final String KEYSTORE_TYPE = "server.ssl.key-store-type";
 	public static final String $KEYSTORE_TYPE_WD = "${" + KEYSTORE_TYPE + ":" + PKCS12 + "}";
 	public static final String KEYSTORE_PATH = "server.ssl.key-store";
 	public static final String $KEYSTORE_PATH_WD = "${" + KEYSTORE_PATH + ":}";
-	public static final String KEYSTORE_PASSWORD = "server.ssl.key-store-password"; 
-	public static final String $KEYSTORE_PASSWORD_WD = "${" + KEYSTORE_PASSWORD + ":}"; 
-	public static final String KEY_PASSWORD = "server.ssl.key-password"; 
+	public static final String KEYSTORE_PASSWORD = "server.ssl.key-store-password";
+	public static final String $KEYSTORE_PASSWORD_WD = "${" + KEYSTORE_PASSWORD + ":}";
+	public static final String KEY_PASSWORD = "server.ssl.key-password";
 	public static final String $KEY_PASSWORD_WD = "${" + KEY_PASSWORD + ":}";
 	public static final String TRUSTSTORE_PATH = "server.ssl.trust-store";
 	public static final String $TRUSTSTORE_PATH_WD = "${" + TRUSTSTORE_PATH + ":}";
-	public static final String TRUSTSTORE_PASSWORD = "server.ssl.trust-store-password"; 
-	public static final String $TRUSTSTORE_PASSWORD_WD = "${" + TRUSTSTORE_PASSWORD + ":}"; 
+	public static final String TRUSTSTORE_PASSWORD = "server.ssl.trust-store-password";
+	public static final String $TRUSTSTORE_PASSWORD_WD = "${" + TRUSTSTORE_PASSWORD + ":}";
 	public static final String DISABLE_HOSTNAME_VERIFIER = "disable.hostname.verifier";
 	public static final String $DISABLE_HOSTNAME_VERIFIER_WD = "${" + DISABLE_HOSTNAME_VERIFIER + ":false}";
-	
-	//  HTTP related
-	
+
+	// HTTP related
+
 	public static final String HTTP_STATUS_OK = "200";
 	public static final String HTTP_STATUS_BAD_REQUEST = "400";
 	public static final String HTTP_STATUS_UNAUTHORIZED = "401";
 	public static final String HTTP_STATUS_FORBIDDEN = "403";
 	public static final String HTTP_STATUS_NOT_FOUND = "404";
 	public static final String HTTP_STATUS_INTERNAL_SERVER_ERROR = "500";
-	
+
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
 	public static final String HTTP_HEADER_AUTHORIZATION_DELIMITER = "//";
 	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
-	
+
 	public static final String HTTP_CLIENT_CONNECTION_TIMEOUT = "http.client.connection.timeout";
 	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":30000}";
 	public static final String HTTP_CLIENT_SOCKET_TIMEOUT = "http.client.socket.timeout";
@@ -82,7 +81,7 @@ public class Constants {
 	public static final String $LOG_ALL_REQUEST_AND_RESPONSE_WD = "${" + LOG_ALL_REQUEST_AND_RESPONSE + ":false}";
 
 	// Swagger
-	
+
 	public static final String SWAGGER_API_DOCS_URI = "/v3/api-docs";
 	public static final String SWAGGER_UI_URI = "/swagger-ui";
 	public static final String SWAGGER_UI_INDEX_HTML = SWAGGER_UI_URI + "/index.html";
@@ -93,18 +92,18 @@ public class Constants {
 	public static final String SWAGGER_HTTP_403_MESSAGE = "You have no permission";
 	public static final String SWAGGER_HTTP_404_MESSAGE = "Not found";
 	public static final String SWAGGER_HTTP_500_MESSAGE = "Internal server error";
-	
+
 	// CORS defaults
-	
-    public static final long CORS_MAX_AGE = 600;
-    public static final boolean CORS_ALLOW_CREDENTIALS = true;
-    public static final String DEFAULT_CORS_ORIGIN_PATTERN = "*";
-    public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
+
+	public static final long CORS_MAX_AGE = 600;
+	public static final boolean CORS_ALLOW_CREDENTIALS = true;
+	public static final String DEFAULT_CORS_ORIGIN_PATTERN = "*";
+	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
 	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
-	
+
 	//=================================================================================================
 	// assistant methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private Constants() {
 		throw new UnsupportedOperationException();

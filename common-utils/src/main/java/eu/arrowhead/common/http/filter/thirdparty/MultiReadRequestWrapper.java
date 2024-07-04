@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 
 /**
  * Third party code from: https://stackoverflow.com/a/54258488
+ *
  * @author granadaCoder (https://stackoverflow.com/users/214977/granadacoder)
  *
  */
@@ -19,24 +20,26 @@ public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
 	//=================================================================================================
 	// members
 
-    private final String body;
+	private final String body;
 
-    //=================================================================================================
+	//=================================================================================================
 	// methods
-    
-    //-------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------
 	public MultiReadRequestWrapper(final HttpServletRequest request) throws IOException {
-    	super(request);
-	    body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+		super(request);
+		body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 	}
-    
-    //-------------------------------------------------------------------------------------------------
-	public String getCachedBody() { return body; }
-	
-    //-------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------
+	public String getCachedBody() {
+		return body;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
-    	return new CustomServletInputStream(body.getBytes());
+		return new CustomServletInputStream(body.getBytes());
 	}
 
 	//-------------------------------------------------------------------------------------------------

@@ -4,7 +4,7 @@ import eu.arrowhead.dto.enums.ExceptionType;
 
 @SuppressWarnings("serial")
 public class ArrowheadException extends RuntimeException {
-	
+
 	//=================================================================================================
 	// members
 
@@ -16,32 +16,43 @@ public class ArrowheadException extends RuntimeException {
 
 	//-------------------------------------------------------------------------------------------------
 	public ArrowheadException(final String msg, final String origin, final Throwable cause) {
-	    super(msg, cause);
-	    this.origin = origin;
+		super(msg, cause);
+		this.origin = origin;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public ArrowheadException(final String msg, final String origin) {
-	    super(msg);
-	    this.origin = origin;
+		super(msg);
+		this.origin = origin;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public ArrowheadException(final String msg, final Throwable cause) {
-	    super(msg, cause);
-	    this.origin = null;
+		super(msg, cause);
+		this.origin = null;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public ArrowheadException(final String msg) {
-	    super(msg);
-	    this.origin = null;
+		super(msg);
+		this.origin = null;
 	}
-	
+
+	//=================================================================================================
+	// boilerplate
+
 	//-------------------------------------------------------------------------------------------------
-	public ExceptionType getExceptionType() { return exceptionType; }
-	public String getOrigin() { return origin; }
-	
+	public ExceptionType getExceptionType() {
+		return exceptionType;
+	}
+
 	//-------------------------------------------------------------------------------------------------
-	protected void setExceptionType(final ExceptionType exceptionType) { this.exceptionType = exceptionType; }
+	public String getOrigin() {
+		return origin;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	protected void setExceptionType(final ExceptionType exceptionType) {
+		this.exceptionType = exceptionType;
+	}
 }

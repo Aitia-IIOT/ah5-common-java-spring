@@ -16,10 +16,10 @@ import eu.arrowhead.dto.ErrorMessageDTO;
 
 @ControllerAdvice
 public class ArrowheadResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-	
+
 	//=================================================================================================
 	// members
-	
+
 	private Logger log = LogManager.getLogger(ArrowheadResponseEntityExceptionHandler.class);
 	private static final HttpHeaders headers = new HttpHeaders();
 	static {

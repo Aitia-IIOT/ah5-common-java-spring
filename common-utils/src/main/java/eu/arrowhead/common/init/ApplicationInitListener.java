@@ -25,40 +25,40 @@ public abstract class ApplicationInitListener {
 
 	//=================================================================================================
 	// members
-	
+
 	protected final Logger logger = LogManager.getLogger(getClass());
-	
+
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
-	protected Map<String,Object> arrowheadContext;
-	
+	protected Map<String, Object> arrowheadContext;
+
 	@Autowired
 	protected SSLProperties sslProperties;
-	
+
 	protected boolean standaloneMode = false;
-	
+
 	//=================================================================================================
 	// methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@EventListener
 	@Order(10)
 	public void onApplicationEvent(final ContextRefreshedEvent event) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, InterruptedException {
 		logger.debug("Initialization in onApplicationEvent()...");
-		
+
 		//TODO: print system's name
 		logger.info("SSL mode: {}", getSSLString());
 		//TODO: print authentication method
-		
+
 		if (sslProperties.isSslEnabled()) {
 			final KeyStore keyStore = initializeKeyStore();
 			checkServerCertificate(keyStore);
 			obtainKeys(keyStore);
 		}
-		
+
 		registerToServiceRegistry();
-		
+
 		customInit(event);
-		
+
 		logger.debug("Initialization in onApplicationEvent() is done.");
 	}
 
@@ -66,9 +66,9 @@ public abstract class ApplicationInitListener {
 	@PreDestroy
 	public void destroy() throws InterruptedException {
 		logger.debug("destroy called...");
-		
+
 		// TODO: revoke services
-		
+
 		try {
 			customDestroy();
 		} catch (final Throwable t) {
@@ -76,21 +76,23 @@ public abstract class ApplicationInitListener {
 			logger.debug(t);
 		}
 	}
-	
+
 	//=================================================================================================
 	// assistant methods
-	
+
 	//-------------------------------------------------------------------------------------------------
-	protected void customInit(final ContextRefreshedEvent event) throws InterruptedException {}
-	
+	protected void customInit(final ContextRefreshedEvent event) throws InterruptedException {
+	}
+
 	//-------------------------------------------------------------------------------------------------
-	protected void customDestroy() {}
-	
+	protected void customDestroy() {
+	}
+
 	//-------------------------------------------------------------------------------------------------
 	protected String getSSLString() {
 		return sslProperties.isSslEnabled() ? "ENABLED" : "DISABLED";
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private KeyStore initializeKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		logger.debug("initializeKeyStore started...");
@@ -100,23 +102,23 @@ public abstract class ApplicationInitListener {
 		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
 		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found.");
 		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
-		
+
 		final KeyStore keystore = KeyStore.getInstance(sslProperties.getKeyStoreType());
 		keystore.load(sslProperties.getKeyStore().getInputStream(), sslProperties.getKeyStorePassword().toCharArray());
 
 		return keystore;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
-	private void checkServerCertificate(KeyStore keyStore) {
+	private void checkServerCertificate(final KeyStore keyStore) {
 		// TODO implement
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private void obtainKeys(final KeyStore keyStore) {
 		// TODO implement
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private void registerToServiceRegistry() {
 		// TODO implement

@@ -15,11 +15,11 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import eu.arrowhead.common.Constants;
 
-public class JDBCConnectionFactoryForLog4J2 {
-	
+public final class JDBCConnectionFactoryForLog4J2 {
+
 	//=================================================================================================
 	// members
-	
+
 	private static Properties props;
 	private static DataSource dataSource;
 
@@ -28,8 +28,8 @@ public class JDBCConnectionFactoryForLog4J2 {
 			init();
 		} catch (final IOException ex) {
 			// this class' purpose to configure logging so in case of exceptions we can't use logging
-			System.out.println(ex.getMessage()); 
-			ex.printStackTrace(); 
+			System.out.println(ex.getMessage());
+			ex.printStackTrace();
 		}
 	}
 
@@ -44,20 +44,20 @@ public class JDBCConnectionFactoryForLog4J2 {
 			config.setUsername(props.getProperty(Constants.DATABASE_USER));
 			config.setPassword(props.getProperty(Constants.DATABASE_PASSWORD));
 			config.setDriverClassName(props.getProperty(Constants.DATABASE_DRIVER_CLASS));
-			
+
 			dataSource = new HikariDataSource(config);
 		}
-		
+
 		return dataSource.getConnection();
 	}
-	
+
 	//=================================================================================================
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	private static void init() throws IOException {
 		InputStream propStream = null;
-		
+
 		try {
 			final File propertiesFile = new File(Constants.APPLICATION_PROPERTIES);
 			if (!propertiesFile.exists()) {
@@ -65,10 +65,10 @@ public class JDBCConnectionFactoryForLog4J2 {
 			} else {
 				propStream = new FileInputStream(propertiesFile);
 			}
-			
+
 			final Properties temp = new Properties();
 			temp.load(propStream);
-	
+
 			props = temp;
 		} finally {
 			if (propStream != null) {
@@ -76,7 +76,7 @@ public class JDBCConnectionFactoryForLog4J2 {
 			}
 		}
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private JDBCConnectionFactoryForLog4J2() {
 		throw new UnsupportedOperationException();

@@ -56,43 +56,43 @@ import reactor.netty.http.client.HttpClient;
 
 @Component
 public class HttpService {
-	
+
 	//=================================================================================================
 	// members
 
 	private static final String ERROR_MESSAGE_PART_PKIX_PATH = "PKIX path";
 	private static final String ERROR_MESSAGE_PART_SUBJECT_ALTERNATIVE_NAMES = "No subject alternative";
 	private static final String ERROR_MESSAGE_PART_X509_NAME = "No name matching";
-	private static final List<HttpMethod> NOT_SUPPORTED_METHODS = List.of(HttpMethod.HEAD, HttpMethod.OPTIONS, HttpMethod.TRACE); 
+	private static final List<HttpMethod> NOT_SUPPORTED_METHODS = List.of(HttpMethod.HEAD, HttpMethod.OPTIONS, HttpMethod.TRACE);
 	private static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM = "ssl.KeyManagerFactory.algorithm";
 	private static final String SSL_TRUST_MANAGER_FACTORY_ALGORITHM = "ssl.TrustManagerFactory.algorithm";
- 
+
 	private final Logger logger = LogManager.getLogger(HttpService.class);
-	
+
 	@Value(Constants.$DISABLE_HOSTNAME_VERIFIER_WD)
 	private boolean disableHostnameVerifier;
-	
+
 	@Value(Constants.$HTTP_CLIENT_CONNECTION_TIMEOUT_WD)
 	private int connectionTimeout;
-	
+
 	@Value(Constants.$HTTP_CLIENT_SOCKET_TIMEOUT_WD)
 	private int socketTimeout;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
 
 	@Autowired
 	private SSLProperties sslProperties;
-	
+
 	private HttpClient httpClient;
 	private HttpClient sslClient;
-	
+
 	//=================================================================================================
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
 	@PostConstruct
-	public void init() throws Exception { 
+	public void init() throws Exception {
 		logger.debug("Initializing HttpService...");
 		httpClient = createHttpClient(null);
 		SslContext sslContext;
@@ -109,30 +109,30 @@ public class HttpService {
 		}
 		logger.debug("HttpService is initialized.");
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
-	public <T,P> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType, final P payload, final SslContext givenContext, final Map<String,String> customHeaders) {
+	public <T, P> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType, final P payload, final SslContext givenContext, final Map<String, String> customHeaders) {
 		logger.debug("sendRequest started...");
 		Assert.notNull(method, "Request method is not defined.");
 		logger.debug("Sending {} request to: {}", method, uri);
-		
+
 		if (uri == null) {
 			logger.error("sendRequest() is called with null URI.");
 			throw new NullPointerException("HttpService.sendRequest method received null URI.");
 		}
-		
+
 		if (NOT_SUPPORTED_METHODS.contains(method)) {
 			throw new MethodNotFoundException("Invalid method type was given to the HttpService.sendRequest() method.");
 		}
-		
+
 		final boolean secure = Constants.HTTPS.equalsIgnoreCase(uri.getScheme());
 		if (secure && sslClient == null) {
 			logger.debug("sendRequest(): secure request sending was invoked in insecure mode.");
 			throw new ForbiddenException("SSL Context is not set, but secure request sending was invoked. An insecure application may not send requests to secure servers.");
 		}
-		
+
 		HttpClient usedClient;
-		if (secure) { 
+		if (secure) {
 			usedClient = givenContext != null ? createHttpClient(givenContext) : sslClient;
 		} else {
 			usedClient = httpClient;
@@ -141,19 +141,19 @@ public class HttpService {
 		try {
 			final WebClient client = createWebClient(usedClient);
 			final RequestBodySpec spec = client.method(method)
-						 					   .uri(uri.toUri());
-			
+					.uri(uri.toUri());
+
 			RequestHeadersSpec<?> headersSpec = (payload != null) ? spec.bodyValue(payload) : spec;
-			
+
 			if (!Utilities.isEmpty(customHeaders)) {
-				for (final Entry<String,String> header : customHeaders.entrySet()) {
+				for (final Entry<String, String> header : customHeaders.entrySet()) {
 					headersSpec = headersSpec.header(header.getKey(), header.getValue());
 				}
 			}
-						 
+
 			return headersSpec.retrieve()
-						 	  .bodyToMono(responseType)
-						 	  .block();
+					.bodyToMono(responseType)
+					.block();
 		} catch (final WebClientResponseException ex) {
 			throw convertWebClientException(ex, uri.toString());
 		} catch (final Exception ex) {
@@ -166,64 +166,63 @@ public class HttpService {
 				} else if (throwable.getMessage().contains(ERROR_MESSAGE_PART_SUBJECT_ALTERNATIVE_NAMES) || throwable.getMessage().contains(ERROR_MESSAGE_PART_X509_NAME)) {
 					logger.error("The certificate of the system at {} does not contain the specified IP address or DNS name as a Subject Alternative Name.", uri.toString());
 					logger.debug("Exception:", throwable);
-					throw new AuthException("The certificate of the system at " + uri.toString() + " does not contain the specified IP address or DNS name as a Subject Alternative Name."); 
+					throw new AuthException("The certificate of the system at " + uri.toString() + " does not contain the specified IP address or DNS name as a Subject Alternative Name.");
 				}
-				
+
 				logger.error("Service unavailable at {}", uri.toUriString());
 				logger.debug("Exception:", throwable);
 				throw new ExternalServerError("Could not get any response from: " + uri.toUriString());
 			}
 
-		    logger.error("Service unavailable at {}", uri.toUriString());
-		    logger.debug("Exception", ex);
-		    throw new ExternalServerError("Could not get any response from: " + uri.toUriString());
+			logger.error("Service unavailable at {}", uri.toUriString());
+			logger.debug("Exception", ex);
+			throw new ExternalServerError("Could not get any response from: " + uri.toUriString());
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public <T,P> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType, final P payload) {
+	public <T, P> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType, final P payload) {
 		return sendRequest(uri, method, responseType, payload, null, null);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public <T> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType, final SslContext givenContext) {
 		return sendRequest(uri, method, responseType, null, givenContext, null);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
-	public <T> T sendRequest(final UriComponents uri, final HttpMethod method, final Map<String,String> customHeaders, final Class<T> responseType) {
+	public <T> T sendRequest(final UriComponents uri, final HttpMethod method, final Map<String, String> customHeaders, final Class<T> responseType) {
 		return sendRequest(uri, method, responseType, null, null, customHeaders);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public <T> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType) {
 		return sendRequest(uri, method, responseType, null, null, null);
 	}
-	
-	
+
 	//-------------------------------------------------------------------------------------------------
-	public <T,P> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType, final P payload, final SslContext givenContext, final Map<String,String> customHeaders) {
+	public <T, P> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType, final P payload, final SslContext givenContext, final Map<String, String> customHeaders) {
 		logger.debug("sendRequest started...");
 		Assert.notNull(method, "Request method is not defined.");
 		logger.debug("Sending {} request to: {}", method, uri);
-		
+
 		if (uri == null) {
 			logger.error("sendRequest() is called with null URI.");
 			throw new NullPointerException("HttpService.sendRequest method received null URI.");
 		}
-		
+
 		if (NOT_SUPPORTED_METHODS.contains(method)) {
 			throw new MethodNotFoundException("Invalid method type was given to the HttpService.sendRequest() method.");
 		}
-		
+
 		final boolean secure = Constants.HTTPS.equalsIgnoreCase(uri.getScheme());
 		if (secure && sslClient == null) {
 			logger.debug("sendRequest(): secure request sending was invoked in insecure mode.");
 			throw new ForbiddenException("SSL Context is not set, but secure request sending was invoked. An insecure application may not send requests to secure servers.");
 		}
-		
+
 		HttpClient usedClient;
-		if (secure) { 
+		if (secure) {
 			usedClient = givenContext != null ? createHttpClient(givenContext) : sslClient;
 		} else {
 			usedClient = httpClient;
@@ -232,18 +231,18 @@ public class HttpService {
 		try {
 			final WebClient client = createWebClient(usedClient);
 			final RequestBodySpec spec = client.method(method)
-						 					   .uri(uri.toUri());
+					.uri(uri.toUri());
 			RequestHeadersSpec<?> headersSpec = (payload != null) ? spec.bodyValue(payload) : spec;
-			
+
 			if (!Utilities.isEmpty(customHeaders)) {
-				for (final Entry<String,String> header : customHeaders.entrySet()) {
+				for (final Entry<String, String> header : customHeaders.entrySet()) {
 					headersSpec = headersSpec.header(header.getKey(), header.getValue());
 				}
 			}
-						 
+
 			return headersSpec.retrieve()
-						 	  .bodyToMono(responseType)
-						 	  .block();
+					.bodyToMono(responseType)
+					.block();
 		} catch (final WebClientResponseException ex) {
 			throw convertWebClientException(ex, uri.toString());
 		} catch (final Exception ex) {
@@ -256,102 +255,101 @@ public class HttpService {
 				} else if (throwable.getMessage().contains(ERROR_MESSAGE_PART_SUBJECT_ALTERNATIVE_NAMES) || throwable.getMessage().contains(ERROR_MESSAGE_PART_X509_NAME)) {
 					logger.error("The certificate of the system at {} does not contain the specified IP address or DNS name as a Subject Alternative Name.", uri.toString());
 					logger.debug("Exception:", throwable);
-					throw new AuthException("The certificate of the system at " + uri.toString() + " does not contain the specified IP address or DNS name as a Subject Alternative Name."); 
+					throw new AuthException("The certificate of the system at " + uri.toString() + " does not contain the specified IP address or DNS name as a Subject Alternative Name.");
 				}
-				
+
 				logger.error("Service unavailable at {}", uri.toUriString());
 				logger.debug("Exception:", throwable);
 				throw new ExternalServerError("Could not get any response from: " + uri.toUriString());
 			}
 
-		    logger.error("Service unavailable at {}", uri.toUriString());
-		    logger.debug("Exception", ex);
-		    throw new ExternalServerError("Could not get any response from: " + uri.toUriString());
+			logger.error("Service unavailable at {}", uri.toUriString());
+			logger.debug("Exception", ex);
+			throw new ExternalServerError("Could not get any response from: " + uri.toUriString());
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public <T,P> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType, final P payload) {
+	public <T, P> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType, final P payload) {
 		return sendRequest(uri, method, responseType, payload, null, null);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public <T> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType, final SslContext givenContext) {
 		return sendRequest(uri, method, responseType, null, givenContext, null);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public <T> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType) {
 		return sendRequest(uri, method, responseType, null, null, null);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public WebClient createInsecureWebClient() {
 		logger.debug("createInsecureWebClient started...");
-		
+
 		return createWebClient(httpClient);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public WebClient createSecureWebClient() {
 		logger.debug("createSecureWebClient started...");
-		
+
 		return createWebClient(sslClient);
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	public WebClient createSecureWebClient(final SslContext sslContext) {
 		logger.debug("createSecureWebClient started...");
-		
+
 		final HttpClient client = createHttpClient(sslContext);
 		return createWebClient(client);
 	}
-	
+
 	//=================================================================================================
 	// assistant methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private HttpClient createHttpClient(final SslContext sslContext) {
 		HttpClient client = HttpClient.create()
-									  .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectionTimeout)
-									  .doOnConnected(connection -> {
-										  connection.addHandlerLast(new ReadTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
-										  connection.addHandlerLast(new WriteTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
-									  });
-		
+				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectionTimeout)
+				.doOnConnected(connection -> {
+					connection.addHandlerLast(new ReadTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
+					connection.addHandlerLast(new WriteTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
+				});
+
 		if (sslContext != null) {
 			client = client.secure(t -> t.sslContext(sslContext)
-										 .handlerConfigurator(handler -> {
-											 final SSLEngine sslEngine = handler.engine();
-											 final SSLParameters sslParameters = sslEngine.getSSLParameters();
-											 sslParameters.setEndpointIdentificationAlgorithm(Constants.HTTPS);
+					.handlerConfigurator(handler -> {
+						final SSLEngine sslEngine = handler.engine();
+						final SSLParameters sslParameters = sslEngine.getSSLParameters();
+						sslParameters.setEndpointIdentificationAlgorithm(Constants.HTTPS);
 
-											 if (disableHostnameVerifier) {
-												 sslParameters.setEndpointIdentificationAlgorithm("");
-												 // see: https://stackoverflow.com/a/67964695												 
-											 }
+						if (disableHostnameVerifier) {
+							sslParameters.setEndpointIdentificationAlgorithm("");
+							// see: https://stackoverflow.com/a/67964695
+						}
 
-									        sslEngine.setSSLParameters(sslParameters);
-										 })
-								   );
+						sslEngine.setSSLParameters(sslParameters);
+					}));
 		}
-		
+
 		return client;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private WebClient createWebClient(final HttpClient client) {
 		final Builder builder = WebClient.builder().clientConnector(new ReactorClientHttpConnector(client))
-								  .defaultHeader(HttpHeaderNames.ACCEPT.toString(), MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE)
-								  .defaultHeader(HttpHeaderNames.CONTENT_TYPE.toString(), MediaType.APPLICATION_JSON_VALUE);
-		
+				.defaultHeader(HttpHeaderNames.ACCEPT.toString(), MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE)
+				.defaultHeader(HttpHeaderNames.CONTENT_TYPE.toString(), MediaType.APPLICATION_JSON_VALUE);
+
 		return builder.build();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private SslContext createSSLContext() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, KeyManagementException, UnrecoverableKeyException {
 		logger.debug("createSSLContext started...");
-		
+
 		final String messageNotDefined = " is not defined.";
 		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
 		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
@@ -361,30 +359,30 @@ public class HttpService {
 		Assert.notNull(sslProperties.getTrustStore(), Constants.TRUSTSTORE_PATH + messageNotDefined);
 		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.TRUSTSTORE_PATH + " file is not found.");
 		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.TRUSTSTORE_PASSWORD + messageNotDefined);
-		
+
 		final KeyStore keyStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
 		keyStore.load(sslProperties.getKeyStore().getInputStream(), sslProperties.getKeyStorePassword().toCharArray());
 		final String kmfAlgorithm = System.getProperty(SSL_KEY_MANAGER_FACTORY_ALGORITHM, KeyManagerFactory.getDefaultAlgorithm());
-	    final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(kmfAlgorithm);
-	    keyManagerFactory.init(keyStore, sslProperties.getKeyStorePassword().toCharArray());
-	    
-	    final KeyStore trustStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
-	    trustStore.load(sslProperties.getTrustStore().getInputStream(), sslProperties.getTrustStorePassword().toCharArray());
-	    final String tmfAlgorithm = System.getProperty(SSL_TRUST_MANAGER_FACTORY_ALGORITHM, TrustManagerFactory.getDefaultAlgorithm());
-	    final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
-	    trustManagerFactory.init(trustStore);
-		
+		final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(kmfAlgorithm);
+		keyManagerFactory.init(keyStore, sslProperties.getKeyStorePassword().toCharArray());
+
+		final KeyStore trustStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
+		trustStore.load(sslProperties.getTrustStore().getInputStream(), sslProperties.getTrustStorePassword().toCharArray());
+		final String tmfAlgorithm = System.getProperty(SSL_TRUST_MANAGER_FACTORY_ALGORITHM, TrustManagerFactory.getDefaultAlgorithm());
+		final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
+		trustManagerFactory.init(trustStore);
+
 		return SslContextBuilder.forClient()
-								.keyStoreType(sslProperties.getKeyStoreType())
-								.keyManager(keyManagerFactory)
-								.trustManager(trustManagerFactory)
-								.build();
+				.keyStoreType(sslProperties.getKeyStoreType())
+				.keyManager(keyManagerFactory)
+				.trustManager(trustManagerFactory)
+				.build();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private ArrowheadException convertWebClientException(final WebClientResponseException ex, final String uri) {
 		logger.debug("convertWebClientException started...");
-		
+
 		ErrorMessageDTO dto;
 		try {
 			dto = mapper.readValue(ex.getResponseBodyAsByteArray(), ErrorMessageDTO.class);
@@ -395,18 +393,18 @@ public class HttpService {
 			if (ex.getResponseBodyAsString() == null || ex.getResponseBodyAsString().isBlank()) {
 				logger.error("Body: {}", Utilities.toPrettyJson(ex.getResponseBodyAsString()));
 			}
-			
+
 			final String message = Utilities.isEmpty(ex.getResponseBodyAsString()) ? ex.getStatusText() : ex.getResponseBodyAsString();
 			final String code = getStatusCodeAsString(ex);
-			return new ArrowheadException(message + ", status code:" +  code); 
+			return new ArrowheadException(message + ", status code:" + code);
 		}
-		
-		logger.debug("Error occured at {}. Returned with {}, status text: {}", uri,  getStatusCodeAsString(ex), ex.getStatusText());
+
+		logger.debug("Error occured at {}. Returned with {}, status text: {}", uri, getStatusCodeAsString(ex), ex.getStatusText());
 		logger.error("Request from {} returned with {}: {}", dto.origin(), dto.exceptionType(), dto.errorMessage());
-		
+
 		return HttpUtilities.createExceptionFromErrorMessageDTO(dto);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private String getStatusCodeAsString(final WebClientResponseException ex) {
 		if (ex != null) {
@@ -416,7 +414,7 @@ public class HttpService {
 				// do nothing
 			}
 		}
-		
+
 		return Constants.UNKNOWN;
 	}
 }
