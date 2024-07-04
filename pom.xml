@@ -100,9 +100,7 @@
 		 		<configuration>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 					<configLocation>checkstyle/aitia_checks.xml</configLocation>
-					<suppressionsLocation>checkstyle/aitia_suppressions.xml</suppressionsLocation>
-					<suppressionsFileExpression>aitia_suppressions.xml</suppressionsFileExpression>
-					<failOnViolation>fail</failOnViolation>
+					<failOnViolation>false</failOnViolation>
 				</configuration>
 				<executions>
 					<execution>
