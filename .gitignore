@@ -3,3 +3,4 @@
 .classpath
 .settings/
 /common-utils/.factorypath
+.checkstyle
