@@ -13,6 +13,8 @@ public class ArrowheadEntity {
 	//=================================================================================================
 	// members
 
+	protected static final int VARCHAR_MEDIUM = 63;
+
 	@Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	protected ZonedDateTime createdAt;
 
