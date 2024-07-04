@@ -17,6 +17,9 @@ public final class Constants {
 	public static final String UNKNOWN = "<unknown>";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
 
+	public static final int MIN_PORT = 1;
+	public static final int MAX_PORT = 65535;
+
 	// System related
 
 	public static final String DATABASE_URL = "spring.datasource.url";
