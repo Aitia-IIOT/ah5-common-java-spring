@@ -1,4 +1,4 @@
-package eu.arrowhead.common.http.model;
+package eu.arrowhead.common.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +9,13 @@ import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Utilities;
 
-public record HttpServiceModel(
+public record ServiceModel(
 		String serviceDefinition,
 		String version,
-		List<HttpInterfaceModel> interfaces,
+		List<InterfaceModel> interfaces,
 		Map<String, Object> metadata) {
 
-	public HttpServiceModel {
+	public ServiceModel {
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinition), "Service definition is null or blank");
 		Assert.isTrue(!Utilities.isEmpty(version), "Version null or blank");
 		Assert.isTrue(!Utilities.isEmpty(interfaces), "Interfaces list is null or empty");
@@ -32,7 +32,7 @@ public record HttpServiceModel(
 
 		private String serviceDefinition;
 		private String version;
-		private List<HttpInterfaceModel> interfaces = new ArrayList<>();
+		private List<InterfaceModel> interfaces = new ArrayList<>();
 		private Map<String, Object> metadata = new HashMap<>();
 
 		//=================================================================================================
@@ -51,7 +51,7 @@ public record HttpServiceModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder serviceInterface(final HttpInterfaceModel serviceInterface) {
+		public Builder serviceInterface(final InterfaceModel serviceInterface) {
 			if (interfaces == null) {
 				interfaces = new ArrayList<>();
 			}
@@ -60,7 +60,7 @@ public record HttpServiceModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder serviceInterfaces(final List<HttpInterfaceModel> interfaces) {
+		public Builder serviceInterfaces(final List<InterfaceModel> interfaces) {
 			this.interfaces = interfaces;
 			return this;
 		}
@@ -81,8 +81,8 @@ public record HttpServiceModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public HttpServiceModel build() {
-			return new HttpServiceModel(serviceDefinition, version, interfaces, metadata);
+		public ServiceModel build() {
+			return new ServiceModel(serviceDefinition, version, interfaces, metadata);
 		}
 	}
 }

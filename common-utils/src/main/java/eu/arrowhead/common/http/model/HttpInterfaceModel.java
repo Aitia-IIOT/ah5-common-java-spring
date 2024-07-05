@@ -9,14 +9,17 @@ import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.model.InterfaceModel;
 
 public record HttpInterfaceModel(
+		String templateName,
 		List<String> accessAddresses,
 		int accessPort,
 		String basePath,
-		Map<String, HttpOperationModel> operations) {
+		Map<String, HttpOperationModel> operations) implements InterfaceModel {
 
 	public HttpInterfaceModel {
+		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty.");
 		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty.");
 		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid.");
 		Assert.isTrue(!Utilities.isEmpty(basePath), "'basePath' is missing.");
@@ -32,6 +35,7 @@ public record HttpInterfaceModel(
 		//=================================================================================================
 		// members
 
+		private final String templateName;
 		private List<String> accessAddresses = new ArrayList<>();
 		private int accessPort;
 		private String basePath;
@@ -41,13 +45,15 @@ public record HttpInterfaceModel(
 		// methods
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder() {
+		public Builder(final String templateName) {
+			this.templateName = templateName;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder(final String domainName, final int port) {
-			accessAddresses.add(domainName);
-			accessPort = port;
+		public Builder(final String templateName, final String domainName, final int port) {
+			this(templateName);
+			this.accessAddresses.add(domainName);
+			this.accessPort = port;
 		}
 
 		//-------------------------------------------------------------------------------------------------
@@ -94,7 +100,7 @@ public record HttpInterfaceModel(
 
 		//-------------------------------------------------------------------------------------------------
 		public HttpInterfaceModel build() {
-			return new HttpInterfaceModel(accessAddresses, accessPort, basePath, operations);
+			return new HttpInterfaceModel(templateName, accessAddresses, accessPort, basePath, operations);
 		}
 
 	}

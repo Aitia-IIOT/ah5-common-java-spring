@@ -32,8 +32,6 @@ public final class Constants {
 	public static final String $SERVER_PORT = "${" + SERVER_PORT + ":0}";
 	public static final String DOMAIN_NAME = "domain.name";
 	public static final String $DOMAIN_NAME = "${" + DOMAIN_NAME + ":}";
-	public static final String DOMAIN_PORT = "domain.port";
-	public static final String $DOMAIN_PORT = "${" + DOMAIN_PORT + ":0}";
 	public static final String SERVICEREGISTRY_ADDRESS = "service.registry.address";
 	public static final String $SERVICEREGISTRY_ADDRESS_WD = "${" + SERVICEREGISTRY_ADDRESS + ":" + LOCALHOST + "}";
 	public static final String SERVICEREGISTRY_PORT = "service.registry.port";
