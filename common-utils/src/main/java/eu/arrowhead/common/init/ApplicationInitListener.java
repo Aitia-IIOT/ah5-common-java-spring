@@ -16,7 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Constants;
-import eu.arrowhead.common.SSLProperties;
+import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.Utilities;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
@@ -32,7 +32,7 @@ public abstract class ApplicationInitListener {
 	protected Map<String, Object> arrowheadContext;
 
 	@Autowired
-	protected SSLProperties sslProperties;
+	protected SystemInfo sysInfo;
 
 	protected boolean standaloneMode = false;
 
@@ -45,11 +45,11 @@ public abstract class ApplicationInitListener {
 	public void onApplicationEvent(final ContextRefreshedEvent event) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, InterruptedException {
 		logger.debug("Initialization in onApplicationEvent()...");
 
-		//TODO: print system's name
+		logger.info("System name: {}", sysInfo.getSystemName());
 		logger.info("SSL mode: {}", getSSLString());
-		//TODO: print authentication method
+		logger.info("Authentication policy: {}", sysInfo.getAuthenticationPolicy().name());
 
-		if (sslProperties.isSslEnabled()) {
+		if (sysInfo.isSslEnabled()) {
 			final KeyStore keyStore = initializeKeyStore();
 			checkServerCertificate(keyStore);
 			obtainKeys(keyStore);
@@ -90,21 +90,21 @@ public abstract class ApplicationInitListener {
 
 	//-------------------------------------------------------------------------------------------------
 	protected String getSSLString() {
-		return sslProperties.isSslEnabled() ? "ENABLED" : "DISABLED";
+		return sysInfo.isSslEnabled() ? "ENABLED" : "DISABLED";
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private KeyStore initializeKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		logger.debug("initializeKeyStore started...");
-		Assert.isTrue(sslProperties.isSslEnabled(), "SSL is not enabled.");
+		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled.");
 		final String messageNotDefined = " is not defined.";
-		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
-		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found.");
-		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
+		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
+		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found.");
+		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
 
-		final KeyStore keystore = KeyStore.getInstance(sslProperties.getKeyStoreType());
-		keystore.load(sslProperties.getKeyStore().getInputStream(), sslProperties.getKeyStorePassword().toCharArray());
+		final KeyStore keystore = KeyStore.getInstance(sysInfo.getSslProperties().getKeyStoreType());
+		keystore.load(sysInfo.getSslProperties().getKeyStore().getInputStream(), sysInfo.getSslProperties().getKeyStorePassword().toCharArray());
 
 		return keystore;
 	}

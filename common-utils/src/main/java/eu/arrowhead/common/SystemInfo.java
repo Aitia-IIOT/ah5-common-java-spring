@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import eu.arrowhead.common.exception.InvalidParameterException;
+import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -30,6 +31,9 @@ public abstract class SystemInfo {
 
 	@Value(Constants.$SERVICEREGISTRY_PORT_WD)
 	private int serviceRegistryPort;
+
+	@Value(Constants.$AUTHENTICATION_POLICY_WD)
+	private AuthenticationPolicy authenticationPolicy;
 
 	@Autowired
 	private SSLProperties sslProperties;
@@ -95,6 +99,11 @@ public abstract class SystemInfo {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public AuthenticationPolicy getAuthenticationPolicy() {
+		return authenticationPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public SSLProperties getSslProperties() {
 		return sslProperties;
 	}
@@ -105,7 +114,7 @@ public abstract class SystemInfo {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public boolean isSSLEnabled() {
+	public boolean isSslEnabled() {
 		return sslProperties != null && sslProperties.isSslEnabled();
 	}
 }
