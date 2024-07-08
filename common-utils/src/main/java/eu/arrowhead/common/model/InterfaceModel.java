@@ -7,4 +7,5 @@ public interface InterfaceModel {
 
 	//-------------------------------------------------------------------------------------------------
 	public String templateName();
+	public String protocol();
 }
