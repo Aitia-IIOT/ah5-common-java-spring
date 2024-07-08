@@ -122,6 +122,7 @@ public abstract class ApplicationInitListener {
 	//-------------------------------------------------------------------------------------------------
 	private void registerToServiceRegistry() {
 		// TODO implement
+		// register system and its services
 	}
 
 }

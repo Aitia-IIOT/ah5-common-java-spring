@@ -22,6 +22,8 @@ public final class Constants {
 
 	// System related
 
+	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
+
 	public static final String DATABASE_URL = "spring.datasource.url";
 	public static final String DATABASE_USER = "spring.datasource.username";
 	public static final String DATABASE_PASSWORD = "spring.datasource.password";

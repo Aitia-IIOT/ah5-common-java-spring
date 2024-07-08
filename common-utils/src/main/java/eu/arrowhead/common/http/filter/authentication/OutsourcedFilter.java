@@ -24,7 +24,7 @@ public class OutsourcedFilter extends ArrowheadFilter {
 		// put <system-name> to request attribute "arrowhead.authenticated.system"
 
 		// Exceptions:
-		// - when requester calls for '/serviceregistry/api/service-discovery/lookup' with login-service(?) as service definition and without auth header
+		// - when requester calls for '/serviceregistry/service-discovery/lookup' with login-service(?) as service definition and without auth header
 		chain.doFilter(request, response);
 	}
 
