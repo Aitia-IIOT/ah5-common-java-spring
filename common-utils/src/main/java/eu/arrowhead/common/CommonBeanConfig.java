@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import eu.arrowhead.common.collector.HttpCollectorDriver;
+import eu.arrowhead.common.collector.ICollectorDriver;
 import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authentication.CertificateFilter;
-import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
 import eu.arrowhead.common.http.filter.authentication.OutsourcedFilter;
+import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
 
 @Configuration
 public class CommonBeanConfig {
@@ -38,5 +40,11 @@ public class CommonBeanConfig {
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Bean
+	ICollectorDriver getDefaultCollectorDriver() {
+		return new HttpCollectorDriver();
 	}
 }
