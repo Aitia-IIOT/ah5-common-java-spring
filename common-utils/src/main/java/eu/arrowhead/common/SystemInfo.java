@@ -50,6 +50,11 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public abstract List<ServiceModel> getServices();
 
+	//-------------------------------------------------------------------------------------------------
+	public String getIdentityToken() {
+		return authenticationPolicy == AuthenticationPolicy.OUTSOURCED ? (String) arrowheadContext.get(Constants.KEY_IDENTITY_TOKEN) : null;
+	}
+
 	//=================================================================================================
 	// assistant methods
 

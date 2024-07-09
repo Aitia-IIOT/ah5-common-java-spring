@@ -16,6 +16,7 @@ public final class Constants {
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
+	public static final String KEY_IDENTITY_TOKEN = "identity-token";
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
