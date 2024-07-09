@@ -17,6 +17,7 @@ public class LogEntity {
 
 	//=================================================================================================
 	// members
+
 	@Id
 	@Column(length = varchar)
 	protected String logId;
