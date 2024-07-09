@@ -2,8 +2,7 @@ package eu.arrowhead.dto;
 
 import java.util.List;
 
-public record ServiceInstanceQueryRequestDTO(
-		PageDTO pagination,
+public record ServiceInstanceLookupRequestDTO(
 		List<String> instanceIds,
 		List<String> providerNames,
 		List<String> serviceDefinitionNames,
