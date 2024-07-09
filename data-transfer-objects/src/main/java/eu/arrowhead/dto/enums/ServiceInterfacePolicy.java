@@ -1,5 +1,5 @@
 package eu.arrowhead.dto.enums;
 
 public enum ServiceInterfacePolicy {
-	NONE, CERTIFICATE, TOKEN;
+	NONE, CERT_AUTH, TOKEN_AUTH;
 }
