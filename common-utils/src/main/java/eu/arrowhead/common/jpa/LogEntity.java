@@ -1,6 +1,7 @@
 package eu.arrowhead.common.jpa;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.springframework.boot.logging.LogLevel;
 
@@ -13,10 +14,13 @@ import jakarta.persistence.MappedSuperclass;
 @MappedSuperclass
 public class LogEntity {
 
-	private static final int VARCHAR = 100;
-
 	//=================================================================================================
 	// members
+
+	private static final int VARCHAR = 100;
+
+	public static final List<String> SORTABLE_FIELDS_BY = List.of("logId", "entryDate", "logger", "logLevel");
+	public static final String FIELD_NAME_ID = "logId";
 
 	@Id
 	@Column(length = VARCHAR)
