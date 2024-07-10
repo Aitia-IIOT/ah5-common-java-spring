@@ -19,6 +19,9 @@ public final class Constants {
 	public static final String KEY_IDENTITY_TOKEN = "identity-token";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
+	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "GENERIC_HTTP";
+	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "GENERIC_HTTPS";
+
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
 
