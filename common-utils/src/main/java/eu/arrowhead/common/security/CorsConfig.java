@@ -26,7 +26,7 @@ public class CorsConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 				.allowCredentials(Constants.CORS_ALLOW_CREDENTIALS)
 				.maxAge(Constants.CORS_MAX_AGE)
-				.allowedHeaders(HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT, HttpHeaders.AUTHORIZATION) //TODO allow own custom headers also
+				.allowedHeaders(HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT, HttpHeaders.AUTHORIZATION)
 				.allowedOriginPatterns(originPatterns);
 	}
 }

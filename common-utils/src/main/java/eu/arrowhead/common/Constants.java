@@ -66,6 +66,7 @@ public final class Constants {
 	// HTTP related
 
 	public static final String HTTP_STATUS_OK = "200";
+	public static final String HTTP_STATUS_CREATED = "201";
 	public static final String HTTP_STATUS_BAD_REQUEST = "400";
 	public static final String HTTP_STATUS_UNAUTHORIZED = "401";
 	public static final String HTTP_STATUS_FORBIDDEN = "403";

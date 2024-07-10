@@ -4,7 +4,7 @@ import java.util.Map;
 
 import eu.arrowhead.dto.MetadataRequirementDTO;
 
-public final class MetadataRequirementsValidator {
+public final class MetadataRequirementsMatcher {
 
 	//=================================================================================================
 	// methods
@@ -19,7 +19,7 @@ public final class MetadataRequirementsValidator {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	private MetadataRequirementsValidator() {
+	private MetadataRequirementsMatcher() {
 		throw new UnsupportedOperationException();
 	}
 }

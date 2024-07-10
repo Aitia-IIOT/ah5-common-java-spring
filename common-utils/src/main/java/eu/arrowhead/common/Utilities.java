@@ -1,6 +1,12 @@
 package eu.arrowhead.common;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.Map;
 
@@ -18,6 +24,7 @@ public final class Utilities {
 	// members
 
 	private static final ObjectMapper mapper = new ObjectMapper();
+	private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
 
 	static {
 		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
@@ -112,6 +119,26 @@ public final class Utilities {
 		}
 
 		return uri;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static String convertZonedDateTimeToUTCString(final ZonedDateTime time) {
+		if (time == null) {
+			return null;
+		}
+
+		return dateTimeFormatter.format(time.toInstant());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static ZonedDateTime parseUTCStringToLocalZonedDateTime(final String timeStr) throws DateTimeParseException {
+		if (isEmpty(timeStr)) {
+			return null;
+		}
+
+		final TemporalAccessor tempAcc = dateTimeFormatter.parse(timeStr);
+
+		return ZonedDateTime.ofInstant(Instant.from(tempAcc), ZoneId.systemDefault());
 	}
 
 	//=================================================================================================

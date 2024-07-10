@@ -13,22 +13,22 @@ import jakarta.persistence.MappedSuperclass;
 @MappedSuperclass
 public class LogEntity {
 
-	private final int varchar = 100;
+	private static final int VARCHAR = 100;
 
 	//=================================================================================================
 	// members
 
 	@Id
-	@Column(length = varchar)
+	@Column(length = VARCHAR)
 	protected String logId;
 
 	@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	protected ZonedDateTime entryDate;
 
-	@Column(nullable = true, length = varchar)
+	@Column(nullable = true, length = VARCHAR)
 	protected String logger;
 
-	@Column(nullable = true, length = varchar)
+	@Column(nullable = true, length = VARCHAR)
 	@Enumerated(EnumType.STRING)
 	protected LogLevel logLevel;
 
