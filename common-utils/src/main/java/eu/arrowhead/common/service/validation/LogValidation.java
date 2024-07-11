@@ -1,10 +1,16 @@
 package eu.arrowhead.common.service.validation;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Service;
 
+import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.jpa.LogEntity;
 import eu.arrowhead.dto.LogRequestDTO;
 
@@ -28,9 +34,41 @@ public class LogValidation {
 
 		if (dto != null) {
 			pageValidator.validatePageParameter(dto.pagination(), LogEntity.SORTABLE_FIELDS_BY, origin);
+			final ZonedDateTime from = validateAndParseDateTime(dto.from(), "from", origin);
+			final ZonedDateTime to = validateAndParseDateTime(dto.to(), "to", origin);
 
-			// TODO: continue
+			if (from != null && to != null && to.isBefore(from)) {
+				throw new InvalidParameterException("Invalid time interval", origin);
+			}
+
+			validateSeverity(dto.severity(), origin);
 		}
 	}
 
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	private ZonedDateTime validateAndParseDateTime(final String dateTime, final String fieldName, final String origin) {
+		logger.debug("validateAndParseDateTime started...");
+
+		try {
+			return Utilities.parseUTCStringToLocalZonedDateTime(dateTime);
+		} catch (final DateTimeParseException ex) {
+			throw new InvalidParameterException("Invalid date time in field: " + fieldName + ". Please use a UTC date time in ISO-8601 format.", origin);
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void validateSeverity(final String severity, final String origin) {
+		logger.debug("validateSeverity started...");
+
+		if (!Utilities.isEmpty(severity)) {
+			try {
+				LogLevel.valueOf(severity.trim().toUpperCase());
+			} catch (final IllegalArgumentException ex) {
+				throw new InvalidParameterException("Invalid severity is spericied. Allowed values are: " + LogLevel.values(), origin);
+			}
+		}
+	}
 }
