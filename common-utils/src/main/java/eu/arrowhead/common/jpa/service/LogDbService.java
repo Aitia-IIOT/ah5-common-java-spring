@@ -39,7 +39,7 @@ public class LogDbService {
 	public Page<LogEntity> getLogEntries(final PageRequest pageRequest, final List<LogLevel> levels, final ZonedDateTime from, final ZonedDateTime to, final String loggerStr) {
 		logger.debug("getLogEntries started...");
 
-		final List<LogLevel> _levels = levels == null || levels.isEmpty() ? ALL_LOG_LEVELS : levels;
+		final List<LogLevel> _levels = Utilities.isEmpty(levels) ? ALL_LOG_LEVELS : levels;
 		final ZonedDateTime _from = from == null ? START_OF_TIMES : from;
 		final ZonedDateTime _to = to == null ? Utilities.utcNow() : to;
 
