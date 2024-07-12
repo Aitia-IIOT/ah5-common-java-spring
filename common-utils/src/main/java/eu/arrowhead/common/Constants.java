@@ -7,6 +7,7 @@ public final class Constants {
 
 	// Global
 
+	public static final String UTC = "UTC";
 	public static final String LOCALHOST = "localhost";
 	public static final String PKCS12 = "PKCS12";
 	public static final String APPLICATION_PROPERTIES = "application.properties";
@@ -110,6 +111,10 @@ public final class Constants {
 	public static final String DEFAULT_CORS_ORIGIN_PATTERN = "*";
 	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
 	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
+
+	// Operation related
+
+	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 
 	//=================================================================================================
 	// assistant methods

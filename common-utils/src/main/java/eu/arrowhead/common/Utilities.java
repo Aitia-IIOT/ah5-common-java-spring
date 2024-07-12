@@ -131,14 +131,19 @@ public final class Utilities {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public static ZonedDateTime parseUTCStringToLocalZonedDateTime(final String timeStr) throws DateTimeParseException {
+	public static ZonedDateTime parseUTCStringToZonedDateTime(final String timeStr) throws DateTimeParseException {
 		if (isEmpty(timeStr)) {
 			return null;
 		}
 
 		final TemporalAccessor tempAcc = dateTimeFormatter.parse(timeStr);
 
-		return ZonedDateTime.ofInstant(Instant.from(tempAcc), ZoneId.systemDefault());
+		return ZonedDateTime.ofInstant(Instant.from(tempAcc), ZoneId.of(Constants.UTC));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static ZonedDateTime utcNow() {
+		return ZonedDateTime.now(ZoneId.of(Constants.UTC));
 	}
 
 	//=================================================================================================

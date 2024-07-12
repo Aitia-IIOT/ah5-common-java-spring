@@ -2,6 +2,7 @@ package eu.arrowhead.common.jpa;
 
 import java.time.ZonedDateTime;
 
+import eu.arrowhead.common.Utilities;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -30,14 +31,14 @@ public class ArrowheadEntity {
 	//-------------------------------------------------------------------------------------------------
 	@PrePersist
 	public void onCreate() {
-		this.createdAt = ZonedDateTime.now();
+		this.createdAt = Utilities.utcNow();
 		this.updatedAt = this.createdAt;
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	@PreUpdate
 	public void onUpdate() {
-		this.updatedAt = ZonedDateTime.now();
+		this.updatedAt = Utilities.utcNow();
 	}
 
 	//=================================================================================================
