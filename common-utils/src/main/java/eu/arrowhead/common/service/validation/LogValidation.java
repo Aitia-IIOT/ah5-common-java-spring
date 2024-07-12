@@ -53,7 +53,7 @@ public class LogValidation {
 		logger.debug("validateAndParseDateTime started...");
 
 		try {
-			return Utilities.parseUTCStringToLocalZonedDateTime(dateTime);
+			return Utilities.parseUTCStringToZonedDateTime(dateTime);
 		} catch (final DateTimeParseException ex) {
 			throw new InvalidParameterException("Invalid date time in field: " + fieldName + ". Please use a UTC date time in ISO-8601 format.", origin);
 		}

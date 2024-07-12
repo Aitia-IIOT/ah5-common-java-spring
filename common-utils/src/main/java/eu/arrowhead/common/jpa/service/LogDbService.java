@@ -41,7 +41,7 @@ public class LogDbService {
 
 		final List<LogLevel> _levels = levels == null || levels.isEmpty() ? ALL_LOG_LEVELS : levels;
 		final ZonedDateTime _from = from == null ? START_OF_TIMES : from;
-		final ZonedDateTime _to = to == null ? ZonedDateTime.now() : to;
+		final ZonedDateTime _to = to == null ? Utilities.utcNow() : to;
 
 		try {
 			if (Utilities.isEmpty(loggerStr)) {

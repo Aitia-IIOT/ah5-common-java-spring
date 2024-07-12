@@ -49,8 +49,8 @@ public class LogService {
 
 		validator.validateLogRequest(dto, origin);
 		final PageRequest pageRequest = pageService.getPageRequest(dto.pagination(), Direction.DESC, LogEntity.SORTABLE_FIELDS_BY, LogEntity.DEFAULT_SORT_FIELD, origin);
-		final ZonedDateTime from = Utilities.parseUTCStringToLocalZonedDateTime(dto.from());
-		final ZonedDateTime to = Utilities.parseUTCStringToLocalZonedDateTime(dto.to());
+		final ZonedDateTime from = Utilities.parseUTCStringToZonedDateTime(dto.from());
+		final ZonedDateTime to = Utilities.parseUTCStringToZonedDateTime(dto.to());
 		final List<LogLevel> logLevels = getLogLevels(dto.severity());
 		final String logger = Utilities.isEmpty(dto.logger()) ? null : dto.logger().trim();
 

@@ -7,6 +7,7 @@ public final class Constants {
 
 	// Global
 
+	public static final String UTC = "UTC";
 	public static final String LOCALHOST = "localhost";
 	public static final String PKCS12 = "PKCS12";
 	public static final String APPLICATION_PROPERTIES = "application.properties";
