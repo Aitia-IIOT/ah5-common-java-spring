@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,32 @@ public final class Utilities {
 	//-------------------------------------------------------------------------------------------------
 	public static boolean isEmpty(final Collection<?> collection) {
 		return collection == null || collection.isEmpty();
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	public static <T> boolean containsNull(final Iterable<T> iterable) {
+		Assert.notNull(iterable, "iterable is null");
+
+		for (final T element : iterable) {
+			if (element == null) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static boolean containsNullOrEmpty(final Iterable<String> iterable) {
+		Assert.notNull(iterable, "iterable is null");
+
+		for (final String element : iterable) {
+			if (Utilities.isEmpty(element)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	//-------------------------------------------------------------------------------------------------
