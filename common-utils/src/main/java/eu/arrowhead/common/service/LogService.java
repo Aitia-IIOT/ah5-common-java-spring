@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.jpa.LogEntity;
 import eu.arrowhead.common.jpa.service.LogDbService;
 import eu.arrowhead.common.service.validation.LogValidation;
@@ -48,15 +49,18 @@ public class LogService {
 		logger.debug("getLogEntries started...");
 
 		validator.validateLogRequest(dto, origin);
-		final PageRequest pageRequest = pageService.getPageRequest(dto.pagination(), Direction.DESC, LogEntity.SORTABLE_FIELDS_BY, LogEntity.DEFAULT_SORT_FIELD, origin);
-		final ZonedDateTime from = Utilities.parseUTCStringToZonedDateTime(dto.from());
-		final ZonedDateTime to = Utilities.parseUTCStringToZonedDateTime(dto.to());
-		final List<LogLevel> logLevels = getLogLevels(dto.severity());
-		final String logger = Utilities.isEmpty(dto.logger()) ? null : dto.logger().trim();
+		final PageRequest pageRequest = pageService.getPageRequest(dto == null ? null : dto.pagination(), Direction.DESC, LogEntity.SORTABLE_FIELDS_BY, LogEntity.DEFAULT_SORT_FIELD, origin);
+		final ZonedDateTime from = Utilities.parseUTCStringToZonedDateTime(dto == null ? null : dto.from());
+		final ZonedDateTime to = Utilities.parseUTCStringToZonedDateTime(dto == null ? null : dto.to());
+		final List<LogLevel> logLevels = getLogLevels(dto == null ? null : dto.severity());
+		final String logger = dto == null || Utilities.isEmpty(dto.logger()) ? null : dto.logger().trim();
 
-		final Page<LogEntity> page = dbService.getLogEntries(pageRequest, logLevels, from, to, logger);
-
-		return convertPageToResponse(page);
+		try {
+			final Page<LogEntity> page = dbService.getLogEntries(pageRequest, logLevels, from, to, logger);
+			return convertPageToResponse(page);
+		} catch (final InternalServerError ex) {
+			throw new InternalServerError(ex.getMessage(), origin);
+		}
 	}
 
 	//=================================================================================================
