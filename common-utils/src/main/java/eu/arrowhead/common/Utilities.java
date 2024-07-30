@@ -67,7 +67,7 @@ public final class Utilities {
 		Assert.notNull(iterable, "iterable is null");
 
 		for (final String element : iterable) {
-			if (Utilities.isEmpty(element)) {
+			if (isEmpty(element)) {
 				return true;
 			}
 		}

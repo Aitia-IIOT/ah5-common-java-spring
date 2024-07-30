@@ -99,7 +99,7 @@ public final class Constants {
 	public static final String SWAGGER_UI_INDEX_HTML = SWAGGER_UI_URI + "/index.html";
 	public static final String SWAGGER_HTTP_200_MESSAGE = "Ok";
 	public static final String SWAGGER_HTTP_201_MESSAGE = "Created";
-	public static final String SWAGGER_HTTP_204_MESSAGE = "No changes was necesarry";
+	public static final String SWAGGER_HTTP_204_MESSAGE = "No changes was necessary";
 	public static final String SWAGGER_HTTP_400_MESSAGE = "Bad request";
 	public static final String SWAGGER_HTTP_401_MESSAGE = "You are not authenticated";
 	public static final String SWAGGER_HTTP_403_MESSAGE = "You have no permission";
