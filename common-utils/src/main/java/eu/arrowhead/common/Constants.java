@@ -71,6 +71,7 @@ public final class Constants {
 
 	public static final String HTTP_STATUS_OK = "200";
 	public static final String HTTP_STATUS_CREATED = "201";
+	public static final String HTTP_STATUS_NO_CONTENT = "204";
 	public static final String HTTP_STATUS_BAD_REQUEST = "400";
 	public static final String HTTP_STATUS_UNAUTHORIZED = "401";
 	public static final String HTTP_STATUS_FORBIDDEN = "403";
@@ -96,8 +97,9 @@ public final class Constants {
 	public static final String SWAGGER_API_DOCS_URI = "/v3/api-docs";
 	public static final String SWAGGER_UI_URI = "/swagger-ui";
 	public static final String SWAGGER_UI_INDEX_HTML = SWAGGER_UI_URI + "/index.html";
-	public static final String SWAGGER_HTTP_200_MESSAGE = "Service is available";
+	public static final String SWAGGER_HTTP_200_MESSAGE = "Ok";
 	public static final String SWAGGER_HTTP_201_MESSAGE = "Created";
+	public static final String SWAGGER_HTTP_204_MESSAGE = "No changes was necessary";
 	public static final String SWAGGER_HTTP_400_MESSAGE = "Bad request";
 	public static final String SWAGGER_HTTP_401_MESSAGE = "You are not authenticated";
 	public static final String SWAGGER_HTTP_403_MESSAGE = "You have no permission";
