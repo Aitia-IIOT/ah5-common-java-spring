@@ -17,6 +17,7 @@ public final class MetadataRequirementsMatcher {
 
 	//-------------------------------------------------------------------------------------------------
 	// Returns true if every requirement matches one of the given metadata. Otherwise returns false. 
+	//TODO: finish the implementation!
 	public static boolean isMetadataMatch(final Map<String, Object> metadata, final MetadataRequirementDTO requirements) {
 		
 		for (Entry<String, Object> requirement : requirements.entrySet()) {
@@ -80,6 +81,7 @@ public final class MetadataRequirementsMatcher {
 			
 		}
 		
+		//throw new NotImplementedException("MetadataRequirementsMatcher is not implemented yet!");
 		return true;
 	}
 

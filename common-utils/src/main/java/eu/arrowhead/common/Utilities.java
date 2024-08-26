@@ -62,31 +62,6 @@ public final class Utilities {
 		return false;
 	}
 
-	//-------------------------------------------------------------------------------------------------
-	public static boolean containsNullOrEmpty(final Iterable<String> iterable) {
-		Assert.notNull(iterable, "iterable is null");
-
-		for (final String element : iterable) {
-			if (Utilities.isEmpty(element)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public static <T> boolean containsNull(final Iterable<T> iterable) {
-		Assert.notNull(iterable, "iterable is null");
-
-		for (final T element : iterable) {
-			if (element == null) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 
 	//-------------------------------------------------------------------------------------------------
 	public static boolean containsNullOrEmpty(final Iterable<String> iterable) {
@@ -204,20 +179,6 @@ public final class Utilities {
 		if (value == null || enumClass == null) {
 			return false;
 		}
-		try {
-			Enum.valueOf(enumClass, value);
-			return true;
-		} catch (final IllegalArgumentException ex) {
-			return false;
-		}
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public static <E extends Enum<E>> boolean isEnumValue(final String value, final Class<E> enumClass) {
-		if (value == null || enumClass == null) {
-			return false;
-		}
-
 		try {
 			Enum.valueOf(enumClass, value);
 			return true;

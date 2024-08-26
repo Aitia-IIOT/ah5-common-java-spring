@@ -14,10 +14,10 @@ public class ArrowheadEntity {
 	//=================================================================================================
 	// members
 
-	protected static final int VARCHAR_TINY = 14;
-	protected static final int VARCHAR_SMALL = 63;
-	protected static final int VARCHAR_MEDIUM = 255;
-	protected static final int VARCHAR_LARGE = 1024;
+	public static final int VARCHAR_TINY = 14;
+	public static final int VARCHAR_SMALL = 63;
+	public static final int VARCHAR_MEDIUM = 255;
+	public static final int VARCHAR_LARGE = 1024;
 
 	@Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	protected ZonedDateTime createdAt;
