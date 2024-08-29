@@ -3,7 +3,6 @@ package eu.arrowhead.common.service.validation;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import eu.arrowhead.dto.MetadataRequirementDTO;
 
 public final class MetadataRequirementsMatcher {
@@ -17,6 +16,14 @@ public final class MetadataRequirementsMatcher {
 	//TODO: this implementation is not correct!
 	@SuppressWarnings("rawtypes")
 	public static boolean isMetadataMatch(final Map<String, Object> metadata, final MetadataRequirementDTO requirements) {
+		
+		if (metadata == null && requirements == null) {
+			return true;
+		}
+		
+		if (metadata == null && requirements == null) {
+			return false;
+		}
 		
 		for (Entry<String, Object> requirement : requirements.entrySet()) {
 			
