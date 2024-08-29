@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import eu.arrowhead.dto.MetadataRequirementDTO;
 
 public final class MetadataRequirementsMatcher {
@@ -17,7 +14,8 @@ public final class MetadataRequirementsMatcher {
 
 	//-------------------------------------------------------------------------------------------------
 	// Returns true if every requirement matches one of the given metadata. Otherwise returns false. 
-	//TODO: finish the implementation!
+	//TODO: this implementation is not correct!
+	@SuppressWarnings("rawtypes")
 	public static boolean isMetadataMatch(final Map<String, Object> metadata, final MetadataRequirementDTO requirements) {
 		
 		for (Entry<String, Object> requirement : requirements.entrySet()) {
