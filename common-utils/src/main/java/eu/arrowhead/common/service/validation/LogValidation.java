@@ -67,7 +67,7 @@ public class LogValidation {
 			try {
 				LogLevel.valueOf(severity.trim().toUpperCase());
 			} catch (final IllegalArgumentException ex) {
-				throw new InvalidParameterException("Invalid severity is spericied. Allowed values are: " + LogLevel.values(), origin);
+				throw new InvalidParameterException("Invalid severity is specified. Allowed values are: " + LogLevel.values(), origin);
 			}
 		}
 	}
