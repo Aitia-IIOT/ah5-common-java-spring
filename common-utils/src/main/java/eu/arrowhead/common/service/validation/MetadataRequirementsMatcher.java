@@ -5,6 +5,7 @@ import java.util.Map;
 
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.InvalidParameterException;
+import eu.arrowhead.common.service.validation.meta.MetadataKeyEvaluator;
 import eu.arrowhead.common.service.validation.meta.MetadataRequirementExpression;
 import eu.arrowhead.common.service.validation.meta.MetadataRequirementTokenizer;
 import eu.arrowhead.dto.MetadataRequirementDTO;
@@ -26,9 +27,15 @@ public final class MetadataRequirementsMatcher {
 
 		final List<MetadataRequirementExpression> expressions = MetadataRequirementTokenizer.parseRequirements(requirements);
 		for (final MetadataRequirementExpression expression : expressions) {
-			// TODO: MetadataKeyEvaluator finds the value for specified key
-			// TODO: use op evaluator with parameters: value from metadata as left and value from requirements as right => is eval is false return false
+			final Object actValue = MetadataKeyEvaluator.getMetadataValueForCompositeKey(metadata, expression.keyPath());
+			if (actValue == null) {
+				// key is invalid
+				return false;
+			}
 
+			if (!expression.operation().eval(actValue, expression.value())) {
+				return false;
+			}
 		}
 
 		return true;
