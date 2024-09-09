@@ -17,6 +17,7 @@ public final class Constants {
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
+	public static final String SERVER_STANDALONE_MODE = "server.standalone.mode";
 	public static final String KEY_IDENTITY_TOKEN = "identity-token";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
