@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -43,5 +44,37 @@ public class MetadataRequirementsMatcherTest {
 		req.put("key.not_subkey", "value");
 
 		assertFalse(MetadataRequirementsMatcher.isMetadataMatch(metadata, req));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	public void isMetadataMatchNoMatch() {
+		final Map<String, Object> metadata = Map.of("key", Map.of("subkey", "value"));
+		final MetadataRequirementDTO req = new MetadataRequirementDTO();
+		req.put("key.subkey", "not_value");
+
+		assertFalse(MetadataRequirementsMatcher.isMetadataMatch(metadata, req));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	@SuppressWarnings("checkstyle:magicnumber")
+	public void isMetadataMatchMatch() {
+		final Map<String, Object> metadata = Map.of("key", Map.of("subkey", 5));
+		final MetadataRequirementDTO req = new MetadataRequirementDTO();
+		req.put("key.subkey", Map.of("op", "LESS_THAN", "value", 10));
+
+		assertTrue(MetadataRequirementsMatcher.isMetadataMatch(metadata, req));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	@SuppressWarnings("checkstyle:magicnumber")
+	public void isMetadataMatchMatch2() {
+		final Map<String, Object> metadata = Map.of("key", List.of(1, 2, 4, 8, 16));
+		final MetadataRequirementDTO req = new MetadataRequirementDTO();
+		req.put("key[3]", Map.of("op", "LESS_THAN", "value", 10));
+
+		assertTrue(MetadataRequirementsMatcher.isMetadataMatch(metadata, req));
 	}
 }

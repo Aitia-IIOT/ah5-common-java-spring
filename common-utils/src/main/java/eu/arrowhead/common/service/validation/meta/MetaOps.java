@@ -57,6 +57,7 @@ public enum MetaOps {
 	NOT_CONTAINS(new NotEvaluator(new ListNotContainsEvaluator())),
 
 	// any - list
+	IN(new InEvaluator()),
 	NOT_IN(new NotEvaluator(new InEvaluator()));
 
 	//=================================================================================================
