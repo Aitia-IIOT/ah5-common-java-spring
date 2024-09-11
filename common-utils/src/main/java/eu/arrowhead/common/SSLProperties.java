@@ -28,6 +28,9 @@ public class SSLProperties {
 	@Value(Constants.$KEY_PASSWORD_WD)
 	private String keyPassword;
 
+	@Value(Constants.$KEY_ALIAS_WD)
+	private String keyAlias;
+
 	@Value(Constants.$TRUSTSTORE_PATH_WD)
 	private Resource trustStore;
 
@@ -55,6 +58,10 @@ public class SSLProperties {
 
 			if (Utilities.isEmpty(keyPassword)) {
 				throw new InvalidParameterException("keyPassword is missing");
+			}
+
+			if (Utilities.isEmpty(keyAlias)) {
+				throw new InvalidParameterException("keyAlias is missing");
 			}
 
 			if (trustStore == null) {
@@ -93,6 +100,10 @@ public class SSLProperties {
 	//-------------------------------------------------------------------------------------------------
 	public String getKeyPassword() {
 		return keyPassword;
+	}
+
+	public String getKeyAlias() {
+		return keyAlias;
 	}
 
 	//-------------------------------------------------------------------------------------------------

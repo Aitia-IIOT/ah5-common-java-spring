@@ -4,8 +4,14 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
+
+import javax.security.auth.x500.X500Principal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +24,11 @@ import org.springframework.util.Assert;
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.exception.AuthException;
+import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
+import eu.arrowhead.common.security.CertificateProfileType;
+import eu.arrowhead.common.security.SecurityUtilities;
+import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
 
@@ -51,8 +62,11 @@ public abstract class ApplicationInitListener {
 
 		if (sysInfo.isSslEnabled()) {
 			final KeyStore keyStore = initializeKeyStore();
-			checkServerCertificate(keyStore);
 			obtainKeys(keyStore);
+			if (sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE) {
+				// in this case the certificate must be compliant with the Arrowhead Certificate Structure
+				checkServerCertificate(keyStore);
+			}
 		}
 
 		registerToServiceRegistry();
@@ -111,12 +125,45 @@ public abstract class ApplicationInitListener {
 
 	//-------------------------------------------------------------------------------------------------
 	private void checkServerCertificate(final KeyStore keyStore) {
-		// TODO implement
+		logger.debug("checkServerCertificate started...");
+		final X509Certificate serverCertificate = (X509Certificate) arrowheadContext.get(Constants.SERVER_CERTIFICATE);
+		final CommonNameAndType serverData = SecurityUtilities.getIdentificationDataFromCertificate(serverCertificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
+
+		if (serverData == null) {
+			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, common name and profile type not found.");
+		}
+		if (CertificateProfileType.SYSTEM != serverData.profileType()) {
+			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, invalid profile type: " + serverData.profileType());
+		}
+
+		if (!SecurityUtilities.isValidSystemCommonName(serverData.commonName())) {
+			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have 5 parts.", serverData.commonName());
+			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have 5 parts.");
+		}
+		logger.info("Server CN: {}", serverData.commonName());
+
+		arrowheadContext.put(Constants.SERVER_COMMON_NAME, serverData.commonName());
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private void obtainKeys(final KeyStore keyStore) {
-		// TODO implement
+		logger.debug("obtainKeys started...");
+
+		final X509Certificate serverCertificate = SecurityUtilities.getCertificateFromKeyStore(keyStore, sysInfo.getSslProperties().getKeyAlias());
+		if (serverCertificate == null) {
+			// never happens because checkServer
+			throw new ServiceConfigurationError("Cannot find server certificate in the specified key store.");
+		}
+
+		arrowheadContext.put(Constants.SERVER_CERTIFICATE, serverCertificate);
+		final PublicKey publicKey = serverCertificate.getPublicKey();
+		arrowheadContext.put(Constants.SERVER_PUBLIC_KEY, publicKey);
+
+		final PrivateKey privateKey = SecurityUtilities.getPrivateKeyFromKeyStore(keyStore, sysInfo.getSslProperties().getKeyAlias(), sysInfo.getSslProperties().getKeyPassword());
+		if (privateKey == null) {
+			throw new ServiceConfigurationError("Cannot find private key in the specified key store.");
+		}
+		arrowheadContext.put(Constants.SERVER_PRIVATE_KEY, privateKey);
 	}
 
 	//-------------------------------------------------------------------------------------------------

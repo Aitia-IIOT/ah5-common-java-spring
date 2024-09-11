@@ -69,4 +69,10 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 		response.getWriter().print(mapper.writeValueAsString(dto));
 		response.getWriter().flush();
 	}
+
+	//-------------------------------------------------------------------------------------------------
+	protected void initializeRequestAttributes(final HttpServletRequest request) {
+		request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, Constants.UNKNOWN);
+		request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST, false);
+	}
 }
