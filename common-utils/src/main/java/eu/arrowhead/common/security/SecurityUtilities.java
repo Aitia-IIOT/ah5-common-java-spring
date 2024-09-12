@@ -60,8 +60,8 @@ public final class SecurityUtilities {
 	@Nullable
 	public static PrivateKey getPrivateKeyFromKeyStore(final KeyStore keystore, final String alias, final String keyPass) {
 		Assert.notNull(keystore, "Key store is not defined.");
-		Assert.notNull(keyPass, "Password is not defined.");
 		Assert.isTrue(!Utilities.isEmpty(alias), "Alias is not defined.");
+		Assert.notNull(keyPass, "Password is not defined.");
 
 		try {
 			return (PrivateKey) keystore.getKey(alias, keyPass.toCharArray());
