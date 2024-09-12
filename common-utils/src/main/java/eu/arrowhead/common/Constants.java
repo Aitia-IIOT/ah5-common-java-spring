@@ -88,6 +88,7 @@ public final class Constants {
 
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
 	public static final String HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST = "arrowhead.sysop.request";
+	public static final String HTTP_ATTR_JAKARTA_SERVLET_REQUEST_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 	public static final String HTTP_HEADER_AUTHORIZATION_DELIMITER = "//";
 	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
