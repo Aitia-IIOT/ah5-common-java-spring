@@ -127,7 +127,7 @@ public abstract class ApplicationInitListener {
 	private void checkServerCertificate(final KeyStore keyStore) {
 		logger.debug("checkServerCertificate started...");
 		final X509Certificate serverCertificate = (X509Certificate) arrowheadContext.get(Constants.SERVER_CERTIFICATE);
-		final CommonNameAndType serverData = SecurityUtilities.getIdentificationDataFromCertificate(serverCertificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
+		final CommonNameAndType serverData = SecurityUtilities.getIdentificationDataFromSubjectDN(serverCertificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
 
 		if (serverData == null) {
 			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, common name and profile type not found.");

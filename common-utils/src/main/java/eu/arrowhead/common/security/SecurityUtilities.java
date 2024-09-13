@@ -73,7 +73,7 @@ public final class SecurityUtilities {
 
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
-	public static CommonNameAndType getIdentificationDataFromCertificate(final String dn) {
+	public static CommonNameAndType getIdentificationDataFromSubjectDN(final String dn) {
 		if (Utilities.isEmpty(dn)) {
 			return null;
 		}
@@ -93,14 +93,16 @@ public final class SecurityUtilities {
 				}
 			}
 
-			for (final String qualifier : dnQualifiers) {
-				final CertificateProfileType type = CertificateProfileType.fromCode(qualifier);
-				if (type != null) {
-					return new CommonNameAndType(commonName, type);
+			if (commonName != null) {
+				for (final String qualifier : dnQualifiers) {
+					final CertificateProfileType type = CertificateProfileType.fromCode(qualifier);
+					if (type != null) {
+						return new CommonNameAndType(commonName, type);
+					}
 				}
 			}
 		} catch (final InvalidNameException ex) {
-			logger.warn("InvalidNameException in getIdentificationDataFromCertificate: {}", ex.getMessage());
+			logger.warn("InvalidNameException in getIdentificationDataFromSubjectDN: {}", ex.getMessage());
 			logger.debug("Exception", ex);
 		}
 
@@ -114,7 +116,7 @@ public final class SecurityUtilities {
 		final X509Certificate[] certificates = (X509Certificate[]) request.getAttribute(Constants.HTTP_ATTR_JAKARTA_SERVLET_REQUEST_X509_CERTIFICATE);
 		if (certificates != null && certificates.length > 0) {
 			for (final X509Certificate cert : certificates) {
-				final CommonNameAndType requesterData = getIdentificationDataFromCertificate(cert.getSubjectX500Principal().getName(X500Principal.RFC2253));
+				final CommonNameAndType requesterData = getIdentificationDataFromSubjectDN(cert.getSubjectX500Principal().getName(X500Principal.RFC2253));
 				if (requesterData == null || !isValidSystemCommonName(requesterData.commonName())) {
 					continue;
 				}
@@ -137,20 +139,20 @@ public final class SecurityUtilities {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public static String getCloudCN(final String systemCN) {
-		final String[] fields = systemCN.split(X509_CN_DELIMITER, 2); // fields contains: systemName, <cloudName>.<organization>.<two parts of the master certificate, eg. arrowhead.eu>
-		Assert.isTrue(fields.length >= 2, "System common name is invalid: " + systemCN);
+	public static String getCloudCN(final String clientCn) {
+		final String[] fields = clientCn.split(X509_CN_DELIMITER, 2); // fields contains: clientName, <cloudName>.<organization>.<two parts of the master certificate, eg. arrowhead.eu>
+		Assert.isTrue(fields.length >= 2, "Client common name is invalid: " + clientCn);
 
 		return fields[1];
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public static boolean isClienInTheLocalCloudByCNs(final String clientCN, final String cloudCN) {
+	public static boolean isClientInTheLocalCloudByCNs(final String clientCN, final String cloudCN) {
 		if (Utilities.isEmpty(clientCN) || Utilities.isEmpty(cloudCN)) {
 			return false;
 		}
 
-		final String[] fields = clientCN.split(X509_CN_DELIMITER, 2); // valid clientFields contains clientmName, <cloudName>.<organization>.<two parts of the master certificate, eg. arrowhead.eu>
+		final String[] fields = clientCN.split(X509_CN_DELIMITER, 2); // valid clientFields contains clientName, <cloudName>.<organization>.<two parts of the master certificate, eg. arrowhead.eu>
 		return fields.length >= 2 && cloudCN.equalsIgnoreCase(fields[1]);
 	}
 

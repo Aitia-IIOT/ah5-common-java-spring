@@ -65,7 +65,7 @@ public class CertificateFilter extends ArrowheadFilter {
 
 		final String serverCN = (String) arrowheadContext.get(Constants.SERVER_COMMON_NAME);
 		final String cloudCN = SecurityUtilities.getCloudCN(serverCN);
-		if (!SecurityUtilities.isClienInTheLocalCloudByCNs(requesterData.commonName(), cloudCN)) {
+		if (!SecurityUtilities.isClientInTheLocalCloudByCNs(requesterData.commonName(), cloudCN)) {
 			log.error("Unauthorized access: {}, from foreign cloud", requestTarget);
 			throw new ForbiddenException("Unauthorized access: " + requestTarget + ", from foreign cloud");
 		}
