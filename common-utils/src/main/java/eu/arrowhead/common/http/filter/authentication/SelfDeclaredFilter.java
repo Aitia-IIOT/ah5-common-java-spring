@@ -19,16 +19,22 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SelfDeclaredFilter extends ArrowheadFilter {
 
 	//=================================================================================================
+	// members
+
+	private static final String SYSOP = "sysop";
+
+	//=================================================================================================
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		try {
-			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, Constants.UNKNOWN);
+			initializeRequestAttributes(request);
 
 			final String systemName = processAuthHeader(request);
 			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, systemName);
+			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST, SYSOP.equals(systemName.toLowerCase().trim()));
 
 			chain.doFilter(request, response);
 		} catch (final ArrowheadException ex) {
