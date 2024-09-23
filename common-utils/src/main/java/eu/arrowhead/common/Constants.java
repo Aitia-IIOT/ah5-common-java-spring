@@ -17,6 +17,12 @@ public final class Constants {
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
+	public static final String SERVER_STANDALONE_MODE = "server.standalone.mode";
+	public static final String SERVER_COMMON_NAME = "server.common.name";
+	public static final String SERVER_PUBLIC_KEY = "server.public.key";
+	public static final String SERVER_PRIVATE_KEY = "server.private.key";
+	public static final String SERVER_CERTIFICATE = "server.certificate";
+
 	public static final String KEY_IDENTITY_TOKEN = "identity-token";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
@@ -60,6 +66,8 @@ public final class Constants {
 	public static final String $KEYSTORE_PASSWORD_WD = "${" + KEYSTORE_PASSWORD + ":}";
 	public static final String KEY_PASSWORD = "server.ssl.key-password";
 	public static final String $KEY_PASSWORD_WD = "${" + KEY_PASSWORD + ":}";
+	public static final String KEY_ALIAS = "server.ssl.key-alias";
+	public static final String $KEY_ALIAS_WD = "${" + KEY_ALIAS + ":}";
 	public static final String TRUSTSTORE_PATH = "server.ssl.trust-store";
 	public static final String $TRUSTSTORE_PATH_WD = "${" + TRUSTSTORE_PATH + ":}";
 	public static final String TRUSTSTORE_PASSWORD = "server.ssl.trust-store-password";
@@ -79,6 +87,8 @@ public final class Constants {
 	public static final String HTTP_STATUS_INTERNAL_SERVER_ERROR = "500";
 
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
+	public static final String HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST = "arrowhead.sysop.request";
+	public static final String HTTP_ATTR_JAKARTA_SERVLET_REQUEST_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 	public static final String HTTP_HEADER_AUTHORIZATION_DELIMITER = "//";
 	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
