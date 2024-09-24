@@ -48,7 +48,7 @@ public final class Utilities {
 	public static boolean isEmpty(final Collection<?> collection) {
 		return collection == null || collection.isEmpty();
 	}
-
+	
 	//-------------------------------------------------------------------------------------------------
 	public static <T> boolean containsNull(final Iterable<T> iterable) {
 		Assert.notNull(iterable, "iterable is null");
@@ -61,6 +61,7 @@ public final class Utilities {
 
 		return false;
 	}
+
 
 	//-------------------------------------------------------------------------------------------------
 	public static boolean containsNullOrEmpty(final Iterable<String> iterable) {
@@ -172,13 +173,12 @@ public final class Utilities {
 	public static ZonedDateTime utcNow() {
 		return ZonedDateTime.now(ZoneId.of(Constants.UTC));
 	}
-
+	
 	//-------------------------------------------------------------------------------------------------
 	public static <E extends Enum<E>> boolean isEnumValue(final String value, final Class<E> enumClass) {
 		if (value == null || enumClass == null) {
 			return false;
 		}
-
 		try {
 			Enum.valueOf(enumClass, value);
 			return true;
