@@ -1,5 +1,7 @@
 package eu.arrowhead.common.model;
 
+import java.util.Map;
+
 public interface InterfaceModel {
 
 	//=================================================================================================
@@ -8,4 +10,5 @@ public interface InterfaceModel {
 	//-------------------------------------------------------------------------------------------------
 	public String templateName();
 	public String protocol();
+	public Map<String, Object> properties();
 }

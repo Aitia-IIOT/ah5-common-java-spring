@@ -39,6 +39,14 @@ public record HttpInterfaceModel(
 		return templateName.equals(httpTemplateName) ? "http" : "https";
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	@Override
+	public Map<String, Object> properties() {
+		// TODO Auto-generated method stub
+		// TODO create map from addresses, port, base path and operation
+		return null;
+	}
+
 	//=================================================================================================
 	// nested classes
 

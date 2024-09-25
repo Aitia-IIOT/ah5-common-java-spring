@@ -8,8 +8,12 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ServiceConfigurationError;
+import java.util.stream.Collectors;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -24,11 +28,24 @@ import org.springframework.util.Assert;
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.collector.ServiceCollector;
+import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.AuthException;
+import eu.arrowhead.common.exception.ForbiddenException;
+import eu.arrowhead.common.http.ArrowheadHttpService;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
+import eu.arrowhead.common.model.ServiceModel;
+import eu.arrowhead.common.model.SystemModel;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
+import eu.arrowhead.dto.AddressDTO;
+import eu.arrowhead.dto.ServiceInstanceCreateRequestDTO;
+import eu.arrowhead.dto.ServiceInstanceInterfaceRequestDTO;
+import eu.arrowhead.dto.ServiceInstanceResponseDTO;
+import eu.arrowhead.dto.SystemRegisterRequestDTO;
+import eu.arrowhead.dto.SystemResponseDTO;
+import eu.arrowhead.dto.enums.ServiceInterfacePolicy;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
 
@@ -39,13 +56,24 @@ public abstract class ApplicationInitListener {
 
 	protected final Logger logger = LogManager.getLogger(getClass());
 
+	private static final int MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES = 3;
+	private static final int WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS = 15;
+
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	protected Map<String, Object> arrowheadContext;
 
 	@Autowired
 	protected SystemInfo sysInfo;
 
+	@Autowired
+	protected ServiceCollector serviceCollector;
+
+	@Autowired
+	protected ArrowheadHttpService arrowheadHttpService;
+
 	protected boolean standaloneMode = false;
+
+	private Map<String, ServiceModel> registeredServices = new HashMap<>();
 
 	//=================================================================================================
 	// methods
@@ -59,6 +87,10 @@ public abstract class ApplicationInitListener {
 		logger.info("System name: {}", sysInfo.getSystemName());
 		logger.info("SSL mode: {}", getSSLString());
 		logger.info("Authentication policy: {}", sysInfo.getAuthenticationPolicy().name());
+
+		if (arrowheadContext.containsKey(Constants.SERVER_STANDALONE_MODE)) {
+			standaloneMode = (boolean) arrowheadContext.get(Constants.SERVER_STANDALONE_MODE);
+		}
 
 		if (sysInfo.isSslEnabled()) {
 			final KeyStore keyStore = initializeKeyStore();
@@ -81,7 +113,7 @@ public abstract class ApplicationInitListener {
 	public void destroy() throws InterruptedException {
 		logger.debug("destroy called...");
 
-		// TODO: revoke services
+		revokeServices();
 
 		try {
 			customDestroy();
@@ -167,9 +199,97 @@ public abstract class ApplicationInitListener {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private void registerToServiceRegistry() {
-		// TODO implement
-		// register system and its services
+	private void registerToServiceRegistry() throws InterruptedException {
+		logger.debug("registerToServiceRegistry started...");
+
+		if (skipRegistration()) {
+			return;
+		}
+
+		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
+
+		// register system
+		final SystemModel model = sysInfo.getSystemModel();
+		final List<AddressDTO> addresses = model.addresses()
+				.stream()
+				.map(a -> new AddressDTO(a.type().name(), a.address()))
+				.collect(Collectors.toList());
+		final SystemRegisterRequestDTO payload = new SystemRegisterRequestDTO(model.metadata(), model.version(), addresses, model.deviceName());
+		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, SystemResponseDTO.class, payload);
+
+		// register services
+		for (final ServiceModel serviceModel : sysInfo.getServices()) {
+			registerService(serviceModel);
+		}
+
+		logger.info("System {} published {} service(s).", sysInfo.getSystemName(), registeredServices.size());
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	private boolean skipRegistration() {
+		logger.debug("skipRegistration started...");
+
+		return standaloneMode || Constants.SYS_NAME_SERVICE_REGISTRY.equals(sysInfo.getSystemName());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void checkServiceRegistryConnection(final boolean secure, final int retries, final int period) throws InterruptedException {
+		logger.debug("checkServiceRegistryConnection started...");
+
+		final String templateName = secure ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
+		for (int i = 0; i <= retries; ++i) {
+			try {
+				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName);
+				logger.info("Service Registry is accessable...");
+				break;
+			} catch (final ForbiddenException | AuthException ex) {
+				throw ex;
+			} catch (final ArrowheadException ex) {
+				if (i >= retries) {
+					throw ex;
+				} else {
+					logger.info("Service Registry is unavailable at the moment, retrying in {} seconds...", period);
+					Thread.sleep(period * Constants.CONVERSION_MILLISECOND_TO_SECOND);
+				}
+			}
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void registerService(final ServiceModel model) {
+		logger.debug("registerService started...");
+
+		final List<ServiceInstanceInterfaceRequestDTO> interfaces = model.interfaces()
+				.stream()
+				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), ServiceInterfacePolicy.NONE.name(), i.properties()))
+				.collect(Collectors.toList());
+		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(sysInfo.getSystemName(), model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
+		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, ServiceInstanceResponseDTO.class, payload);
+		registeredServices.put(response.instanceId(), model);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void revokeServices() throws InterruptedException {
+		logger.debug("revokeServices started...");
+		// TODO Auto-generated method stub
+
+		if (skipRegistration()) {
+			return;
+		}
+
+		try {
+			checkServiceRegistryConnection(sysInfo.isSslEnabled(), 0, 1);
+
+			for (final Entry<String, ServiceModel> entry : registeredServices.entrySet()) {
+				// TODO: revoke here, need possibility to add path param
+			}
+
+			registeredServices.clear();
+			logger.info("Core system {} revoked {} service(s).", sysInfo, registeredServices.size());
+		} catch (final Throwable t) {
+			logger.error(t.getMessage());
+			logger.debug(t);
+		}
+
+	}
 }

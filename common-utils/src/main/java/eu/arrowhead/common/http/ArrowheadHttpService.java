@@ -95,7 +95,8 @@ public class ArrowheadHttpService {
 			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + sysInfo.getSystemName();
 		case OUTSOURCED:
 			final String identityToken = sysInfo.getIdentityToken();
-			return identityToken == null ? null : Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER;
+			return identityToken == null ? null
+					: Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
 		default:
 			return null;
 		}

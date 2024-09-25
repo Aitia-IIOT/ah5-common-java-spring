@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
+import eu.arrowhead.common.model.SystemModel;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
@@ -46,6 +47,9 @@ public abstract class SystemInfo {
 
 	//-------------------------------------------------------------------------------------------------
 	public abstract String getSystemName();
+
+	//-------------------------------------------------------------------------------------------------
+	public abstract SystemModel getSystemModel();
 
 	//-------------------------------------------------------------------------------------------------
 	public abstract List<ServiceModel> getServices();

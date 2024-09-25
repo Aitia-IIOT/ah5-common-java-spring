@@ -31,8 +31,12 @@ public final class Constants {
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
+	public static final long CONVERSION_MILLISECOND_TO_SECOND = 1000;
+	public static final long CONVERSION_MILLISECOND_TO_MINUTE = 60000;
 
 	// System related
+
+	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -124,7 +128,15 @@ public final class Constants {
 	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
 	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
 
+	// Service related
+
+	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
+	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
+
 	// Operation related
+
+	public static final String SERVICE_OP_REGISTER = "register";
+	public static final String SERVICE_OP_REVOKE = "revoke";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 
