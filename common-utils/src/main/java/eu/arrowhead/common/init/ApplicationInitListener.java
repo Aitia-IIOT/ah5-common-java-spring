@@ -8,11 +8,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.ServiceConfigurationError;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.security.auth.x500.X500Principal;
@@ -73,7 +73,7 @@ public abstract class ApplicationInitListener {
 
 	protected boolean standaloneMode = false;
 
-	private Map<String, ServiceModel> registeredServices = new HashMap<>();
+	private Set<String> registeredServices = new HashSet<>();
 
 	//=================================================================================================
 	// methods
@@ -265,13 +265,12 @@ public abstract class ApplicationInitListener {
 				.collect(Collectors.toList());
 		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(sysInfo.getSystemName(), model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
 		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, ServiceInstanceResponseDTO.class, payload);
-		registeredServices.put(response.instanceId(), model);
+		registeredServices.add(response.instanceId());
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private void revokeServices() throws InterruptedException {
 		logger.debug("revokeServices started...");
-		// TODO Auto-generated method stub
 
 		if (skipRegistration()) {
 			return;
@@ -280,8 +279,8 @@ public abstract class ApplicationInitListener {
 		try {
 			checkServiceRegistryConnection(sysInfo.isSslEnabled(), 0, 1);
 
-			for (final Entry<String, ServiceModel> entry : registeredServices.entrySet()) {
-				// TODO: revoke here, need possibility to add path param
+			for (final String serviceInstanceId : registeredServices) {
+				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class, List.of(serviceInstanceId));
 			}
 
 			registeredServices.clear();
