@@ -75,7 +75,6 @@ public class NotEmptyAddressListValidator implements IPropertyValidator {
 		logger.debug("NotEmptyAddressListValidator.validateAndNormalizeAddress started...");
 
 		final String normalized = normalizer.normalize(addressStr);
-		//TODO: detect addresstype
 		final AddressType addressType = validator.detectType(normalized);
 
 		if (!acceptableAddressTypes.contains(addressType)) {
