@@ -208,6 +208,8 @@ public abstract class ApplicationInitListener {
 
 		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
 
+		// TODO: revoke system 
+		
 		// register system
 		final SystemModel model = sysInfo.getSystemModel();
 		final List<AddressDTO> addresses = model.addresses()
