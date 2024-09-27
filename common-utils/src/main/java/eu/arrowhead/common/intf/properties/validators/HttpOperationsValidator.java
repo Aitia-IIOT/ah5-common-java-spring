@@ -13,9 +13,9 @@ public class HttpOperationsValidator implements IPropertyValidator {
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
-	public Object validateNormalize(final Object property, final String... args) throws InvalidParameterException {
+	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
 		// TODO Auto-generated method stub
-		return property;
+		return propertyValue;
 	}
 
 }
