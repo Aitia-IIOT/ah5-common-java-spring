@@ -8,5 +8,5 @@ public interface IPropertyValidator {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public void validate(final Object property, final String... args) throws InvalidParameterException;
+	public Object validateNormalize(final Object property, final String... args) throws InvalidParameterException;
 }
