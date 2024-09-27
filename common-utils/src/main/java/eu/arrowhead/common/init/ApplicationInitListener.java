@@ -73,7 +73,7 @@ public abstract class ApplicationInitListener {
 
 	protected boolean standaloneMode = false;
 
-	private Set<String> registeredServices = new HashSet<>();
+	protected Set<String> registeredServices = new HashSet<>();
 
 	//=================================================================================================
 	// methods
@@ -208,8 +208,9 @@ public abstract class ApplicationInitListener {
 
 		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
 
-		// TODO: revoke system 
-		
+		// revoke system (if any)
+		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class);
+
 		// register system
 		final SystemModel model = sysInfo.getSystemModel();
 		final List<AddressDTO> addresses = model.addresses()
@@ -265,7 +266,7 @@ public abstract class ApplicationInitListener {
 				.stream()
 				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), ServiceInterfacePolicy.NONE.name(), i.properties()))
 				.collect(Collectors.toList());
-		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(sysInfo.getSystemName(), model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
+		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
 		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, ServiceInstanceResponseDTO.class, payload);
 		registeredServices.add(response.instanceId());
 	}
@@ -291,6 +292,5 @@ public abstract class ApplicationInitListener {
 			logger.error(t.getMessage());
 			logger.debug(t);
 		}
-
 	}
 }
