@@ -5,6 +5,9 @@ public final class Constants {
 	//=================================================================================================
 	// members
 
+	// Framework version
+	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
+
 	// Global
 
 	public static final String UTC = "UTC";
@@ -61,6 +64,8 @@ public final class Constants {
 	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
 	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
 	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":true}";
+
+	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 
 	// SSL related
 

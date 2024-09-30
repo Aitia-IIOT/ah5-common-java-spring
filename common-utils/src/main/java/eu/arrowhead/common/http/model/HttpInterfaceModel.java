@@ -30,6 +30,10 @@ public record HttpInterfaceModel(
 	// members
 
 	private static final String httpTemplateName = "GENERIC_HTTP";
+	private static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
+	private static final String PROP_NAME_ACCESS_PORT = "accessPort";
+	private static final String PROP_NAME_BASE_PATH = "basePath";
+	private static final String PROP_NAME_OPERATIONS = "operations";
 
 	//=================================================================================================
 	// methods
@@ -42,9 +46,10 @@ public record HttpInterfaceModel(
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public Map<String, Object> properties() {
-		// TODO Auto-generated method stub
-		// TODO create map from addresses, port, base path and operation
-		return null;
+		return Map.of(PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
+				      PROP_NAME_ACCESS_PORT, accessPort,
+				      PROP_NAME_BASE_PATH, basePath,
+				      PROP_NAME_OPERATIONS, operations);
 	}
 
 	//=================================================================================================

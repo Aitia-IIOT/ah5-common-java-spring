@@ -13,7 +13,7 @@ public class MinMaxValidator implements IPropertyValidator {
 	//=================================================================================================
 	// members
 
-	protected final Logger logger = LogManager.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	//=================================================================================================
 	// methods
