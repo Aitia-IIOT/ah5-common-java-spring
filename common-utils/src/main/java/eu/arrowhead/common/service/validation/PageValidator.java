@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.dto.PageDTO;
@@ -17,8 +19,8 @@ public class PageValidator {
 	//=================================================================================================
 	// members
 
-	//=================================================================================================
-	// members
+	@Value(Constants.$MAX_PAGE_SIZE_WD)
+	private long maxPageSize;
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -30,8 +32,17 @@ public class PageValidator {
 		logger.debug("validatePageParameter started...");
 
 		if (page != null) {
-			if (page.page() == null && page.size() != null) {
-				throw new InvalidParameterException("If size parameter is defined then page parameter cannot be undefined", origin);
+
+			if (page.size() != null) {
+
+				if (page.page() == null) {
+					throw new InvalidParameterException("If size parameter is defined then page parameter cannot be undefined", origin);
+				}
+
+				if (page.size() > maxPageSize) {
+					throw new InvalidParameterException("The page size cannot be larger than " + maxPageSize, origin);
+				}
+
 			}
 
 			if (page.page() != null && page.size() == null) {
