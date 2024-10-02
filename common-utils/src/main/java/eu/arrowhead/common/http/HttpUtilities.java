@@ -160,23 +160,23 @@ public final class HttpUtilities {
 
 		return createURI(scheme, host, port, query, path);
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public static String acquireName(final HttpServletRequest request, final String origin) throws InvalidParameterException {
-		
+
 		if (request == null) {
 			throw new InvalidParameterException("Request is null", origin);
 		}
-		
+
 		final Object nameObject = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
-		
+
 		if (nameObject == null) {
 			throw new InvalidParameterException("Name is missing", origin);
 		}
-		
+
 		return nameObject.toString();
 	}
-	
+
 	//=================================================================================================
 	// assistant methods
 
