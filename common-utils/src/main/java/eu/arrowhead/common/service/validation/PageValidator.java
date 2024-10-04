@@ -20,7 +20,7 @@ public class PageValidator {
 	// members
 
 	@Value(Constants.$MAX_PAGE_SIZE_WD)
-	private long maxPageSize;
+	private int maxPageSize;
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
