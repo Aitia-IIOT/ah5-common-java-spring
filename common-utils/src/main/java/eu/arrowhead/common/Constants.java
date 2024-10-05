@@ -32,6 +32,9 @@ public final class Constants {
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
 
+	public static final String MAX_PAGE_SIZE = "max.page.size";
+	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":1000}";
+
 	// System related
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";

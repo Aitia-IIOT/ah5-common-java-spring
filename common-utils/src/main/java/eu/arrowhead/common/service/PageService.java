@@ -5,10 +5,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.service.validation.PageValidator;
 import eu.arrowhead.dto.PageDTO;
@@ -20,6 +22,9 @@ public class PageService {
 	// members
 
 	private static final Direction DEFAULT_DEFAULT_DIRECTION = Direction.ASC;
+	
+	@Value(Constants.$MAX_PAGE_SIZE_WD)
+	private int maxPageSize;
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -34,7 +39,7 @@ public class PageService {
 		logger.debug("normalizePageParameters started...");
 
 		if (page == null) {
-			return new PageDTO(0, Integer.MAX_VALUE, defaultDirection.name(), defaultSortField);
+			return new PageDTO(0, maxPageSize, defaultDirection.name(), defaultSortField);
 		}
 
 		pageValidator.validatePageParameter(page, availableSortFields, origin);
@@ -48,7 +53,7 @@ public class PageService {
 
 		int normalizedSize = notDefined ? -1 : page.size();
 		if (normalizedSize < 1) {
-			normalizedSize = Integer.MAX_VALUE;
+			normalizedSize = maxPageSize;
 		}
 
 		final Direction normalizedDirection = Utilities.isEmpty(page.direction()) ? defaultDirection : Direction.valueOf(page.direction().trim().toUpperCase());
