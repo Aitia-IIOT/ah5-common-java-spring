@@ -16,10 +16,10 @@ public class MetadataValidationTest {
 	//=================================================================================================
 	// members
 
-	final String KEY = "key";
-	final String INVALID_KEY = "key.key";
-	final String VALUE = "value";
-	final String EXPECTED_ERROR_MESSAGE = "Invalid metadata key: " + INVALID_KEY + ", it should not contain . character!";
+	private final String KEY = "key";
+	private final String INVALID_KEY = "key.key";
+	private final String VALUE = "value";
+	private final String EXPECTED_ERROR_MESSAGE = "Invalid metadata key: " + INVALID_KEY + ", it should not contain . character!";
 
 	//=================================================================================================
 	// methods
