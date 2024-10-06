@@ -14,11 +14,19 @@ public final class MetadataValidation {
 	//=================================================================================================
 	// methods
 	//-------------------------------------------------------------------------------------------------
-	@SuppressWarnings("unchecked")
-	public static void validateMetadataKey(final Object metadata) {
+	public static void validateMetadataKey(final Map<String, Object> metadata) {
+		validateMetadataObjectKey(metadata);
+	}
 
-		if (isValidMap(metadata)) {
-			final Map<String, Object> map = (Map<String, Object>) metadata;
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	private static void validateMetadataObjectKey(final Object metadataObject) {
+
+		if (isValidMap(metadataObject)) {
+			final Map<String, Object> map = (Map<String, Object>) metadataObject;
 			for (final String key : map.keySet()) {
 
 				// check the key
@@ -27,19 +35,16 @@ public final class MetadataValidation {
 				}
 
 				// check the value
-				validateMetadataKey(map.get(key));
+				validateMetadataObjectKey(map.get(key));
 			}
 		}
 
-		if (metadata instanceof List) {
-			for (Object element : (List<?>) metadata) {
-				validateMetadataKey(element);
+		if (metadataObject instanceof List) {
+			for (Object element : (List<?>) metadataObject) {
+				validateMetadataObjectKey(element);
 			}
 		}
 	}
-
-	//=================================================================================================
-	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	// checks if the type of map is Map<String, Object>
