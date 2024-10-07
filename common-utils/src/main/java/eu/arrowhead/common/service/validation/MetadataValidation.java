@@ -14,7 +14,7 @@ public final class MetadataValidation {
 	//=================================================================================================
 	// methods
 	//-------------------------------------------------------------------------------------------------
-	public static void validateMetadataKey(final Map<String, Object> metadata) {
+	public static void validateMetadataKey(final Map<String, Object> metadata) throws InvalidParameterException {
 		validateMetadataObjectKey(metadata);
 	}
 
@@ -37,10 +37,8 @@ public final class MetadataValidation {
 				// check the value
 				validateMetadataObjectKey(map.get(key));
 			}
-		}
-
-		if (metadataObject instanceof List) {
-			for (Object element : (List<?>) metadataObject) {
+		} else if (metadataObject instanceof List) {
+			for (final Object element : (List<?>) metadataObject) {
 				validateMetadataObjectKey(element);
 			}
 		}
@@ -52,10 +50,10 @@ public final class MetadataValidation {
 		if (!(object instanceof Map)) {
 			return false;
 		}
-		Map<?, ?> map = (Map<?, ?>) object;
+		final Map<?, ?> map = (Map<?, ?>) object;
 		boolean isValid = true;
 
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
+        for (final Map.Entry<?, ?> entry : map.entrySet()) {
             if (!(entry.getKey() instanceof String) || !(entry.getValue() instanceof Object)) {
                 isValid = false;
                 break;
