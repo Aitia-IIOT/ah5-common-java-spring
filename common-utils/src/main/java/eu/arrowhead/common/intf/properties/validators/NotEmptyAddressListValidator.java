@@ -13,9 +13,9 @@ public class NotEmptyAddressListValidator implements IPropertyValidator {
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
-	public void validate(final Object property, final String... args) throws InvalidParameterException {
+	public Object validateNormalize(final Object property, final String... args) throws InvalidParameterException {
 		// TODO Auto-generated method stub
-
+		return property;
 	}
 
 }
