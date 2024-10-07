@@ -22,7 +22,7 @@ public class PageService {
 	// members
 
 	private static final Direction DEFAULT_DEFAULT_DIRECTION = Direction.ASC;
-	
+
 	@Value(Constants.$MAX_PAGE_SIZE_WD)
 	private int maxPageSize;
 
