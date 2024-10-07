@@ -29,13 +29,16 @@ public final class Constants {
 	public static final String KEY_IDENTITY_TOKEN = "identity-token";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
-	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "GENERIC_HTTP";
-	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "GENERIC_HTTPS";
+	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic-http";
+	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic-https";
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
 	public static final long CONVERSION_MILLISECOND_TO_SECOND = 1000;
 	public static final long CONVERSION_MILLISECOND_TO_MINUTE = 60000;
+
+	public static final String MAX_PAGE_SIZE = "max.page.size";
+	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":1000}";
 
 	// System related
 
