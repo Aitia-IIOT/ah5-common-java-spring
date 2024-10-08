@@ -84,7 +84,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 			}
 
 			if (!HttpUtilities.isValidHttpMethod(model.method())) {
-				throw new InvalidParameterException("method should be a standard HTTP method.");
+				throw new InvalidParameterException("Method should be a standard HTTP method.");
 			}
 
 			return new HttpOperationModel(model.path().trim(), model.method().toUpperCase().trim());
