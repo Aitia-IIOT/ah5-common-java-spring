@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
@@ -68,7 +69,7 @@ public class ArrowheadHttpService {
 		final UriComponents uri = HttpUtilities.createURI(interfaceModel.protocol(), interfaceModel.accessAddresses().get(0), interfaceModel.accessPort(), queryParams,
 				interfaceModel.basePath() + operationModel.path(), pathSegments);
 
-		return httpService.sendRequest(uri, operationModel.method(), responseType, payload, null, actualHeaders);
+		return httpService.sendRequest(uri, HttpMethod.valueOf(operationModel.method()), responseType, payload, null, actualHeaders);
 	}
 
 	//-------------------------------------------------------------------------------------------------

@@ -32,12 +32,7 @@ public class PortValidator implements IPropertyValidator {
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
 		logger.debug("PortValidator.validateAndNormalize started...");
 
-		if (propertyValue instanceof Number) {
-			final boolean isReal = (propertyValue instanceof Double || propertyValue instanceof Float);
-			if (isReal) {
-				throw new InvalidParameterException("Property value should be an integer");
-			}
-
+		if (propertyValue instanceof Number && !(propertyValue instanceof Double || propertyValue instanceof Float)) {
 			return minMaxValidator.validateAndNormalize(propertyValue, minMax);
 		}
 

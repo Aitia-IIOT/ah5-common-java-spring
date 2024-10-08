@@ -29,7 +29,7 @@ public record HttpInterfaceModel(
 	//=================================================================================================
 	// members
 
-	private static final String httpTemplateName = "GENERIC_HTTP";
+	private static final String httpTemplateName = "generic-http";
 	private static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
 	private static final String PROP_NAME_ACCESS_PORT = "accessPort";
 	private static final String PROP_NAME_BASE_PATH = "basePath";

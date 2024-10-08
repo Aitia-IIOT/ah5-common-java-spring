@@ -1,17 +1,16 @@
 package eu.arrowhead.common.http.model;
 
-import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Utilities;
 
 public record HttpOperationModel(
 		String path,
-		HttpMethod method) {
+		String method) {
 
 	public HttpOperationModel {
 		Assert.isTrue(!Utilities.isEmpty(path), "'path' is missing.");
-		Assert.notNull(method, "'method' is missing.");
+		Assert.isTrue(!Utilities.isEmpty(method), "'method' is missing.");
 	}
 
 	//=================================================================================================
@@ -24,7 +23,7 @@ public record HttpOperationModel(
 		// members
 
 		private String path;
-		private HttpMethod method;
+		private String method;
 
 		//=================================================================================================
 		// methods
@@ -36,7 +35,7 @@ public record HttpOperationModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder method(final HttpMethod method) {
+		public Builder method(final String method) {
 			this.method = method;
 			return this;
 		}
