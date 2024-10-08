@@ -68,7 +68,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 		if (key instanceof String stringKey) {
 			nameValidator.validateName(stringKey.trim());
 
-			return stringKey.toLowerCase();
+			return stringKey.toLowerCase().trim();
 		} else {
 			throw new InvalidParameterException("Key should be a string");
 		}
