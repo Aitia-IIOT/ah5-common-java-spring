@@ -1,5 +1,7 @@
 package eu.arrowhead.common;
 
+import eu.arrowhead.common.collector.HttpCollectorMode;
+
 public final class Constants {
 
 	//=================================================================================================
@@ -67,6 +69,8 @@ public final class Constants {
 	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
 	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
 	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":true}";
+	public static final String HTTP_COLLECTOR_MODE = "http.collector.mode";
+	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":SR_AND_ORCH}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 

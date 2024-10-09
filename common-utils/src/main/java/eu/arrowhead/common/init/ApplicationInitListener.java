@@ -221,8 +221,10 @@ public abstract class ApplicationInitListener {
 		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, SystemResponseDTO.class, payload);
 
 		// register services
-		for (final ServiceModel serviceModel : sysInfo.getServices()) {
-			registerService(serviceModel);
+		if (sysInfo.getServices() != null) {
+			for (final ServiceModel serviceModel : sysInfo.getServices()) {
+				registerService(serviceModel);
+			}
 		}
 
 		logger.info("System {} published {} service(s).", sysInfo.getSystemName(), registeredServices.size());
