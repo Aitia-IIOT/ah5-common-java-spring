@@ -1,9 +1,11 @@
 package eu.arrowhead.common.http;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
@@ -175,6 +177,17 @@ public final class HttpUtilities {
 		}
 
 		return nameObject.toString();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static boolean isValidHttpMethod(final String str) {
+		if (!Utilities.isEmpty(str)) {
+			final HttpMethod method = HttpMethod.valueOf(str.toUpperCase().trim());
+
+			return Arrays.stream(HttpMethod.values()).anyMatch(method::equals);
+		}
+
+		return false;
 	}
 
 	//=================================================================================================

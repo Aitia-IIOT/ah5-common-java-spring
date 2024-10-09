@@ -1,12 +1,14 @@
 package eu.arrowhead.common.http;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
@@ -42,7 +44,13 @@ public class ArrowheadHttpService {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public <T, P> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final P payload, final MultiValueMap<String, String> queryParams, final Map<String, String> customHeaders) {
+	public <T, P> T consumeService(final String serviceDefinition,
+			final String operation,
+			final Class<T> responseType,
+			final P payload,
+			final MultiValueMap<String, String> queryParams,
+			final List<String> pathParams, // in order
+			final Map<String, String> customHeaders) {
 		logger.debug("consumeService started...");
 
 		final ServiceModel model = collector.getServiceModel(serviceDefinition, templateName);
@@ -57,24 +65,32 @@ public class ArrowheadHttpService {
 			actualHeaders.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
 		}
 
-		final UriComponents uri = HttpUtilities.createURI(interfaceModel.protocol(), interfaceModel.accessAddresses().get(0), interfaceModel.accessPort(), queryParams, interfaceModel.basePath(), operationModel.path());
+		final String[] pathSegments = pathParams == null ? null : pathParams.toArray(String[]::new);
+		final UriComponents uri = HttpUtilities.createURI(interfaceModel.protocol(), interfaceModel.accessAddresses().get(0), interfaceModel.accessPort(), queryParams,
+				interfaceModel.basePath() + operationModel.path(), pathSegments);
 
-		return httpService.sendRequest(uri, operationModel.method(), responseType, payload, null, actualHeaders);
+		return httpService.sendRequest(uri, HttpMethod.valueOf(operationModel.method()), responseType, payload, null, actualHeaders);
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	public <T, P> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final P payload) {
-		return consumeService(serviceDefinition, operation, responseType, payload, null, null);
+		return consumeService(serviceDefinition, operation, responseType, payload, null, null, null);
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	public <T, P> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final MultiValueMap<String, String> queryParams) {
-		return consumeService(serviceDefinition, operation, responseType, null, queryParams, null);
+		return consumeService(serviceDefinition, operation, responseType, null, queryParams, null, null);
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	public <T> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType) {
-		return consumeService(serviceDefinition, operation, responseType, null, null, null);
+		return consumeService(serviceDefinition, operation, responseType, null, null, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// path params in order
+	public <T> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final List<String> pathParams) {
+		return consumeService(serviceDefinition, operation, responseType, null, null, pathParams, null);
 	}
 
 	//=================================================================================================
@@ -95,7 +111,8 @@ public class ArrowheadHttpService {
 			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + sysInfo.getSystemName();
 		case OUTSOURCED:
 			final String identityToken = sysInfo.getIdentityToken();
-			return identityToken == null ? null : Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER;
+			return identityToken == null ? null
+					: Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
 		default:
 			return null;
 		}

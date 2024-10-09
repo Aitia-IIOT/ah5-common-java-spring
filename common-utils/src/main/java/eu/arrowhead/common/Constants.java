@@ -5,6 +5,9 @@ public final class Constants {
 	//=================================================================================================
 	// members
 
+	// Framework version
+	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
+
 	// Global
 
 	public static final String UTC = "UTC";
@@ -31,11 +34,15 @@ public final class Constants {
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
+	public static final long CONVERSION_MILLISECOND_TO_SECOND = 1000;
+	public static final long CONVERSION_MILLISECOND_TO_MINUTE = 60000;
 
 	public static final String MAX_PAGE_SIZE = "max.page.size";
 	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":1000}";
 
 	// System related
+
+	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -56,6 +63,12 @@ public final class Constants {
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
+	public static final String ALLOW_SELF_ADDRESSING = "allow.self.addressing";
+	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
+	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
+	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":true}";
+
+	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 
 	// SSL related
 
@@ -127,7 +140,15 @@ public final class Constants {
 	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
 	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
 
+	// Service related
+
+	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
+	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
+
 	// Operation related
+
+	public static final String SERVICE_OP_REGISTER = "register";
+	public static final String SERVICE_OP_REVOKE = "revoke";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 

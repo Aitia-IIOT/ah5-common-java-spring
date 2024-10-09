@@ -1,20 +1,25 @@
-package eu.arrowhead.common.http.model;
+package eu.arrowhead.common.model;
 
 import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.dto.enums.AddressType;
 
-public record HttpOperationModel(
-		String path,
-		String method) {
+public record AddressModel(
+		AddressType type,
+		String address) {
 
-	public HttpOperationModel {
-		Assert.isTrue(!Utilities.isEmpty(path), "'path' is missing.");
-		Assert.isTrue(!Utilities.isEmpty(method), "'method' is missing.");
+	//=================================================================================================
+	// methods
+
+	//-------------------------------------------------------------------------------------------------
+	public AddressModel {
+		Assert.notNull(type, "Address type is null.");
+		Assert.isTrue(!Utilities.isEmpty(address), "Address is null or blank.");
 	}
 
 	//=================================================================================================
-	// nested classes
+	// nested class
 
 	//-------------------------------------------------------------------------------------------------
 	public static class Builder {
@@ -22,27 +27,27 @@ public record HttpOperationModel(
 		//=================================================================================================
 		// members
 
-		private String path;
-		private String method;
+		private AddressType type;
+		private String address;
 
 		//=================================================================================================
 		// methods
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder path(final String path) {
-			this.path = path;
+		public Builder type(final AddressType type) {
+			this.type = type;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder method(final String method) {
-			this.method = method;
+		public Builder address(final String address) {
+			this.address = address;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public HttpOperationModel build() {
-			return new HttpOperationModel(path, method);
+		public AddressModel build() {
+			return new AddressModel(type, address);
 		}
 	}
 }
