@@ -1,7 +1,5 @@
 package eu.arrowhead.common;
 
-import eu.arrowhead.common.collector.HttpCollectorMode;
-
 public final class Constants {
 
 	//=================================================================================================
@@ -146,13 +144,37 @@ public final class Constants {
 
 	// Service related
 
+	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
+	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
 
 	// Operation related
 
 	public static final String SERVICE_OP_REGISTER = "register";
+	public static final String SERVICE_OP_LOOKUP = "lookup";
 	public static final String SERVICE_OP_REVOKE = "revoke";
+
+	public static final String SERVICE_OP_GET_LOG = "get-log";
+	public static final String SERVICE_OP_GET_CONFIG = "get-config";
+	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
+	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
+	public static final String SERVICE_OP_DEVICE_UPDATE = "device-update";
+	public static final String SERVICE_OP_DEVICE_REMOVE = "device-remove";
+	public static final String SERVICE_OP_SYSTEM_QUERY = "system-query";
+	public static final String SERVICE_OP_SYSTEM_CREATE = "system-create";
+	public static final String SERVICE_OP_SYSTEM_UPDATE = "system-update";
+	public static final String SERVICE_OP_SYSTEM_REMOVE = "system-remove";
+	public static final String SERVICE_OP_SERVICE_DEF_QUERY = "service-definition-query";
+	public static final String SERVICE_OP_SERVICE_DEF_CREATE = "service-definition-create";
+	public static final String SERVICE_OP_SERVICE_DEF_REMOVE = "service-definition-remove";
+	public static final String SERVICE_OP_SERVICE_QUERY = "service-query";
+	public static final String SERVICE_OP_SERVICE_CREATE = "service-create";
+	public static final String SERVICE_OP_SERVICE_UPDATE = "service-update";
+	public static final String SERVICE_OP_SERVICE_REMOVE = "service-remove";
+	public static final String SERVICE_OP_INTERFACE_TEMPLATE_QUERY = "interface-template-query";
+	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
+	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 
