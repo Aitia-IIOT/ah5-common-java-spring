@@ -26,6 +26,9 @@ public class OutsourcedFilter extends ArrowheadFilter {
 		// Exceptions:
 		// - when requester calls for '/serviceregistry/service-discovery/lookup' with login-service(?) as service definition and without auth header
 		chain.doFilter(request, response);
+
+		// TODO: when we implement this we also have to implement a method that logins to the auth server and store the token in the Arrowhead context. This method should be called from the
+		// ApplicationInitListener and from a quartz job (that automatically changes the token that will expire soon).
 	}
 
 }

@@ -29,10 +29,10 @@ public record HttpInterfaceModel(
 	//=================================================================================================
 	// members
 
-	private static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
-	private static final String PROP_NAME_ACCESS_PORT = "accessPort";
-	private static final String PROP_NAME_BASE_PATH = "basePath";
-	private static final String PROP_NAME_OPERATIONS = "operations";
+	public static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
+	public static final String PROP_NAME_ACCESS_PORT = "accessPort";
+	public static final String PROP_NAME_BASE_PATH = "basePath";
+	public static final String PROP_NAME_OPERATIONS = "operations";
 
 	//=================================================================================================
 	// methods
