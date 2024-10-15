@@ -36,6 +36,7 @@ import eu.arrowhead.common.http.ArrowheadHttpService;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
+import eu.arrowhead.common.mqtt.ArrowheadMqttService;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
@@ -71,6 +72,9 @@ public abstract class ApplicationInitListener {
 	@Autowired
 	protected ArrowheadHttpService arrowheadHttpService;
 
+	@Autowired
+	protected ArrowheadMqttService arrowheadMqttService;
+
 	protected boolean standaloneMode = false;
 
 	protected Set<String> registeredServices = new HashSet<>();
@@ -101,11 +105,11 @@ public abstract class ApplicationInitListener {
 			}
 		}
 
-		if (sysInfo.isMqttApiEnabled()) {
-			connectToMqttBroker();
-		}
-
 		registerToServiceRegistry();
+
+		if (sysInfo.isMqttApiEnabled()) {
+			subscribeToMqttServiceTopics();
+		}
 
 		customInit(event);
 
@@ -118,6 +122,10 @@ public abstract class ApplicationInitListener {
 		logger.debug("destroy called...");
 
 		revokeServices();
+
+		if (sysInfo.isMqttApiEnabled()) {
+			arrowheadMqttService.disconnect();
+		}
 
 		try {
 			customDestroy();
@@ -203,8 +211,12 @@ public abstract class ApplicationInitListener {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private void connectToMqttBroker() {
-		//TODO
+	private void subscribeToMqttServiceTopics() {
+		logger.debug("subscribeToMqttServiceTopics started...");
+
+		for (final ServiceModel serviceModel : sysInfo.getServices()) {
+			arrowheadMqttService.serviceListener(serviceModel);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------

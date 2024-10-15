@@ -51,9 +51,6 @@ public abstract class SystemInfo {
 	@Value(Constants.$MQTT_BROKER_PORT_WD)
 	private int mqttBrokerPort;
 
-	@Value(Constants.$MQTT_CLIENT_NAME_WD)
-	private String mqttClientName;
-
 	@Value(Constants.$MQTT_CLIENT_PASSWORD)
 	private String mqttClientPassword;
 
@@ -161,6 +158,21 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public boolean isMqttApiEnabled() {
 		return this.mqttEnabled;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getMqttBrokerAddress() {
+		return this.mqttBrokerAddress;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getMqttClientPassword() {
+		return this.mqttClientPassword;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public int getMqttBrokerPort() {
+		return this.mqttBrokerPort;
 	}
 
 	//-------------------------------------------------------------------------------------------------

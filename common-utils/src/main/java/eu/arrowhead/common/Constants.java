@@ -153,8 +153,6 @@ public final class Constants {
 	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":127.0.0.1}";
 	public static final String MQTT_BROKER_PORT = "mqtt.broker.port";
 	public static final String $MQTT_BROKER_PORT_WD = "${" + MQTT_BROKER_PORT + ":1883}";
-	public static final String MQTT_CLIENT_NAME = "mqtt.client.name";
-	public static final String $MQTT_CLIENT_NAME_WD = "${" + MQTT_CLIENT_NAME + ":ah-service-registry}";
 	public static final String MQTT_CLIENT_PASSWORD = "mqtt.client.password";
 	public static final String $MQTT_CLIENT_PASSWORD = "${" + MQTT_CLIENT_PASSWORD + ":123456}";
 

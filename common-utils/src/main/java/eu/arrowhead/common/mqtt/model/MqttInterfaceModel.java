@@ -15,13 +15,14 @@ public record MqttInterfaceModel(
 		String templateName,
 		List<String> accessAddresses,
 		int accessPort,
-		String basePath,
+		String topic,
 		Map<String, String> operations) implements InterfaceModel {
 
 	public MqttInterfaceModel {
 		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty.");
 		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty.");
 		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid.");
+		Assert.isTrue(!Utilities.isEmpty(topic), "'topic' is missing or empty.");
 		Assert.isTrue(!Utilities.isEmpty(operations), "'operations' is missing or empty.");
 	}
 
@@ -31,7 +32,7 @@ public record MqttInterfaceModel(
 	private static final String mqttTemplateName = "generic-mqtt";
 	private static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
 	private static final String PROP_NAME_ACCESS_PORT = "accessPort";
-	private static final String PROP_NAME_BASE_PATH = "basePath";
+	private static final String PROP_NAME_TOPIC = "topic";
 	private static final String PROP_NAME_OPERATIONS = "operations";
 
 	//=================================================================================================
@@ -47,7 +48,7 @@ public record MqttInterfaceModel(
 	public Map<String, Object> properties() {
 		return Map.of(PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
 				      PROP_NAME_ACCESS_PORT, accessPort,
-				      PROP_NAME_BASE_PATH, basePath,
+				      PROP_NAME_TOPIC, topic,
 				      PROP_NAME_OPERATIONS, operations);
 	}
 
@@ -63,7 +64,7 @@ public record MqttInterfaceModel(
 		private final String templateName;
 		private List<String> accessAddresses = new ArrayList<>();
 		private int accessPort;
-		private String basePath;
+		private String topic;
 		private Map<String, String> operations = new HashMap<>();
 
 		//=================================================================================================
@@ -103,8 +104,8 @@ public record MqttInterfaceModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder basePath(final String basePath) {
-			this.basePath = basePath;
+		public Builder topic(final String topic) {
+			this.topic = topic;
 			return this;
 		}
 
@@ -125,7 +126,7 @@ public record MqttInterfaceModel(
 
 		//-------------------------------------------------------------------------------------------------
 		public MqttInterfaceModel build() {
-			return new MqttInterfaceModel(templateName, accessAddresses, accessPort, basePath, operations);
+			return new MqttInterfaceModel(templateName, accessAddresses, accessPort, topic, operations);
 		}
 
 	}
