@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import eu.arrowhead.common.Constants;
+import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.AuthException;
@@ -188,6 +189,22 @@ public final class HttpUtilities {
 		}
 
 		return false;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static String calculateAuthorizationHeader(final SystemInfo sysInfo) {
+		logger.debug("calculateAuthorizationHeader started...");
+
+		switch (sysInfo.getAuthenticationPolicy()) {
+		case DECLARED:
+			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + sysInfo.getSystemName();
+		case OUTSOURCED:
+			final String identityToken = sysInfo.getIdentityToken();
+			return identityToken == null ? null
+					: Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
+		default:
+			return null;
+		}
 	}
 
 	//=================================================================================================

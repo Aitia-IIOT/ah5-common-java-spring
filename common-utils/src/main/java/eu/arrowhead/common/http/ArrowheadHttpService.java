@@ -15,10 +15,15 @@ import org.springframework.web.util.UriComponents;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
+import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.collector.ServiceCollector;
+import eu.arrowhead.common.exception.DataNotFoundException;
+import eu.arrowhead.common.exception.ExternalServerError;
+import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.model.HttpInterfaceModel;
 import eu.arrowhead.common.http.model.HttpOperationModel;
 import eu.arrowhead.common.model.ServiceModel;
+import eu.arrowhead.common.service.validation.name.NameNormalizer;
 import jakarta.annotation.PostConstruct;
 
 @Service
@@ -38,13 +43,17 @@ public class ArrowheadHttpService {
 	@Autowired
 	private SystemInfo sysInfo;
 
+	@Autowired
+	private NameNormalizer nameNormalizer;
+
 	private String templateName;
 
 	//=================================================================================================
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public <T, P> T consumeService(final String serviceDefinition,
+	public <T, P> T consumeService(
+			final String serviceDefinition,
 			final String operation,
 			final Class<T> responseType,
 			final P payload,
@@ -53,10 +62,28 @@ public class ArrowheadHttpService {
 			final Map<String, String> customHeaders) {
 		logger.debug("consumeService started...");
 
+		if (!Utilities.isEmpty(serviceDefinition)) {
+			throw new InvalidParameterException("Service definition is not specified.");
+		}
+
+		if (!Utilities.isEmpty(operation)) {
+			throw new InvalidParameterException("Service operation is not specified.");
+		}
+
 		final ServiceModel model = collector.getServiceModel(serviceDefinition, templateName);
+		if (model == null) {
+			throw new DataNotFoundException("Service definition/operation is not found.");
+		}
+
 		final HttpInterfaceModel interfaceModel = (HttpInterfaceModel) model.interfaces().get(0);
-		final HttpOperationModel operationModel = interfaceModel.operations().get(operation);
-		final String authorizationHeader = calculateAuthorizationHeader();
+
+		final String nOperation = nameNormalizer.normalize(operation);
+		final HttpOperationModel operationModel = interfaceModel.operations().get(nOperation);
+		if (operationModel == null) {
+			throw new ExternalServerError("Service does not defined the specified operation");
+		}
+
+		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
 		final Map<String, String> actualHeaders = new HashMap<>();
 		if (customHeaders != null) {
 			actualHeaders.putAll(customHeaders);
@@ -100,21 +127,5 @@ public class ArrowheadHttpService {
 	@PostConstruct
 	private void init() {
 		templateName = sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	private String calculateAuthorizationHeader() {
-		logger.debug("calculateAuthorizationHeader started...");
-
-		switch (sysInfo.getAuthenticationPolicy()) {
-		case DECLARED:
-			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + sysInfo.getSystemName();
-		case OUTSOURCED:
-			final String identityToken = sysInfo.getIdentityToken();
-			return identityToken == null ? null
-					: Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
-		default:
-			return null;
-		}
 	}
 }
