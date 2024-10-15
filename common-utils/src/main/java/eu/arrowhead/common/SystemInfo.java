@@ -42,6 +42,21 @@ public abstract class SystemInfo {
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
 	private AuthenticationPolicy authenticationPolicy;
 
+	@Value(Constants.$MQTT_API_ENABLED_WD)
+	private boolean mqttEnabled;
+
+	@Value(Constants.$MQTT_BROKER_ADDRESS_WD)
+	private String mqttBrokerAddress;
+
+	@Value(Constants.$MQTT_BROKER_PORT_WD)
+	private int mqttBrokerPort;
+
+	@Value(Constants.$MQTT_CLIENT_NAME_WD)
+	private String mqttClientName;
+
+	@Value(Constants.$MQTT_CLIENT_PASSWORD)
+	private String mqttClientPassword;
+
 	@Autowired
 	private SSLProperties sslProperties;
 
@@ -141,6 +156,11 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public AuthenticationPolicy getAuthenticationPolicy() {
 		return authenticationPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public boolean isMqttApiEnabled() {
+		return this.mqttEnabled;
 	}
 
 	//-------------------------------------------------------------------------------------------------

@@ -101,6 +101,10 @@ public abstract class ApplicationInitListener {
 			}
 		}
 
+		if (sysInfo.isMqttApiEnabled()) {
+			connectToMqttBroker();
+		}
+
 		registerToServiceRegistry();
 
 		customInit(event);
@@ -196,6 +200,11 @@ public abstract class ApplicationInitListener {
 			throw new ServiceConfigurationError("Cannot find private key in the specified key store.");
 		}
 		arrowheadContext.put(Constants.SERVER_PRIVATE_KEY, privateKey);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void connectToMqttBroker() {
+		//TODO
 	}
 
 	//-------------------------------------------------------------------------------------------------

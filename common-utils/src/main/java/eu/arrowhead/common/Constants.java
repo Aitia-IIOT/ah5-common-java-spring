@@ -31,6 +31,9 @@ public final class Constants {
 
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic-http";
 	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic-https";
+	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic-mqtt";
+	public static final String GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME = "generic-mqtts";
+
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
@@ -139,6 +142,19 @@ public final class Constants {
 	public static final String DEFAULT_CORS_ORIGIN_PATTERN = "*";
 	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
 	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
+
+	// MQTT related
+
+	public static final String MQTT_API_ENABLED = "mqtt.api.enabled";
+	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":false}";
+	public static final String MQTT_BROKER_ADDRESS = "mqtt.broker.address";
+	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":127.0.0.1}";
+	public static final String MQTT_BROKER_PORT = "mqtt.broker.port";
+	public static final String $MQTT_BROKER_PORT_WD = "${" + MQTT_BROKER_PORT + ":1883}";
+	public static final String MQTT_CLIENT_NAME = "mqtt.client.name";
+	public static final String $MQTT_CLIENT_NAME_WD = "${" + MQTT_CLIENT_NAME + ":ah-service-registry}";
+	public static final String MQTT_CLIENT_PASSWORD = "mqtt.client.password";
+	public static final String $MQTT_CLIENT_PASSWORD = "${" + MQTT_CLIENT_PASSWORD + ":123456}";
 
 	// Service related
 
