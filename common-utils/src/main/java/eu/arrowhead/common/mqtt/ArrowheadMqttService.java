@@ -56,15 +56,20 @@ public class ArrowheadMqttService {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public void serviceListener(final String serviceDefinition) {
-		logger.debug("serviceListener started");
+	/**
+	 * Creates a subscription for consuming a push service (like EventHandler services)
+	 */
+	public void serviceConsumer(final String serviceDefinition) {
+		logger.debug("serviceConsumer started");
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinition), "serviceDefinition is empty");
 
-		final ServiceModel model = collector.getServiceModel(serviceDefinition, templateName);
-		serviceListener(model);
+		// TODO acquire service with service collector and create a subscription
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	/**
+	 * Creates a subscription when a pull (request-response) service is provided via MQTT
+	 */
 	public void serviceListener(final ServiceModel model) {
 		logger.debug("serviceListener started");
 		Assert.notNull(model, "ServiceModel is null");
@@ -84,7 +89,10 @@ public class ArrowheadMqttService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public void serviceResponser(final String receiver, final String topic, final String traceId, final MqttQoS qos, final boolean success, final Object payload) {
+	/**
+	 * Publish a response for a pull (request-response) service when it is provided via MQTT
+	 */
+	public void serviceResponse(final String receiver, final String topic, final String traceId, final MqttQoS qos, final boolean success, final Object payload) {
 		logger.debug("serviceResponser started");
 		Assert.notNull(client, "client is null");
 		Assert.isTrue(!Utilities.isEmpty(receiver), "receiver is empty");

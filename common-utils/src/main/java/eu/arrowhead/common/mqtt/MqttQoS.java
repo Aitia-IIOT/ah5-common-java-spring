@@ -22,4 +22,17 @@ public enum MqttQoS {
 		return value;
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	public static MqttQoS valueOf(final int value) {
+		switch (value) {
+		case 1:
+			return AT_LEAST_ONCE;
+
+		case 2:
+			return EXACTLY_ONCE;
+
+		default:
+			return AT_MOST_ONCE;
+		}
+	}
 }
