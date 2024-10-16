@@ -80,7 +80,7 @@ public class ArrowheadHttpService {
 		final String nOperation = nameNormalizer.normalize(operation);
 		final HttpOperationModel operationModel = interfaceModel.operations().get(nOperation);
 		if (operationModel == null) {
-			throw new ExternalServerError("Service does not defined the specified operation");
+			throw new ExternalServerError("Service does not define the specified operation");
 		}
 
 		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
