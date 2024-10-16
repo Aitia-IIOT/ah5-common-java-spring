@@ -15,6 +15,7 @@ import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.common.http.model.HttpOperationModel;
 import eu.arrowhead.common.intf.properties.IPropertyValidator;
+import eu.arrowhead.common.service.validation.name.NameNormalizer;
 import eu.arrowhead.common.service.validation.name.NameValidator;
 
 @Service
@@ -27,6 +28,9 @@ public class HttpOperationsValidator implements IPropertyValidator {
 
 	@Autowired
 	private NameValidator nameValidator;
+
+	@Autowired
+	private NameNormalizer nameNormalizer;
 
 	//=================================================================================================
 	// methods
@@ -68,7 +72,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 		if (key instanceof String stringKey) {
 			nameValidator.validateName(stringKey.trim());
 
-			return stringKey.toLowerCase().trim();
+			return nameNormalizer.normalize(stringKey);
 		} else {
 			throw new InvalidParameterException("Key should be a string");
 		}
