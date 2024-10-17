@@ -1,6 +1,6 @@
 package eu.arrowhead.dto;
 
-public record MqttPublishTemplate(
+public record MqttResponseTemplate(
 		boolean success,
 		String traceId,
 		String receiver,

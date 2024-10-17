@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -43,7 +42,7 @@ public class MqttServlet {
 
 		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> h.topic().equals(topic)).findFirst();
 		if (handlerOpt.isEmpty()) {
-			Assert.isTrue(false, "No MQTT topic handler is implemented for topic: " + topic);
+			Assert.isTrue(false,  "No service handler exists for topic: " + topic);
 		}
 
 		topicQueueMap.put(topic, new LinkedBlockingQueue<>());
@@ -63,6 +62,11 @@ public class MqttServlet {
 	//-------------------------------------------------------------------------------------------------
 	protected Set<String> getTopicSet() {
 		return topicQueueMap.keySet();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	protected boolean handlerExists(final String topic) {
+		return handlers.stream().filter(h -> h.topic().equals(topic)).findFirst().isPresent();
 	}
 
 	//=================================================================================================

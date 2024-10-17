@@ -149,6 +149,7 @@ public final class Constants {
 
 	// MQTT related
 
+	public static final String MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID = "SERVICE-PROVIDING-" + UUID.randomUUID().toString();
 	public static final String MQTT_TOPIC_UNSUPPORTED = UUID.randomUUID().toString();
 	public static final String MQTT_API_ENABLED = "mqtt.api.enabled";
 	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":false}";

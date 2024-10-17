@@ -29,6 +29,7 @@ public class UnsupportedMqttTopicHandler extends MqttTopicHandler {
 	public void handle(final MqttRequestModel request) {
 		logger.debug("UnsupportedMqttTopicHandler.handle started");
 
-		ahMqttService.serviceResponse(request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), false, "Unsupported topic: " + request.getRequestTopic());
+		ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(),
+				request.getTraceId(), request.getQosRequirement(), false, "Unsupported topic: " + request.getRequestTopic());
 	}
 }

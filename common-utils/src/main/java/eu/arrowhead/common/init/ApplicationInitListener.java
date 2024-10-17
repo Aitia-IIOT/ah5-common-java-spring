@@ -36,7 +36,7 @@ import eu.arrowhead.common.http.ArrowheadHttpService;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
-import eu.arrowhead.common.mqtt.ArrowheadMqttService;
+import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
@@ -73,7 +73,7 @@ public abstract class ApplicationInitListener {
 	protected ArrowheadHttpService arrowheadHttpService;
 
 	@Autowired
-	protected ArrowheadMqttService arrowheadMqttService;
+	protected MqttController mqttController;
 
 	protected boolean standaloneMode = false;
 
@@ -124,7 +124,7 @@ public abstract class ApplicationInitListener {
 		revokeServices();
 
 		if (sysInfo.isMqttApiEnabled()) {
-			arrowheadMqttService.disconnect();
+			mqttController.disconnect();
 		}
 
 		try {
@@ -215,7 +215,7 @@ public abstract class ApplicationInitListener {
 		logger.debug("subscribeToMqttServiceTopics started...");
 
 		for (final ServiceModel serviceModel : sysInfo.getServices()) {
-			arrowheadMqttService.serviceListener(serviceModel);
+			mqttController.listen(serviceModel);
 		}
 	}
 
