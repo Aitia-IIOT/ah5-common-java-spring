@@ -23,6 +23,7 @@ import eu.arrowhead.common.exception.ExternalServerError;
 import eu.arrowhead.common.exception.ForbiddenException;
 import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.exception.InvalidParameterException;
+import eu.arrowhead.common.exception.LockedException;
 import eu.arrowhead.common.exception.TimeoutException;
 import eu.arrowhead.dto.ErrorMessageDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,6 +63,9 @@ public final class HttpUtilities {
 			case TIMEOUT:
 				status = HttpStatus.REQUEST_TIMEOUT;
 				break;
+			case LOCKED:
+				status = HttpStatus.LOCKED;
+				break;
 			default:
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
@@ -93,6 +97,8 @@ public final class HttpUtilities {
 			return new DataNotFoundException(dto.errorMessage(), dto.origin());
 		case TIMEOUT:
 			return new TimeoutException(dto.errorMessage(), dto.origin());
+		case LOCKED:
+			return new LockedException(dto.errorMessage(), dto.origin());
 		case EXTERNAL_SERVER_ERROR:
 			return new ExternalServerError(dto.errorMessage(), dto.origin());
 		case INTERNAL_SERVER_ERROR:

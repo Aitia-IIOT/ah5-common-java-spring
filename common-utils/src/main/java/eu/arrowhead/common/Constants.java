@@ -102,6 +102,7 @@ public final class Constants {
 	public static final String HTTP_STATUS_UNAUTHORIZED = "401";
 	public static final String HTTP_STATUS_FORBIDDEN = "403";
 	public static final String HTTP_STATUS_NOT_FOUND = "404";
+	public static final String HTTP_STATUS_LOCKED = "423";
 	public static final String HTTP_STATUS_INTERNAL_SERVER_ERROR = "500";
 
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
@@ -132,6 +133,7 @@ public final class Constants {
 	public static final String SWAGGER_HTTP_401_MESSAGE = "You are not authenticated";
 	public static final String SWAGGER_HTTP_403_MESSAGE = "You have no permission";
 	public static final String SWAGGER_HTTP_404_MESSAGE = "Not found";
+	public static final String SWAGGER_HTTP_423_MESSAGE = "Locked";
 	public static final String SWAGGER_HTTP_500_MESSAGE = "Internal server error";
 
 	// CORS defaults
