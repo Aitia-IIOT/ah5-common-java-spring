@@ -15,10 +15,12 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.mqtt.ArrowheadMqttService;
+import eu.arrowhead.common.mqtt.MqttStatus;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.dto.MqttRequestTemplate;
@@ -32,7 +34,7 @@ public abstract class MqttTopicHandler extends Thread {
 	protected ArrowheadMqttService ahMqttService;
 
 	@Autowired
-	private ObjectMapper mapper;
+	protected ObjectMapper mapper;
 
 	@Autowired
 	private List<ArrowheadMqttFilter> filters;
@@ -102,6 +104,26 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	public abstract void handle(final MqttRequestModel request) throws ArrowheadException;
 
+	//-------------------------------------------------------------------------------------------------
+	protected void successResponse(final MqttRequestModel request, final MqttStatus status, final Object response) {
+		if (!Utilities.isEmpty(request.getResponseTopic())) {
+			ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), status, response);
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	protected <T> T readPayload(final Object payload, final Class<T> dtoClass) {
+		if (payload == null) {
+			return null;
+		}
+
+		try {
+			return mapper.readValue(mapper.writeValueAsString(payload), dtoClass);
+		} catch (final IOException ex) {
+			throw new InvalidParameterException("Coud not parse payload. Reason: " + ex.getMessage());
+		}
+	}
+
 	//=================================================================================================
 	// assistant methods
 
@@ -118,9 +140,14 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	private void errorResponse(final Exception ex, final MqttRequestModel request) {
-		System.out.println("error traceId: " + request.getTraceId() + ". Origin: " + topic());
+		if (request == null) {
+			System.out.println(ex.getMessage() + " Origin: " + topic());
+			return;
+		}
+
+		final MqttStatus status = MqttStatus.INTERNAL_SERVER_ERROR; // TODO calculate from ex;
 		if (!Utilities.isEmpty(request.getResponseTopic())) {
-			ahMqttService.response(eu.arrowhead.common.Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), false, ex.getMessage());
+			ahMqttService.response(eu.arrowhead.common.Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), status, ex.getMessage());
 		}
 	}
 }

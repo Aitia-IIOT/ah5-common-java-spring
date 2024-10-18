@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import eu.arrowhead.common.Constants;
+import eu.arrowhead.common.mqtt.MqttStatus;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 @Service
@@ -12,7 +13,7 @@ public class UnsupportedMqttTopicHandler extends MqttTopicHandler {
 
 	//=================================================================================================
 	// members
-	
+
 	// Should not happen because theoretically no subscripton have been made
 
 	private final Logger logger = LogManager.getLogger(getClass());
@@ -32,6 +33,6 @@ public class UnsupportedMqttTopicHandler extends MqttTopicHandler {
 		logger.debug("UnsupportedMqttTopicHandler.handle started");
 
 		ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(),
-				request.getTraceId(), request.getQosRequirement(), false, "Unsupported topic: " + request.getRequestTopic());
+				request.getTraceId(), request.getQosRequirement(), MqttStatus.INTERNAL_SERVER_ERROR, "Unsupported topic: " + request.getRequestTopic());
 	}
 }

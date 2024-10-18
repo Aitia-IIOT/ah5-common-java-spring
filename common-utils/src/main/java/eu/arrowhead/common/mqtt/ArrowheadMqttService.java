@@ -38,12 +38,32 @@ public class ArrowheadMqttService {
 	/**
 	 * Subscribe for consuming a push service
 	 */
-	public void subscribe(final String connectId, final String topic, final MqttQoS qos) {
+	public void subscribe(final String connectId, final String topic, final MqttQoS qos, final Runnable handler) {
 		logger.debug("subscribe started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
 		// TODO
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	/**
+	 * Subscribe for consuming a push service
+	 */
+	public void unsubscribe(final String connectId, final String[] topics) {
+		logger.debug("unsubscribe started");
+		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
+		Assert.notNull(topics, "topic array is null");
+
+		final MqttClient client = mqttService.client(connectId);
+		Assert.notNull(client, "Unknown connectId: " + connectId);
+
+		try {
+			client.unsubscribe(topics);
+		} catch (final MqttException ex) {
+			logger.debug(ex);
+			throw new ExternalServerError("MQTT unsubscribe failed: " + ex.getMessage());
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -62,7 +82,7 @@ public class ArrowheadMqttService {
 	/**
 	 * Publish a response for a pull (request-response) service when it is provided via MQTT
 	 */
-	public void response(final String connectId, final String receiver, final String topic, final String traceId, final MqttQoS qos, final boolean success, final Object payload) {
+	public void response(final String connectId, final String receiver, final String topic, final String traceId, final MqttQoS qos, final MqttStatus status, final Object payload) {
 		logger.debug("response started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(receiver), "receiver is empty");
@@ -72,7 +92,7 @@ public class ArrowheadMqttService {
 		Assert.notNull(client, "Unknown connectId: " + connectId);
 
 		try {
-			final MqttResponseTemplate template = new MqttResponseTemplate(success, traceId, receiver, payload == null ? "" : payload);
+			final MqttResponseTemplate template = new MqttResponseTemplate(status.value(), traceId, receiver, payload == null ? "" : payload);
 			final MqttMessage msg = new MqttMessage(mapper.writeValueAsBytes(template));
 			msg.setQos(qos == null ? MqttQoS.AT_MOST_ONCE.value() : qos.value());
 			client.publish(topic, msg);
