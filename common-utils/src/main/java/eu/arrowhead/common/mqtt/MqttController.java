@@ -61,6 +61,7 @@ public class MqttController {
 				initMqttClient(interfaceModel.accessAddresses().getFirst(), interfaceModel.accessPort());
 			}
 			mqttServlet.addTopic(interfaceModel.topic());
+			client.subscribe(interfaceModel.topic());
 
 		} catch (final MqttException ex) {
 			logger.debug(ex);

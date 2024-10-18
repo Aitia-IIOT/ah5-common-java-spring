@@ -12,6 +12,8 @@ public class UnsupportedMqttTopicHandler extends MqttTopicHandler {
 
 	//=================================================================================================
 	// members
+	
+	// Should not happen because theoretically no subscripton have been made
 
 	private final Logger logger = LogManager.getLogger(getClass());
 

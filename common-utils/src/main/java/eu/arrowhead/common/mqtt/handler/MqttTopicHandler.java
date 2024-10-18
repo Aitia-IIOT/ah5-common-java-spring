@@ -1,6 +1,7 @@
 package eu.arrowhead.common.mqtt.handler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
@@ -14,8 +15,11 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.mqtt.ArrowheadMqttService;
+import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.dto.MqttRequestTemplate;
 
@@ -29,6 +33,9 @@ public abstract class MqttTopicHandler extends Thread {
 
 	@Autowired
 	private ObjectMapper mapper;
+
+	@Autowired
+	private List<ArrowheadMqttFilter> filters;
 
 	private BlockingQueue<MqttMessage> queue;
 
@@ -45,6 +52,8 @@ public abstract class MqttTopicHandler extends Thread {
 		threadpool.setCorePoolSize(1);
 		threadpool.setMaximumPoolSize(100); // TODO calculate these
 		threadpool.setKeepAliveTime(30, TimeUnit.SECONDS);
+
+		filters.sort((a, b) -> a.order() - b.order());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -60,10 +69,12 @@ public abstract class MqttTopicHandler extends Thread {
 					MqttRequestModel request = null;
 					try {
 						final Entry<String, MqttRequestModel> parsed = parseMqttMessage(message);
+						request = parsed.getValue();
 
 						// Filter chain
-						request = authenticate(parsed);
-						authorize(request);
+						for (final ArrowheadMqttFilter filter : filters) {
+							filter.doFilter(parsed.getKey(), request);
+						}
 
 						// API call
 						handle(request);
@@ -89,7 +100,7 @@ public abstract class MqttTopicHandler extends Thread {
 	public abstract String topic();
 
 	//-------------------------------------------------------------------------------------------------
-	public abstract void handle(final MqttRequestModel request);
+	public abstract void handle(final MqttRequestModel request) throws ArrowheadException;
 
 	//=================================================================================================
 	// assistant methods
@@ -99,30 +110,17 @@ public abstract class MqttTopicHandler extends Thread {
 		try {
 			final MqttRequestTemplate template = mapper.readValue(message.getPayload(), MqttRequestTemplate.class);
 			// TODO validate template
-			return Map.entry(template.authentication(), new MqttRequestModel(template));
+			return Map.entry(template.authentication(), new MqttRequestModel(topic(), template));
 		} catch (final IOException ex) {
 			throw new InvalidParameterException("Invalid message template. Reason: " + ex.getMessage());
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private MqttRequestModel authenticate(final Entry<String, MqttRequestModel> parsed) {
-		final MqttRequestModel request = parsed.getValue();
-
-		System.out.println("authenticate traceId: " + request.getTraceId());
-		//TODO set requester after auth, also isSysop
-		return request;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	private void authorize(final MqttRequestModel request) {
-		//TODO throw exception if forbidden
-		System.out.println("authorize traceId: " + request.getTraceId());
-	}
-
-	//-------------------------------------------------------------------------------------------------
 	private void errorResponse(final Exception ex, final MqttRequestModel request) {
-		//TODO
 		System.out.println("error traceId: " + request.getTraceId() + ". Origin: " + topic());
+		if (!Utilities.isEmpty(request.getResponseTopic())) {
+			ahMqttService.response(eu.arrowhead.common.Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), false, ex.getMessage());
+		}
 	}
 }

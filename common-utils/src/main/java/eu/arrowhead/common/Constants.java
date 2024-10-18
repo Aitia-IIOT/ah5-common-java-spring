@@ -12,6 +12,7 @@ public final class Constants {
 
 	// Global
 
+	public static final String SYSOP = "sysop";
 	public static final String UTC = "UTC";
 	public static final String LOCALHOST = "localhost";
 	public static final String PKCS12 = "PKCS12";
@@ -149,8 +150,16 @@ public final class Constants {
 
 	// MQTT related
 
+	public static final String MQTT_AUTH_IFNO_DELIMITER = "//";
+	public static final String MQTT_AUTH_IFNO_PREFIX_SYSTEM = "SYSTEM";
+	public static final String MQTT_AUTH_IFNO_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
+	public static final String MQTT_AUTH_IFNO_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	public static final int MQTT_AUTHENTICATION_FILTER_ORDER = 10;
+	public static final int MQTT_AUTHORIZATION_BLACKLIST_FILTER_ORDER = 15;
+	public static final int MQTT_AUTHORIZATION_MGMT_SERVICE_FILTER_ORDER = 20;
 	public static final String MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID = "SERVICE-PROVIDING-" + UUID.randomUUID().toString();
 	public static final String MQTT_TOPIC_UNSUPPORTED = UUID.randomUUID().toString();
+
 	public static final String MQTT_API_ENABLED = "mqtt.api.enabled";
 	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":false}";
 	public static final String MQTT_BROKER_ADDRESS = "mqtt.broker.address";

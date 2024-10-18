@@ -54,7 +54,7 @@ public class MqttServlet {
 	protected void queueMessage(final String topic, final MqttMessage msg) {
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 		Assert.isTrue(topicQueueMap.containsKey(topic), "unknown topic");
-
+		System.out.println("message queued");
 		topicQueueMap.get(topic).add(msg);
 
 	}
