@@ -27,5 +27,7 @@ public class SelfDeclaredMqttFilter extends ArrowheadMqttFilter {
 		}
 
 		request.setRequester(split[1]);
+		
+		// TODO SYSOP beállítani
 	}
 }

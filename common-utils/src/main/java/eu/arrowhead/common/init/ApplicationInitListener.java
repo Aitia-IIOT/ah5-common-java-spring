@@ -214,6 +214,10 @@ public abstract class ApplicationInitListener {
 	private void subscribeToMqttServiceTopics() {
 		logger.debug("subscribeToMqttServiceTopics started...");
 
+		if (Utilities.isEmpty(sysInfo.getServices())) {
+			return;
+		}
+
 		for (final ServiceModel serviceModel : sysInfo.getServices()) {
 			mqttController.listen(serviceModel);
 		}

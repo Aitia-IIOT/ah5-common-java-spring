@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -27,7 +28,7 @@ public class MqttServlet {
 	@Autowired
 	private List<MqttTopicHandler> handlers;
 
-	private final Map<String, BlockingQueue<MqttMessage>> topicQueueMap = new HashMap<>();
+	private final Map<String, BlockingQueue<MqttMessage>> topicQueueMap = new ConcurrentHashMap<>();
 
 	//=================================================================================================
 	// methods
@@ -54,7 +55,7 @@ public class MqttServlet {
 	protected void queueMessage(final String topic, final MqttMessage msg) {
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 		Assert.isTrue(topicQueueMap.containsKey(topic), "unknown topic");
-		System.out.println("message queued");
+
 		topicQueueMap.get(topic).add(msg);
 
 	}

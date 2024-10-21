@@ -1,8 +1,8 @@
 package eu.arrowhead.common.mqtt;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -27,7 +27,7 @@ public class MqttService {
 	@Autowired
 	private SSLProperties sslProperties;
 
-	private Map<String, MqttClient> clientMap = new HashMap<>();
+	private Map<String, MqttClient> clientMap = new ConcurrentHashMap<>();
 
 	private final Logger logger = LogManager.getLogger(getClass());
 

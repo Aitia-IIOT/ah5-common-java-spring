@@ -65,6 +65,7 @@ public class MqttController {
 
 		} catch (final MqttException ex) {
 			logger.debug(ex);
+			// TODO servlet-ből kiszedni
 			throw new ExternalServerError("MQTT service listener creation failed: " + ex.getMessage());
 		}
 	}

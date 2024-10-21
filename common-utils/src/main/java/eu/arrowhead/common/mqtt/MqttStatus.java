@@ -10,6 +10,7 @@ public enum MqttStatus {
 	FORBIDDEN(403),
 	NOT_FOUND(404),
 	TIMEOUT(408),
+	LOCKED(423),
 	INTERNAL_SERVER_ERROR(500),
 	EXTERNAL_SERVER_ERROR(503);
 
@@ -51,6 +52,8 @@ public enum MqttStatus {
 			return NOT_FOUND;
 		case 408:
 			return TIMEOUT;
+		case 423:
+			return LOCKED;
 		case 500:
 			return INTERNAL_SERVER_ERROR;
 		case 503:
