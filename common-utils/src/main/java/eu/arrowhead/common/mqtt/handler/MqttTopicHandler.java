@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -44,6 +46,8 @@ public abstract class MqttTopicHandler extends Thread {
 	private ThreadPoolExecutor threadpool = null;
 
 	private boolean doWork = false;
+
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	//=================================================================================================
 	// methods
@@ -131,7 +135,6 @@ public abstract class MqttTopicHandler extends Thread {
 	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessage message) {
 		try {
 			final MqttRequestTemplate template = mapper.readValue(message.getPayload(), MqttRequestTemplate.class);
-			// TODO validate template
 			return Map.entry(template.authentication(), new MqttRequestModel(topic(), template));
 		} catch (final IOException ex) {
 			throw new InvalidParameterException("Invalid message template. Reason: " + ex.getMessage());
@@ -141,13 +144,56 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	private void errorResponse(final Exception ex, final MqttRequestModel request) {
 		if (request == null) {
-			System.out.println(ex.getMessage() + " Origin: " + topic());
+			logger.error("MQTT error occured, before request model parsing");
+			logger.debug(ex);
 			return;
 		}
 
-		final MqttStatus status = MqttStatus.INTERNAL_SERVER_ERROR; // TODO calculate from ex;
+		if (Utilities.isEmpty(request.getRequestTopic())) {
+			logger.error("MQTT request error occured, but no response topic has been defined.");
+			logger.debug(ex);
+			return;
+		}
+
+		final MqttStatus status = calculateStatusFromException(ex);
 		if (!Utilities.isEmpty(request.getResponseTopic())) {
 			ahMqttService.response(eu.arrowhead.common.Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), status, ex.getMessage());
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private MqttStatus calculateStatusFromException(final Exception ex) {
+		if (!(ex instanceof ArrowheadException)) {
+			return MqttStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		final ArrowheadException ahEx = (ArrowheadException) ex;
+		MqttStatus status = MqttStatus.resolve(ahEx.getExceptionType().getErrorCode());
+		if (status == null) {
+			switch (ahEx.getExceptionType()) {
+			case AUTH:
+				status = MqttStatus.UNAUTHORIZED;
+				break;
+			case FORBIDDEN:
+				status = MqttStatus.FORBIDDEN;
+				break;
+			case INVALID_PARAMETER:
+				status = MqttStatus.BAD_REQUEST;
+				break;
+			case DATA_NOT_FOUND:
+				status = MqttStatus.NOT_FOUND;
+				break;
+			case EXTERNAL_SERVER_ERROR:
+				status = MqttStatus.EXTERNAL_SERVER_ERROR;
+				break;
+			case TIMEOUT:
+				status = MqttStatus.TIMEOUT;
+				break;
+			default:
+				status = MqttStatus.INTERNAL_SERVER_ERROR;
+			}
+
+		}
+		return null;
 	}
 }

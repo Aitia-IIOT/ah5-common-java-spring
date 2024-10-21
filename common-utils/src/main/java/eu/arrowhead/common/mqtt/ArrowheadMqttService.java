@@ -38,7 +38,7 @@ public class ArrowheadMqttService {
 	/**
 	 * Subscribe for consuming a push service
 	 */
-	public void subscribe(final String connectId, final String topic, final MqttQoS qos, final Runnable handler) {
+	public void subscribe(final String connectId, final String topic, final MqttQoS qos) {
 		logger.debug("subscribe started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
@@ -48,7 +48,7 @@ public class ArrowheadMqttService {
 
 	//-------------------------------------------------------------------------------------------------
 	/**
-	 * Subscribe for consuming a push service
+	 * Unsubscribe from consuming a push service
 	 */
 	public void unsubscribe(final String connectId, final String[] topics) {
 		logger.debug("unsubscribe started");
@@ -75,12 +75,12 @@ public class ArrowheadMqttService {
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
-		// TODO needs an MqttPublishTemplate ()
+		// TODO needs an MqttPublishTemplate
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	/**
-	 * Publish a response for a pull (request-response) service when it is provided via MQTT
+	 * Publish a response for a request-response service when it is provided via MQTT
 	 */
 	public void response(final String connectId, final String receiver, final String topic, final String traceId, final MqttQoS qos, final MqttStatus status, final Object payload) {
 		logger.debug("response started");

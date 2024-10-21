@@ -1,5 +1,8 @@
 package eu.arrowhead.common.mqtt.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import eu.arrowhead.common.mqtt.MqttQoS;
 import eu.arrowhead.dto.MqttRequestTemplate;
 
@@ -13,6 +16,7 @@ public class MqttRequestModel {
 	private final String requestTopic;
 	private final String responseTopic;
 	private final MqttQoS qosRequirement;
+	private final Map<String, String> params;
 	private final Object payload;
 
 	private String requester;
@@ -27,6 +31,7 @@ public class MqttRequestModel {
 		this.requestTopic = requestTopic;
 		this.responseTopic = template.responseTopic();
 		this.qosRequirement = MqttQoS.valueOf(template.qosRequirement());
+		this.params = template.params() == null ? new HashMap<>() : template.params();
 		this.payload = template.payload();
 	}
 
@@ -56,6 +61,11 @@ public class MqttRequestModel {
 	//-------------------------------------------------------------------------------------------------
 	public MqttQoS getQosRequirement() {
 		return qosRequirement;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public Map<String, String> getParams() {
+		return params;
 	}
 
 	//-------------------------------------------------------------------------------------------------
