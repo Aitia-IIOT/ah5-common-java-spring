@@ -1,10 +1,20 @@
 package eu.arrowhead.common.mqtt;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SSLProperties;
 import eu.arrowhead.common.Utilities;
 
@@ -24,10 +35,14 @@ public class MqttService {
 	//=================================================================================================
 	// members
 
+	private static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM = "ssl.KeyManagerFactory.algorithm";
+	private static final String SSL_TRUST_MANAGER_FACTORY_ALGORITHM = "ssl.TrustManagerFactory.algorithm";
+	private static final String TLS_VERSION = "TLSv1.2";
+
 	@Autowired
 	private SSLProperties sslProperties;
 
-	private Map<String, MqttClient> clientMap = new ConcurrentHashMap<>();
+	private final Map<String, MqttClient> clientMap = new ConcurrentHashMap<>();
 
 	private final Logger logger = LogManager.getLogger(getClass());
 
@@ -63,7 +78,13 @@ public class MqttService {
 			options.setPassword(password.toCharArray());
 		}
 		if (sslProperties.isSslEnabled()) {
-			options.setSocketFactory(sslSettings());
+			try {
+				options.setSocketFactory(sslSettings());
+			} catch (final Exception ex) {
+				logger.debug(ex);
+				logger.error("Creating SSL context is failed. Reason: " + ex.getMessage());
+				throw new MqttException(MqttException.REASON_CODE_SSL_CONFIG_ERROR, ex);
+			}
 		}
 
 		final MqttClient client = new MqttClient(serverURI, !Utilities.isEmpty(clientId) ? clientId : UUID.randomUUID().toString());
@@ -88,8 +109,34 @@ public class MqttService {
 	//=================================================================================================
 	// assistant methods
 
-	private SSLSocketFactory sslSettings() {
-		// TODO
-		return null;
+	private SSLSocketFactory sslSettings() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
+		logger.debug("sslSettings started");
+
+		final String messageNotDefined = " is not defined.";
+		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
+		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
+		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found.");
+		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
+		Assert.notNull(sslProperties.getKeyPassword(), Constants.KEY_PASSWORD + messageNotDefined);
+		Assert.notNull(sslProperties.getTrustStore(), Constants.TRUSTSTORE_PATH + messageNotDefined);
+		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.TRUSTSTORE_PATH + " file is not found.");
+		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.TRUSTSTORE_PASSWORD + messageNotDefined);
+
+		final KeyStore keyStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
+		keyStore.load(sslProperties.getKeyStore().getInputStream(), sslProperties.getKeyStorePassword().toCharArray());
+		final String kmfAlgorithm = System.getProperty(SSL_KEY_MANAGER_FACTORY_ALGORITHM, KeyManagerFactory.getDefaultAlgorithm());
+		final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(kmfAlgorithm);
+		keyManagerFactory.init(keyStore, sslProperties.getKeyStorePassword().toCharArray());
+
+		final KeyStore trustStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
+		trustStore.load(sslProperties.getTrustStore().getInputStream(), sslProperties.getTrustStorePassword().toCharArray());
+		final String tmfAlgorithm = System.getProperty(SSL_TRUST_MANAGER_FACTORY_ALGORITHM, TrustManagerFactory.getDefaultAlgorithm());
+		final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
+		trustManagerFactory.init(trustStore);
+
+		final SSLContext sslContext = SSLContext.getInstance(TLS_VERSION);
+		sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+		return sslContext.getSocketFactory();
 	}
 }

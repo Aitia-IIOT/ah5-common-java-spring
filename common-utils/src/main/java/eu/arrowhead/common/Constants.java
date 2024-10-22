@@ -178,6 +178,7 @@ public final class Constants {
 
 	// Operation related
 
+	public static final String SERVICE_OP_ECHO = "echo";
 	public static final String SERVICE_OP_REGISTER = "register";
 	public static final String SERVICE_OP_LOOKUP = "lookup";
 	public static final String SERVICE_OP_REVOKE = "revoke";
