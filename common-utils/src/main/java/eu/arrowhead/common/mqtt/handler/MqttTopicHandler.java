@@ -47,6 +47,10 @@ public abstract class MqttTopicHandler extends Thread {
 
 	private boolean doWork = false;
 
+	private static final int minThread = 1;
+	private static final int maxThreadPoolSize = Runtime.getRuntime().availableProcessors();
+	private static final int threadTimeout = 10;
+
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	//=================================================================================================
@@ -55,10 +59,9 @@ public abstract class MqttTopicHandler extends Thread {
 	public void init(final BlockingQueue<MqttMessage> queue) {
 		this.queue = queue;
 		threadpool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-		threadpool.setCorePoolSize(1);
-		threadpool.setMaximumPoolSize(100); // TODO calculate these
-		threadpool.setKeepAliveTime(30, TimeUnit.SECONDS);
-
+		threadpool.setCorePoolSize(minThread);
+		threadpool.setMaximumPoolSize(maxThreadPoolSize);
+		threadpool.setKeepAliveTime(threadTimeout, TimeUnit.SECONDS);
 		filters.sort((a, b) -> a.order() - b.order());
 	}
 
@@ -88,6 +91,8 @@ public abstract class MqttTopicHandler extends Thread {
 						errorResponse(ex, request);
 					}
 				});
+				
+				adjustThreadpoolIfSaturated();
 
 			} catch (final InterruptedException ex) {
 				logger.debug(ex.getMessage());
@@ -197,5 +202,11 @@ public abstract class MqttTopicHandler extends Thread {
 
 		}
 		return null;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void adjustThreadpoolIfSaturated() {
+		// TODO
+		// current pool size VS current queue size 
 	}
 }

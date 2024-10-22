@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -22,6 +23,7 @@ import eu.arrowhead.common.mqtt.model.MqttInterfaceModel;
 import jakarta.annotation.PostConstruct;
 
 @Component
+@ConditionalOnProperty(name = Constants.MQTT_API_ENABLED, matchIfMissing = false)
 public class MqttController {
 
 	//=================================================================================================
@@ -65,7 +67,7 @@ public class MqttController {
 
 		} catch (final MqttException ex) {
 			logger.debug(ex);
-			// TODO servlet-ből kiszedni
+			mqttServlet.revokeTopic(interfaceModel.topic());
 			throw new ExternalServerError("MQTT service listener creation failed: " + ex.getMessage());
 		}
 	}

@@ -1,6 +1,5 @@
 package eu.arrowhead.common.mqtt;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,15 +10,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.mqtt.handler.MqttTopicHandler;
-import jakarta.annotation.PostConstruct;
 
 @Component
+@ConditionalOnProperty(name = Constants.MQTT_API_ENABLED, matchIfMissing = false)
 public class MqttServlet {
 
 	//=================================================================================================
@@ -52,6 +52,21 @@ public class MqttServlet {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	protected void revokeTopic(final String topic) {
+		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
+
+		if (!topicQueueMap.containsKey(topic)) {
+			return;
+		}
+
+		topicQueueMap.remove(topic);
+		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> h.topic().equals(topic)).findFirst();
+		if (handlerOpt.isPresent()) {
+			handlerOpt.get().interrupt();
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	protected void queueMessage(final String topic, final MqttMessage msg) {
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 		Assert.isTrue(topicQueueMap.containsKey(topic), "unknown topic");
@@ -68,14 +83,5 @@ public class MqttServlet {
 	//-------------------------------------------------------------------------------------------------
 	protected boolean handlerExists(final String topic) {
 		return handlers.stream().filter(h -> h.topic().equals(topic)).findFirst().isPresent();
-	}
-
-	//=================================================================================================
-	// assistant methods
-
-	//-------------------------------------------------------------------------------------------------
-	@PostConstruct
-	private void init() {
-		addTopic(Constants.MQTT_TOPIC_UNSUPPORTED);
 	}
 }

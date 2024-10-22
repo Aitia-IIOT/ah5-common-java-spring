@@ -72,7 +72,7 @@ public abstract class ApplicationInitListener {
 	@Autowired
 	protected ArrowheadHttpService arrowheadHttpService;
 
-	@Autowired
+	@Autowired(required = false)
 	protected MqttController mqttController;
 
 	protected boolean standaloneMode = false;
@@ -213,6 +213,7 @@ public abstract class ApplicationInitListener {
 	//-------------------------------------------------------------------------------------------------
 	private void subscribeToMqttServiceTopics() {
 		logger.debug("subscribeToMqttServiceTopics started...");
+		Assert.notNull(mqttController, "mqttController is null");
 
 		if (Utilities.isEmpty(sysInfo.getServices())) {
 			return;
