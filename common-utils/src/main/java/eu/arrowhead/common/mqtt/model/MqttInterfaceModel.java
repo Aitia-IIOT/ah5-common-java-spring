@@ -1,9 +1,10 @@
 package eu.arrowhead.common.mqtt.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.util.Assert;
 
@@ -16,7 +17,7 @@ public record MqttInterfaceModel(
 		List<String> accessAddresses,
 		int accessPort,
 		String topic,
-		Map<String, String> operations) implements InterfaceModel {
+		Set<String> operations) implements InterfaceModel {
 
 	public MqttInterfaceModel {
 		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty.");
@@ -65,7 +66,7 @@ public record MqttInterfaceModel(
 		private List<String> accessAddresses = new ArrayList<>();
 		private int accessPort;
 		private String topic;
-		private Map<String, String> operations = new HashMap<>();
+		private Set<String> operations = new HashSet<>();
 
 		//=================================================================================================
 		// methods
@@ -110,17 +111,17 @@ public record MqttInterfaceModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder operations(final Map<String, String> operations) {
+		public Builder operations(final Set<String> operations) {
 			this.operations = operations;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder operation(final String operationName, final String model) {
+		public Builder operation(final String operationName) {
 			if (operations == null) {
-				operations = new HashMap<>();
+				operations = new HashSet<>();
 			}
-			operations.put(operationName, model);
+			operations.add(operationName);
 			return this;
 		}
 

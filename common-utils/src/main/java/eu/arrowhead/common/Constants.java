@@ -37,6 +37,9 @@ public final class Constants {
 	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic-mqtt";
 	public static final String GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME = "generic-mqtts";
 
+	public static final int REQUEST_FILTER_ORDER_AUTHENTICATION = 15;
+	public static final int REQUEST_FILTER_ORDER_AUTHORIZATION_BLACKLIST = 20;
+	public static final int REQUEST_FILTER_ORDER_AUTHORIZATION_MGMT_SERVICE = 25;
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
@@ -154,9 +157,6 @@ public final class Constants {
 	public static final String MQTT_AUTH_IFNO_PREFIX_SYSTEM = "SYSTEM";
 	public static final String MQTT_AUTH_IFNO_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 	public static final String MQTT_AUTH_IFNO_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
-	public static final int MQTT_AUTHENTICATION_FILTER_ORDER = 10;
-	public static final int MQTT_AUTHORIZATION_BLACKLIST_FILTER_ORDER = 15;
-	public static final int MQTT_AUTHORIZATION_MGMT_SERVICE_FILTER_ORDER = 20;
 	public static final String MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID = "SERVICE-PROVIDING-" + UUID.randomUUID().toString();
 	public static final String MQTT_TOPIC_UNSUPPORTED = UUID.randomUUID().toString();
 

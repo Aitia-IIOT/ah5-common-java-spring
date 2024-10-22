@@ -14,7 +14,7 @@ public class ManagementServiceMqttFilter extends ArrowheadMqttFilter {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public int order() {
-		return Constants.MQTT_AUTHORIZATION_MGMT_SERVICE_FILTER_ORDER;
+		return Constants.REQUEST_FILTER_ORDER_AUTHORIZATION_MGMT_SERVICE;
 	}
 
 	//-------------------------------------------------------------------------------------------------

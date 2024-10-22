@@ -21,6 +21,7 @@ public class MqttRequestModel {
 
 	private String requester;
 	private boolean isSysOp = false;
+	private final Map<String, String> attributes = new HashMap<>();
 
 	//=================================================================================================
 	// methods
@@ -93,4 +94,13 @@ public class MqttRequestModel {
 		this.isSysOp = isSysOp;
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	public void setAttribute(final String key, final String value) {
+		this.attributes.put(key, value);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getAttribute(final String key) {
+		return this.attributes.get(key);
+	}
 }

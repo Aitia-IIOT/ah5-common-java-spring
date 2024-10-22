@@ -11,7 +11,7 @@ public class SelfDeclaredMqttFilter extends ArrowheadMqttFilter {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public int order() {
-		return Constants.MQTT_AUTHENTICATION_FILTER_ORDER;
+		return Constants.REQUEST_FILTER_ORDER_AUTHENTICATION;
 	}
 
 	//-------------------------------------------------------------------------------------------------

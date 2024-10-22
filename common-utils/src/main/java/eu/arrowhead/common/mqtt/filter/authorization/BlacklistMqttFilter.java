@@ -14,7 +14,7 @@ public class BlacklistMqttFilter extends ArrowheadMqttFilter {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public int order() {
-		return Constants.MQTT_AUTHORIZATION_BLACKLIST_FILTER_ORDER;
+		return Constants.REQUEST_FILTER_ORDER_AUTHORIZATION_BLACKLIST;
 	}
 
 	//-------------------------------------------------------------------------------------------------

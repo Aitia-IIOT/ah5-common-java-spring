@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 // TODO: conditional on 'enable.blacklist.filter'
-@Order(18)
+@Order(Constants.REQUEST_FILTER_ORDER_AUTHORIZATION_BLACKLIST)
 public class BlacklistFilter extends ArrowheadFilter {
 
 	//=================================================================================================
