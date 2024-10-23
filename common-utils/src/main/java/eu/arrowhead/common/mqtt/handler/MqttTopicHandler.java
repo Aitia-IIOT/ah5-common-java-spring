@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +20,7 @@ import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.mqtt.ArrowheadMqttService;
+import eu.arrowhead.common.mqtt.MqttResourceManager;
 import eu.arrowhead.common.mqtt.MqttStatus;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
@@ -43,13 +42,11 @@ public abstract class MqttTopicHandler extends Thread {
 
 	private BlockingQueue<MqttMessage> queue;
 
-	private ThreadPoolExecutor threadpool = null;
-
 	private boolean doWork = false;
 
-	private static final int minThread = 1;
-	private static final int maxThreadPoolSize = Runtime.getRuntime().availableProcessors();
-	private static final int threadTimeout = 10;
+	private final MqttResourceManager resourceManager = new MqttResourceManager();
+
+	private ThreadPoolExecutor threadpool = null;
 
 	private final Logger logger = LogManager.getLogger(getClass());
 
@@ -58,10 +55,7 @@ public abstract class MqttTopicHandler extends Thread {
 
 	public void init(final BlockingQueue<MqttMessage> queue) {
 		this.queue = queue;
-		threadpool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-		threadpool.setCorePoolSize(minThread);
-		threadpool.setMaximumPoolSize(maxThreadPoolSize);
-		threadpool.setKeepAliveTime(threadTimeout, TimeUnit.SECONDS);
+		this.threadpool = resourceManager.getThreadpool();
 		filters.sort((a, b) -> a.order() - b.order());
 	}
 
@@ -75,6 +69,8 @@ public abstract class MqttTopicHandler extends Thread {
 			try {
 				final MqttMessage message = queue.take();
 				threadpool.execute(() -> {
+					long startTime = System.currentTimeMillis();
+					long endTime = 0;
 					MqttRequestModel request = null;
 					try {
 						final Entry<String, MqttRequestModel> parsed = parseMqttMessage(message);
@@ -89,10 +85,11 @@ public abstract class MqttTopicHandler extends Thread {
 						handle(request);
 					} catch (final Exception ex) {
 						errorResponse(ex, request);
+					} finally {
+						endTime = System.currentTimeMillis();
+						resourceManager.registerLatency(endTime - startTime);
 					}
 				});
-				
-				adjustThreadpoolIfSaturated();
 
 			} catch (final InterruptedException ex) {
 				logger.debug(ex.getMessage());
@@ -202,11 +199,5 @@ public abstract class MqttTopicHandler extends Thread {
 
 		}
 		return null;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	private void adjustThreadpoolIfSaturated() {
-		// TODO
-		// current pool size VS current queue size 
 	}
 }
