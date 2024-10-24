@@ -59,14 +59,14 @@ public class MqttResourceManager {
 	 * If latency starts to increase, we would like to prevent creating new threads and make messages to wait in the queue instead
 	 */
 	private void reconsider() {
-		int sum = 0;
-		for (final Long l : latencies) {
-			if (l >= LATENCY_THRESHOLD) {
-				sum++;
+		int count = 0;
+		for (final Long latency : latencies) {
+			if (latency >= LATENCY_THRESHOLD) {
+				count++;
 			}
 		}
 
-		final boolean shouldFix = sum >= MEASURE_SIZE;
+		final boolean shouldFix = count >= MEASURE_SIZE;
 		if (shouldFix && threadpoolFixed) {
 			return;
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
@@ -69,28 +70,41 @@ public abstract class MqttTopicHandler extends Thread {
 		while (doWork) {
 			try {
 				final MqttMessage message = queue.take();
-				threadpool.execute(() -> {
-					long startTime = System.currentTimeMillis();
-					long endTime = 0;
-					MqttRequestModel request = null;
-					try {
-						final Entry<String, MqttRequestModel> parsed = parseMqttMessage(message);
-						request = parsed.getValue();
+				try {
+					threadpool.execute(() -> {
+						final long startTime = System.currentTimeMillis();
+						long endTime = 0;
+						MqttRequestModel request = null;
+						try {
+							final Entry<String, MqttRequestModel> parsed = parseMqttMessage(message);
+							request = parsed.getValue();
 
-						// Filter chain
-						for (final ArrowheadMqttFilter filter : filters) {
-							filter.doFilter(parsed.getKey(), request);
+							// Filter chain
+							for (final ArrowheadMqttFilter filter : filters) {
+								filter.doFilter(parsed.getKey(), request);
+							}
+
+							// API call
+							handle(request);
+
+						} catch (final Exception ex) {
+							errorResponse(ex, request);
+						} finally {
+							endTime = System.currentTimeMillis();
+							resourceManager.registerLatency(endTime - startTime);
 						}
+					});
 
-						// API call
-						handle(request);
-					} catch (final Exception ex) {
-						errorResponse(ex, request);
-					} finally {
-						endTime = System.currentTimeMillis();
-						resourceManager.registerLatency(endTime - startTime);
+				} catch (final RejectedExecutionException ex) {
+					Entry<String, MqttRequestModel> parsed = null;
+					try {
+						parsed = parseMqttMessage(message);
+					} catch (final InvalidParameterException invalidEx) {
+						errorResponse(ex, null);
+						continue;
 					}
-				});
+					errorResponse(ex, parsed.getValue());
+				}
 
 			} catch (final InterruptedException ex) {
 				logger.debug(ex.getMessage());
@@ -163,7 +177,7 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	private void errorResponse(final Exception ex, final MqttRequestModel request) {
 		if (request == null) {
-			logger.error("MQTT error occured, before request model parsing");
+			logger.error("MQTT error occured, without request model being parsed");
 			logger.debug(ex);
 			return;
 		}
