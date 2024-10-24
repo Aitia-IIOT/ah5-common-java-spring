@@ -13,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.arrowhead.common.Constants;
@@ -128,6 +129,19 @@ public abstract class MqttTopicHandler extends Thread {
 
 		try {
 			return mapper.readValue(mapper.writeValueAsString(payload), dtoClass);
+		} catch (final IOException ex) {
+			throw new InvalidParameterException("Coud not parse payload. Reason: " + ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	protected <T> T readPayload(final Object payload, final TypeReference<T> dtoTypeRef) {
+		if (payload == null) {
+			return null;
+		}
+
+		try {
+			return mapper.readValue(mapper.writeValueAsString(payload), dtoTypeRef);
 		} catch (final IOException ex) {
 			throw new InvalidParameterException("Coud not parse payload. Reason: " + ex.getMessage());
 		}
