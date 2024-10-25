@@ -12,7 +12,7 @@ import eu.arrowhead.common.Utilities;
 public record SystemModel(
 		Map<String, Object> metadata,
 		String version,
-		List<AddressModel> addresses,
+		List<String> addresses,
 		String deviceName) {
 
 	public SystemModel {
@@ -31,7 +31,7 @@ public record SystemModel(
 
 		private String deviceName;
 		private String version;
-		private List<AddressModel> addresses = new ArrayList<>();
+		private List<String> addresses = new ArrayList<>();
 		private Map<String, Object> metadata = new HashMap<>();
 
 		//=================================================================================================
@@ -50,7 +50,7 @@ public record SystemModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder address(final AddressModel address) {
+		public Builder address(final String address) {
 			if (addresses == null) {
 				addresses = new ArrayList<>();
 			}
@@ -59,7 +59,7 @@ public record SystemModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder addresses(final List<AddressModel> addresses) {
+		public Builder addresses(final List<String> addresses) {
 			this.addresses = addresses;
 			return this;
 		}

@@ -6,6 +6,6 @@ import java.util.Map;
 public record SystemRegisterRequestDTO(
 		Map<String, Object> metadata,
 		String version,
-		List<AddressDTO> addresses,
+		List<String> addresses,
 		String deviceName) {
 }

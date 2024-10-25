@@ -45,26 +45,22 @@ public class AddressNormalizer {
 		}
 		final String candidate = address.toLowerCase().trim();
 
-		// Simple string
 		if (!candidate.contains(DOT) && !candidate.contains(COLON) && !candidate.contains(DASH)) {
+			// Simple string
 			return candidate;
-
-			// Possible MAC address
 		} else if (candidate.split("\\" + DOT).length == MAC_DOT_PARTS_LENGTH
 				|| (candidate.contains(DASH) && candidate.split(DASH).length == MAC_DASH_OR_COLON_PARTS_LENGTH)
 				|| (!candidate.contains(DOUBLE_COLON) && candidate.split(COLON).length == MAC_DASH_OR_COLON_PARTS_LENGTH)) {
+			// Possible MAC address
 			return normalizeMAC(candidate);
-
-			// Possible IPv4 or domain name
 		} else if (candidate.contains(DOT) && !candidate.contains(COLON)) {
+			// Possible IPv4 or domain name
 			return candidate;
-
-			// Possible IPv6
 		} else if (!candidate.contains(DOT) && candidate.contains(COLON)) {
+			// Possible IPv6
 			return normalizeIPv6(candidate);
-
-			// Possible IPv6-IPv4 hybrid
 		} else {
+			// Possible IPv6-IPv4 hybrid
 			return normalizeIPv6IPv4Hybrid(candidate);
 		}
 	}
