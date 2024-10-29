@@ -201,7 +201,6 @@ public abstract class MqttTopicHandler extends Thread {
 		final ArrowheadException ahEx = (ArrowheadException) ex;
 		MqttStatus status = MqttStatus.resolve(ahEx.getExceptionType().getErrorCode());
 		if (status == null) {
-			// TODO LockedException!
 			switch (ahEx.getExceptionType()) {
 			case AUTH:
 				status = MqttStatus.UNAUTHORIZED;
@@ -221,11 +220,14 @@ public abstract class MqttTopicHandler extends Thread {
 			case TIMEOUT:
 				status = MqttStatus.TIMEOUT;
 				break;
+			case LOCKED:
+				status = MqttStatus.LOCKED;
+				break;
 			default:
 				status = MqttStatus.INTERNAL_SERVER_ERROR;
 			}
 
 		}
-		return null;
+		return status;
 	}
 }

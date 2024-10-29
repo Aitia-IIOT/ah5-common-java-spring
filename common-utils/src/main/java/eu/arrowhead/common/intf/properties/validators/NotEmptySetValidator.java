@@ -60,6 +60,8 @@ public class NotEmptySetValidator implements IPropertyValidator {
 					throw new InvalidParameterException("Value should be a string");
 				}
 			}
+
+			return normalized;
 		}
 
 		throw new InvalidParameterException("Property value should be a set of string values");
