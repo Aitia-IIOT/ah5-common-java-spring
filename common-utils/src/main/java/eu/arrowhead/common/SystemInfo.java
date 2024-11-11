@@ -10,12 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
-import eu.arrowhead.common.model.AddressModel;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
 import eu.arrowhead.common.service.validation.address.AddressNormalizer;
-import eu.arrowhead.common.service.validation.address.AddressValidator;
-import eu.arrowhead.dto.enums.AddressType;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
@@ -58,9 +55,6 @@ public abstract class SystemInfo {
 	private SSLProperties sslProperties;
 
 	@Autowired
-	private AddressValidator addressValidator;
-
-	@Autowired
 	private AddressNormalizer addressNormalizer;
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
@@ -91,11 +85,8 @@ public abstract class SystemInfo {
 	};
 
 	//-------------------------------------------------------------------------------------------------
-	protected AddressModel getAddressModel() {
-		final String normalized = addressNormalizer.normalize(domainAddress);
-		final AddressType addressType = addressValidator.detectType(normalized);
-
-		return new AddressModel(addressType, normalized);
+	protected String getAddress() {
+		return addressNormalizer.normalize(domainAddress);
 	}
 
 	//-------------------------------------------------------------------------------------------------

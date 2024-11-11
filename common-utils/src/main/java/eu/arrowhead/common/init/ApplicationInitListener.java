@@ -40,7 +40,6 @@ import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
-import eu.arrowhead.dto.AddressDTO;
 import eu.arrowhead.dto.ServiceInstanceCreateRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceInterfaceRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceResponseDTO;
@@ -239,11 +238,7 @@ public abstract class ApplicationInitListener {
 
 		// register system
 		final SystemModel model = sysInfo.getSystemModel();
-		final List<AddressDTO> addresses = model.addresses()
-				.stream()
-				.map(a -> new AddressDTO(a.type().name(), a.address()))
-				.collect(Collectors.toList());
-		final SystemRegisterRequestDTO payload = new SystemRegisterRequestDTO(model.metadata(), model.version(), addresses, model.deviceName());
+		final SystemRegisterRequestDTO payload = new SystemRegisterRequestDTO(model.metadata(), model.version(), model.addresses(), model.deviceName());
 		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, SystemResponseDTO.class, payload);
 
 		// register services

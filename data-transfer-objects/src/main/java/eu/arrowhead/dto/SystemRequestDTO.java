@@ -7,7 +7,7 @@ public record SystemRequestDTO(
 		String name,
 		Map<String, Object> metadata,
 		String version,
-		List<AddressDTO> addresses,
+		List<String> addresses,
 		String deviceName) {
 
 }
