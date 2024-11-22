@@ -22,6 +22,7 @@ public final class Constants {
 	public static final String HTTP = "http";
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
+	public static final String VERBOSE = "verbose";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
 	public static final String SERVER_STANDALONE_MODE = "server.standalone.mode";
 	public static final String SERVER_COMMON_NAME = "server.common.name";

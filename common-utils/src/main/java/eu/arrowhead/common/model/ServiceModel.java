@@ -52,9 +52,6 @@ public record ServiceModel(
 
 		//-------------------------------------------------------------------------------------------------
 		public Builder serviceInterface(final InterfaceModel serviceInterface) {
-			if (interfaces == null) {
-				interfaces = new ArrayList<>();
-			}
 			if (serviceInterface != null) {
 				interfaces.add(serviceInterface);
 			}
