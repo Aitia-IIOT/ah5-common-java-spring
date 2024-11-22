@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import eu.arrowhead.common.exception.ExternalServerError;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
@@ -108,6 +109,9 @@ public abstract class SystemInfo {
 		}
 		if (Utilities.isEmpty(domainAddress)) {
 			throw new InvalidParameterException("'domainAddress' is missing or empty");
+		}
+		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
+			throw new InvalidParameterException("MQTT Broker address is not defined.");
 		}
 
 		customInit();

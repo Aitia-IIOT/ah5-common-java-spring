@@ -1,5 +1,6 @@
 package eu.arrowhead.common.intf.properties.validators;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import eu.arrowhead.common.service.validation.name.NameNormalizer;
 import eu.arrowhead.common.service.validation.name.NameValidator;
 
 @Service
-public class NotEmptySetValidator implements IPropertyValidator {
+public class NotEmptyStringSetValidator implements IPropertyValidator {
 
 	//=================================================================================================
 	// members
@@ -36,9 +37,9 @@ public class NotEmptySetValidator implements IPropertyValidator {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
-		logger.debug("NotEmptySetValidator.validateAndNormalize started...");
+		logger.debug("NotEmptyStringSetValidator.validateAndNormalize started...");
 
-		if (propertyValue instanceof final Set<?> set) {
+		if (propertyValue instanceof final Collection<?> set) {
 			if (set.isEmpty()) {
 				throw new InvalidParameterException("Property value should be a non-empty set");
 			}

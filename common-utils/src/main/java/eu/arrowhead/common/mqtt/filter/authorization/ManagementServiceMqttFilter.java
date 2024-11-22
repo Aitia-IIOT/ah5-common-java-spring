@@ -9,7 +9,7 @@ import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 @Service
 @ConditionalOnExpression("${mqtt.api.enabled:true} && ${enable.management.filter:true}")
-public class ManagementServiceMqttFilter extends ArrowheadMqttFilter {
+public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	@Override

@@ -2,9 +2,12 @@ package eu.arrowhead.common.mqtt.filter;
 
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
-public abstract class ArrowheadMqttFilter {
+public interface ArrowheadMqttFilter {
 
-	public abstract int order();
-	public abstract void doFilter(final String authKey, final MqttRequestModel request);
+	//-------------------------------------------------------------------------------------------------
+	public int order();
+
+	//-------------------------------------------------------------------------------------------------
+	public void doFilter(final String authKey, final MqttRequestModel request);
 
 }

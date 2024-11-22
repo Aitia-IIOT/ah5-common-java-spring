@@ -1,5 +1,7 @@
 package eu.arrowhead.common.mqtt;
 
+import eu.arrowhead.common.exception.InvalidParameterException;
+
 public enum MqttQoS {
 
 	AT_MOST_ONCE(0), AT_LEAST_ONCE(1), EXACTLY_ONCE(2);
@@ -13,11 +15,6 @@ public enum MqttQoS {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	private MqttQoS(final int value) {
-		this.value = value;
-	}
-
-	//-------------------------------------------------------------------------------------------------
 	public int value() {
 		return value;
 	}
@@ -25,6 +22,8 @@ public enum MqttQoS {
 	//-------------------------------------------------------------------------------------------------
 	public static MqttQoS valueOf(final int value) {
 		switch (value) {
+		case 0:
+			return AT_MOST_ONCE;
 		case 1:
 			return AT_LEAST_ONCE;
 
@@ -32,7 +31,15 @@ public enum MqttQoS {
 			return EXACTLY_ONCE;
 
 		default:
-			return AT_MOST_ONCE;
+			throw new InvalidParameterException("Unkown MQTT QoS value:" + value);
 		}
+	}
+
+	//=================================================================================================
+	//  assistant method
+
+	//-------------------------------------------------------------------------------------------------
+	private MqttQoS(final int value) {
+		this.value = value;
 	}
 }

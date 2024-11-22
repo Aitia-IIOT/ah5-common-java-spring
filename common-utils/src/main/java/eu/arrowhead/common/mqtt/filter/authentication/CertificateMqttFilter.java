@@ -4,7 +4,7 @@ import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
-public class CertificateMqttFilter extends ArrowheadMqttFilter {
+public class CertificateMqttFilter implements ArrowheadMqttFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	@Override

@@ -53,6 +53,7 @@ public class MqttService {
 
 	//-------------------------------------------------------------------------------------------------
 	public MqttClient client(final String connectId) {
+		logger.debug("client started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		return clientMap.get(connectId);
 	}
@@ -68,16 +69,16 @@ public class MqttService {
 		}
 
 		String serverURI = sslProperties.isSslEnabled() ? "ssl://" : "tcp://";
-		serverURI = serverURI + address + ":" + port;
+		serverURI += address + ":" + port;
 
 		final MqttConnectOptions options = new MqttConnectOptions();
 		options.setAutomaticReconnect(true);
 		options.setCleanSession(true);
 		if (!Utilities.isEmpty(username)) {
 			options.setUserName(username);
-		}
-		if (!Utilities.isEmpty(password)) {
-			options.setPassword(password.toCharArray());
+			if (!Utilities.isEmpty(password)) {
+				options.setPassword(password.toCharArray());
+			}
 		}
 		if (sslProperties.isSslEnabled()) {
 			try {
@@ -111,6 +112,7 @@ public class MqttService {
 	//=================================================================================================
 	// assistant methods
 
+	//-------------------------------------------------------------------------------------------------
 	private SSLSocketFactory sslSettings() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
 		logger.debug("sslSettings started");
 

@@ -6,7 +6,7 @@ import eu.arrowhead.common.exception.AuthException;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
-public class SelfDeclaredMqttFilter extends ArrowheadMqttFilter {
+public class SelfDeclaredMqttFilter implements ArrowheadMqttFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
@@ -18,16 +18,16 @@ public class SelfDeclaredMqttFilter extends ArrowheadMqttFilter {
 	@Override
 	public void doFilter(final String authInfo, final MqttRequestModel request) {
 		if (Utilities.isEmpty(authInfo)) {
-			throw new AuthException("No authorization info has been provided");
+			throw new AuthException("No authentication info has been provided");
 		}
 
-		final String[] split = authInfo.split(Constants.MQTT_AUTH_IFNO_DELIMITER);
-		if (split.length != 2 || !split[0].equals(Constants.MQTT_AUTH_IFNO_PREFIX_SYSTEM)) {
-			throw new AuthException("Invalid authorization info");
+		final String[] split = authInfo.split(Constants.MQTT_AUTH_INFO_DELIMITER);
+		if (split.length != 2 || !split[0].equals(Constants.MQTT_AUTH_INFO_PREFIX_SYSTEM)) {
+			throw new AuthException("Invalid authentication info");
 		}
 
 		request.setRequester(split[1]);
-		
+
 		// TODO SYSOP beállítani
 	}
 }

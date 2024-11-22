@@ -26,6 +26,7 @@ public class MqttRequestModel {
 	//=================================================================================================
 	// methods
 
+	//-------------------------------------------------------------------------------------------------
 	public MqttRequestModel(final String requestTopic, final MqttRequestTemplate template) {
 		this.traceId = template.traceId();
 		this.operation = template.operation();

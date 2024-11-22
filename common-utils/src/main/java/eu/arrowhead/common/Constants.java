@@ -155,17 +155,19 @@ public final class Constants {
 
 	// MQTT related
 
-	public static final String MQTT_AUTH_IFNO_DELIMITER = "//";
-	public static final String MQTT_AUTH_IFNO_PREFIX_SYSTEM = "SYSTEM";
-	public static final String MQTT_AUTH_IFNO_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
-	public static final String MQTT_AUTH_IFNO_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	public static final String MQTT_AUTH_INFO_DELIMITER = "//";
+	public static final String MQTT_AUTH_INFO_PREFIX_SYSTEM = "SYSTEM";
+	public static final String MQTT_AUTH_INFO_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
+	public static final String MQTT_AUTH_INFO_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	public static final String MQTT_AUTH_INFO_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
 	public static final String MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID = "SERVICE-PROVIDING-" + UUID.randomUUID().toString();
 	public static final String MQTT_TOPIC_UNSUPPORTED = UUID.randomUUID().toString();
+	public static final int MQTT_DEFAULT_QOS = 0;
 
 	public static final String MQTT_API_ENABLED = "mqtt.api.enabled";
 	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":false}";
 	public static final String MQTT_BROKER_ADDRESS = "mqtt.broker.address";
-	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":127.0.0.1}";
+	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":}";
 	public static final String MQTT_BROKER_PORT = "mqtt.broker.port";
 	public static final String $MQTT_BROKER_PORT_WD = "${" + MQTT_BROKER_PORT + ":1883}";
 	public static final String MQTT_CLIENT_PASSWORD = "mqtt.client.password";

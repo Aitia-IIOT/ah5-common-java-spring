@@ -56,7 +56,7 @@ public class MqttResourceManager {
 
 	//-------------------------------------------------------------------------------------------------
 	/*
-	 * If latency starts to increase, we would like to prevent creating new threads and make messages to wait in the queue instead
+	 * If latency starts to increase, we would like to prevent creating new threads and reject the incoming messages
 	 */
 	private void reconsider() {
 		int count = 0;

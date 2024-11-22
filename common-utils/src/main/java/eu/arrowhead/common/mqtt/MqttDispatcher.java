@@ -20,7 +20,7 @@ import eu.arrowhead.common.mqtt.handler.MqttTopicHandler;
 
 @Component
 @ConditionalOnProperty(name = Constants.MQTT_API_ENABLED, matchIfMissing = false)
-public class MqttServlet {
+public class MqttDispatcher {
 
 	//=================================================================================================
 	//members
@@ -31,7 +31,7 @@ public class MqttServlet {
 	private final Map<String, BlockingQueue<MqttMessage>> topicQueueMap = new ConcurrentHashMap<>();
 
 	//=================================================================================================
-	// methods
+	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	protected void addTopic(final String topic) {
@@ -43,7 +43,7 @@ public class MqttServlet {
 
 		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> h.topic().equals(topic)).findFirst();
 		if (handlerOpt.isEmpty()) {
-			Assert.isTrue(false,  "No service handler exists for topic: " + topic);
+			throw new IllegalArgumentException("No service handler exists for topic: " + topic);
 		}
 
 		topicQueueMap.put(topic, new LinkedBlockingQueue<>());
@@ -82,6 +82,6 @@ public class MqttServlet {
 
 	//-------------------------------------------------------------------------------------------------
 	protected boolean handlerExists(final String topic) {
-		return handlers.stream().filter(h -> h.topic().equals(topic)).findFirst().isPresent();
+		return handlers.stream().anyMatch(h -> h.topic().equals(topic));
 	}
 }

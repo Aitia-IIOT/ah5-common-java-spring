@@ -97,7 +97,7 @@ public class ArrowheadMqttService {
 		try {
 			final MqttResponseTemplate template = new MqttResponseTemplate(status.value(), traceId, receiver, payload == null ? "" : payload);
 			final MqttMessage msg = new MqttMessage(mapper.writeValueAsBytes(template));
-			msg.setQos(qos == null ? MqttQoS.AT_MOST_ONCE.value() : qos.value());
+			msg.setQos(qos == null ? Constants.MQTT_DEFAULT_QOS : qos.value());
 			client.publish(topic, msg);
 
 		} catch (final JsonProcessingException ex) {

@@ -33,7 +33,7 @@ public class MqttController {
 	private MqttService mqttService;
 
 	@Autowired
-	private MqttServlet mqttServlet;
+	private MqttDispatcher mqttDispatcher;
 
 	@Autowired
 	private SystemInfo sysInfo;
@@ -47,8 +47,9 @@ public class MqttController {
 	//=================================================================================================
 	// methods
 
+	//-------------------------------------------------------------------------------------------------
 	public void listen(final ServiceModel model) {
-		logger.debug("serviceListener started");
+		logger.debug("MqttController.listen started");
 		Assert.notNull(model, "ServiceModel is null");
 
 		 final Optional<InterfaceModel> optional = model.interfaces().stream().filter(i -> i.templateName().equals(templateName)).findFirst();
@@ -62,12 +63,12 @@ public class MqttController {
 			if (client == null) {
 				initMqttClient(interfaceModel.accessAddresses().getFirst(), interfaceModel.accessPort());
 			}
-			mqttServlet.addTopic(interfaceModel.topic());
+			mqttDispatcher.addTopic(interfaceModel.topic());
 			client.subscribe(interfaceModel.topic());
 
 		} catch (final MqttException ex) {
 			logger.debug(ex);
-			mqttServlet.revokeTopic(interfaceModel.topic());
+			mqttDispatcher.revokeTopic(interfaceModel.topic());
 			throw new ExternalServerError("MQTT service listener creation failed: " + ex.getMessage());
 		}
 	}
@@ -78,7 +79,7 @@ public class MqttController {
 		Assert.notNull(client, "client is null");
 
 		try {
-			final String[] topics = mqttServlet.getTopicSet().toArray(new String[0]);
+			final String[] topics = mqttDispatcher.getTopicSet().toArray(new String[0]);
 			client.unsubscribe(topics);
 			mqttService.disconnect(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID);
 
@@ -110,17 +111,20 @@ public class MqttController {
 	private MqttCallback createMqttCallback(final String brokerUri) {
 		return new MqttCallback() {
 
+			//-------------------------------------------------------------------------------------------------
 			@Override
 			public void messageArrived(final String topic, final MqttMessage message) throws Exception {
 				logger.debug("MQTT message arrived to service topic: " + topic);
-				mqttServlet.queueMessage(topic, message);
+				mqttDispatcher.queueMessage(topic, message);
 			}
 
+			//-------------------------------------------------------------------------------------------------
 			@Override
 			public void deliveryComplete(final IMqttDeliveryToken token) {
 				logger.debug("MQTT message delivered to broker " + brokerUri + ". Topic(s): " + token.getTopics());
 			}
 
+			//-------------------------------------------------------------------------------------------------
 			@Override
 			public void connectionLost(final Throwable cause) {
 				logger.error("MQTT Broker connection lost: " + brokerUri + ". Reason: " + cause.getMessage());

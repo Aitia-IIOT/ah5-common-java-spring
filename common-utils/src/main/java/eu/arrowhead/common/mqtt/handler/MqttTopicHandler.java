@@ -55,6 +55,7 @@ public abstract class MqttTopicHandler extends Thread {
 	//=================================================================================================
 	// methods
 
+	//-------------------------------------------------------------------------------------------------
 	public void init(final BlockingQueue<MqttMessage> queue) {
 		this.queue = queue;
 		this.threadpool = resourceManager.getThreadpool();
@@ -100,6 +101,7 @@ public abstract class MqttTopicHandler extends Thread {
 					try {
 						parsed = parseMqttMessage(message);
 					} catch (final InvalidParameterException invalidEx) {
+						logger.debug(invalidEx);
 						errorResponse(ex, null);
 						continue;
 					}
@@ -126,6 +128,9 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	public abstract void handle(final MqttRequestModel request) throws ArrowheadException;
 
+	//=================================================================================================
+	// assistant methods
+
 	//-------------------------------------------------------------------------------------------------
 	protected void successResponse(final MqttRequestModel request, final MqttStatus status, final Object response) {
 		if (!Utilities.isEmpty(request.getResponseTopic())) {
@@ -141,10 +146,14 @@ public abstract class MqttTopicHandler extends Thread {
 			return null;
 		}
 
+		if (dtoClass.isInstance(payload)) {
+			return dtoClass.cast(payload);
+		}
+
 		try {
 			return mapper.readValue(mapper.writeValueAsString(payload), dtoClass);
 		} catch (final IOException ex) {
-			throw new InvalidParameterException("Coud not parse payload. Reason: " + ex.getMessage());
+			throw new InvalidParameterException("Could not parse payload. Reason: " + ex.getMessage());
 		}
 	}
 
@@ -157,7 +166,7 @@ public abstract class MqttTopicHandler extends Thread {
 		try {
 			return mapper.readValue(mapper.writeValueAsString(payload), dtoTypeRef);
 		} catch (final IOException ex) {
-			throw new InvalidParameterException("Coud not parse payload. Reason: " + ex.getMessage());
+			throw new InvalidParameterException("Could not parse payload. Reason: " + ex.getMessage());
 		}
 	}
 
@@ -166,6 +175,10 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessage message) {
+		if (message == null) {
+			throw new InvalidParameterException("Invalid message template: null message");
+		}
+
 		try {
 			final MqttRequestTemplate template = mapper.readValue(message.getPayload(), MqttRequestTemplate.class);
 			return Map.entry(template.authentication(), new MqttRequestModel(topic(), template));
