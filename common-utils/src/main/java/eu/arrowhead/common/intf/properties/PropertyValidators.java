@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import eu.arrowhead.common.intf.properties.validators.HttpOperationsValidator;
 import eu.arrowhead.common.intf.properties.validators.MinMaxValidator;
 import eu.arrowhead.common.intf.properties.validators.NotEmptyAddressListValidator;
+import eu.arrowhead.common.intf.properties.validators.NotEmptyStringSetValidator;
 import eu.arrowhead.common.intf.properties.validators.PortValidator;
 import jakarta.annotation.PostConstruct;
 
@@ -41,6 +42,7 @@ public class PropertyValidators {
 		validators.put(PropertyValidatorType.MINMAX, appContext.getBean(MinMaxValidator.class));
 		validators.put(PropertyValidatorType.PORT, appContext.getBean(PortValidator.class));
 		validators.put(PropertyValidatorType.NOT_EMPTY_ADDRESS_LIST, appContext.getBean(NotEmptyAddressListValidator.class));
+		validators.put(PropertyValidatorType.NOT_EMPTY_STRING_SET, appContext.getBean(NotEmptyStringSetValidator.class));
 		validators.put(PropertyValidatorType.HTTP_OPERATIONS, appContext.getBean(HttpOperationsValidator.class));
 	}
 }

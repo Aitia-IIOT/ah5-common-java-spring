@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 @ConditionalOnProperty(name = Constants.ENABLE_MANAGEMENT_FILTER, matchIfMissing = false)
-@Order(20)
+@Order(Constants.REQUEST_FILTER_ORDER_AUTHORIZATION_MGMT_SERVICE)
 public class ManagementServiceFilter extends ArrowheadFilter {
 
 	// TODO: if an endpoint is management, then check sysop, whitelist or authorization (depending on management.policy config)

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import eu.arrowhead.common.exception.ExternalServerError;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
@@ -38,6 +39,18 @@ public abstract class SystemInfo {
 
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
 	private AuthenticationPolicy authenticationPolicy;
+
+	@Value(Constants.$MQTT_API_ENABLED_WD)
+	private boolean mqttEnabled;
+
+	@Value(Constants.$MQTT_BROKER_ADDRESS_WD)
+	private String mqttBrokerAddress;
+
+	@Value(Constants.$MQTT_BROKER_PORT_WD)
+	private int mqttBrokerPort;
+
+	@Value(Constants.$MQTT_CLIENT_PASSWORD)
+	private String mqttClientPassword;
 
 	@Autowired
 	private SSLProperties sslProperties;
@@ -97,6 +110,9 @@ public abstract class SystemInfo {
 		if (Utilities.isEmpty(domainAddress)) {
 			throw new InvalidParameterException("'domainAddress' is missing or empty");
 		}
+		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
+			throw new InvalidParameterException("MQTT Broker address is not defined.");
+		}
 
 		customInit();
 	}
@@ -132,6 +148,26 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public AuthenticationPolicy getAuthenticationPolicy() {
 		return authenticationPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public boolean isMqttApiEnabled() {
+		return this.mqttEnabled;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getMqttBrokerAddress() {
+		return this.mqttBrokerAddress;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getMqttClientPassword() {
+		return this.mqttClientPassword;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public int getMqttBrokerPort() {
+		return this.mqttBrokerPort;
 	}
 
 	//-------------------------------------------------------------------------------------------------

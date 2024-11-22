@@ -45,7 +45,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
 		logger.debug("HttpOperationsValidator.validateAndNormalize started...");
 
-		if (propertyValue instanceof Map<?, ?> map) {
+		if (propertyValue instanceof final Map<?, ?> map) {
 			if (map.isEmpty()) {
 				throw new InvalidParameterException("Property value should be a non-empty map");
 			}

@@ -55,7 +55,9 @@ public record ServiceModel(
 			if (interfaces == null) {
 				interfaces = new ArrayList<>();
 			}
-			interfaces.add(serviceInterface);
+			if (serviceInterface != null) {
+				interfaces.add(serviceInterface);
+			}
 			return this;
 		}
 
@@ -70,7 +72,9 @@ public record ServiceModel(
 			if (metadata == null) {
 				metadata = new HashMap<>();
 			}
-			metadata.put(key, value);
+			if (!Utilities.isEmpty(key)) {
+				metadata.put(key, value);
+			}
 			return this;
 		}
 

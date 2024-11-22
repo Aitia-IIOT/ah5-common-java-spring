@@ -36,6 +36,7 @@ import eu.arrowhead.common.http.ArrowheadHttpService;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
+import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
@@ -70,6 +71,9 @@ public abstract class ApplicationInitListener {
 	@Autowired
 	protected ArrowheadHttpService arrowheadHttpService;
 
+	@Autowired(required = false)
+	protected MqttController mqttController;
+
 	protected boolean standaloneMode = false;
 
 	protected Set<String> registeredServices = new HashSet<>();
@@ -102,6 +106,10 @@ public abstract class ApplicationInitListener {
 
 		registerToServiceRegistry();
 
+		if (sysInfo.isMqttApiEnabled()) {
+			subscribeToMqttServiceTopics();
+		}
+
 		customInit(event);
 
 		logger.debug("Initialization in onApplicationEvent() is done.");
@@ -113,6 +121,10 @@ public abstract class ApplicationInitListener {
 		logger.debug("destroy called...");
 
 		revokeServices();
+
+		if (sysInfo.isMqttApiEnabled()) {
+			mqttController.disconnect();
+		}
 
 		try {
 			customDestroy();
@@ -195,6 +207,20 @@ public abstract class ApplicationInitListener {
 			throw new ServiceConfigurationError("Cannot find private key in the specified key store.");
 		}
 		arrowheadContext.put(Constants.SERVER_PRIVATE_KEY, privateKey);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void subscribeToMqttServiceTopics() {
+		logger.debug("subscribeToMqttServiceTopics started...");
+		Assert.notNull(mqttController, "mqttController is null");
+
+		if (Utilities.isEmpty(sysInfo.getServices())) {
+			return;
+		}
+
+		for (final ServiceModel serviceModel : sysInfo.getServices()) {
+			mqttController.listen(serviceModel);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
