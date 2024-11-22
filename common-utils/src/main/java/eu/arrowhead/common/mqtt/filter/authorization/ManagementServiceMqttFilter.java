@@ -1,6 +1,6 @@
 package eu.arrowhead.common.mqtt.filter.authorization;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import eu.arrowhead.common.Constants;
@@ -8,7 +8,7 @@ import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 @Service
-@ConditionalOnExpression("${mqtt.api.enabled:true} && ${enable.management.filter:true}")
+@ConditionalOnProperty(name = {"mqtt.api.enabled", "enable.management.filter"}, havingValue = "true", matchIfMissing = false)
 public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 
 	//-------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ public enum MqttQoS {
 			return EXACTLY_ONCE;
 
 		default:
-			throw new InvalidParameterException("Unkown MQTT QoS value:" + value);
+			throw new InvalidParameterException("Unknown MQTT QoS value:" + value);
 		}
 	}
 
