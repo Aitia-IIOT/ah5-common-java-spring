@@ -15,6 +15,7 @@ public record SystemModel(
 		List<String> addresses,
 		String deviceName) {
 
+	//-------------------------------------------------------------------------------------------------
 	public SystemModel {
 		Assert.isTrue(!Utilities.isEmpty(version), "Version null or blank");
 		Assert.isTrue(!Utilities.isEmpty(addresses), "Addresses list is null or empty");
@@ -54,6 +55,7 @@ public record SystemModel(
 			if (addresses == null) {
 				addresses = new ArrayList<>();
 			}
+
 			addresses.add(address);
 			return this;
 		}
@@ -69,6 +71,7 @@ public record SystemModel(
 			if (metadata == null) {
 				metadata = new HashMap<>();
 			}
+
 			metadata.put(key, value);
 			return this;
 		}

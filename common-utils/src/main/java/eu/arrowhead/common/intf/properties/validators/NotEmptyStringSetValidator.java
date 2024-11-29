@@ -21,13 +21,13 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 	//=================================================================================================
 	// members
 
+	private static final String ARG_NAME = "name";
+
 	@Autowired
 	private NameValidator nameValidator;
 
 	@Autowired
 	private NameNormalizer nameNormalizer;
-
-	private final String nameArg = "name";
 
 	private final Logger logger = LogManager.getLogger(getClass());
 
@@ -45,17 +45,17 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 			}
 
 			final Set<String> normalized = new HashSet<>(set.size());
-			final boolean isName = (args.length > 0 ? args[0] : "").trim().equalsIgnoreCase(nameArg);
+			final boolean isName = (args.length > 0 ? args[0] : "").trim().equalsIgnoreCase(ARG_NAME);
 			for (final Object object : set) {
 				if (object instanceof final String str) {
 					if (isName) {
 						nameValidator.validateName(str.trim());
 						normalized.add(nameNormalizer.normalize(str));
 					} else {
-						final String trimmed = str.trim();
-						if (Utilities.isEmpty(trimmed)) {
+						if (Utilities.isEmpty(str)) {
 							throw new InvalidParameterException("Value should be a non-empty string");
 						}
+						normalized.add(str.trim());
 					}
 				} else {
 					throw new InvalidParameterException("Value should be a string");
@@ -67,5 +67,4 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 
 		throw new InvalidParameterException("Property value should be a set of string values");
 	}
-
 }

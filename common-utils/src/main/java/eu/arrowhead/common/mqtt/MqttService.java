@@ -55,11 +55,18 @@ public class MqttService {
 	public MqttClient client(final String connectId) {
 		logger.debug("client started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
+
 		return clientMap.get(connectId);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public void connect(final String connectId, final String address, final int port, final String clientId, final String username, final String password) throws MqttException {
+	public void connect(
+			final String connectId,
+			final String address,
+			final int port,
+			final String clientId,
+			final String username,
+			final String password) throws MqttException {
 		logger.debug("createConnection started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
@@ -80,6 +87,7 @@ public class MqttService {
 				options.setPassword(password.toCharArray());
 			}
 		}
+
 		if (sslProperties.isSslEnabled()) {
 			try {
 				options.setSocketFactory(sslSettings());
@@ -116,14 +124,14 @@ public class MqttService {
 	private SSLSocketFactory sslSettings() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
 		logger.debug("sslSettings started");
 
-		final String messageNotDefined = " is not defined.";
+		final String messageNotDefined = " is not defined";
 		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
 		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found.");
+		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
 		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
 		Assert.notNull(sslProperties.getKeyPassword(), Constants.KEY_PASSWORD + messageNotDefined);
 		Assert.notNull(sslProperties.getTrustStore(), Constants.TRUSTSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.TRUSTSTORE_PATH + " file is not found.");
+		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.TRUSTSTORE_PATH + " file is not found");
 		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.TRUSTSTORE_PASSWORD + messageNotDefined);
 
 		final KeyStore keyStore = KeyStore.getInstance(sslProperties.getKeyStoreType());

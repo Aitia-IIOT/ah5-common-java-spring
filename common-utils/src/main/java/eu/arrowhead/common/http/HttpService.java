@@ -91,27 +91,13 @@ public class HttpService {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	@PostConstruct
-	public void init() throws Exception {
-		logger.debug("Initializing HttpService...");
-		httpClient = createHttpClient(null);
-		SslContext sslContext;
-		if (sslProperties.isSslEnabled()) {
-			try {
-				sslContext = createSSLContext();
-			} catch (final KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-				// it's initialization so we just logging the exception then let the application die
-				logger.error("Error while creating SSL context: {}", ex.getMessage());
-				logger.debug("Exception", ex);
-				throw ex;
-			}
-			sslClient = createHttpClient(sslContext);
-		}
-		logger.debug("HttpService is initialized.");
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public <T, P> T sendRequest(final UriComponents uri, final HttpMethod method, final Class<T> responseType, final P payload, final SslContext givenContext, final Map<String, String> customHeaders) {
+	public <T, P> T sendRequest(
+			final UriComponents uri,
+			final HttpMethod method,
+			final Class<T> responseType,
+			final P payload,
+			final SslContext givenContext,
+			final Map<String, String> customHeaders) {
 		logger.debug("sendRequest started...");
 		Assert.notNull(method, "Request method is not defined.");
 		logger.debug("Sending {} request to: {}", method, uri);
@@ -201,7 +187,13 @@ public class HttpService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public <T, P> T sendRequest(final UriComponents uri, final HttpMethod method, final ParameterizedTypeReference<T> responseType, final P payload, final SslContext givenContext, final Map<String, String> customHeaders) {
+	public <T, P> T sendRequest(
+			final UriComponents uri,
+			final HttpMethod method,
+			final ParameterizedTypeReference<T> responseType,
+			final P payload,
+			final SslContext givenContext,
+			final Map<String, String> customHeaders) {
 		logger.debug("sendRequest started...");
 		Assert.notNull(method, "Request method is not defined.");
 		logger.debug("Sending {} request to: {}", method, uri);
@@ -310,6 +302,31 @@ public class HttpService {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
+	@PostConstruct
+	private void init() throws Exception {
+		logger.debug("Initializing HttpService...");
+
+		httpClient = createHttpClient(null);
+
+		if (sslProperties.isSslEnabled()) {
+			SslContext sslContext;
+
+			try {
+				sslContext = createSSLContext();
+			} catch (final KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+				// it's initialization so we just logging the exception then let the application die
+				logger.error("Error while creating SSL context: {}", ex.getMessage());
+				logger.debug("Exception", ex);
+				throw ex;
+			}
+
+			sslClient = createHttpClient(sslContext);
+		}
+
+		logger.debug("HttpService is initialized.");
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	private HttpClient createHttpClient(final SslContext sslContext) {
 		HttpClient client = HttpClient.create()
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectionTimeout)
@@ -396,7 +413,7 @@ public class HttpService {
 
 			final String message = Utilities.isEmpty(ex.getResponseBodyAsString()) ? ex.getStatusText() : ex.getResponseBodyAsString();
 			final String code = getStatusCodeAsString(ex);
-			return new ArrowheadException(message + ", status code:" + code);
+			return new ArrowheadException(message + ", status code: " + code);
 		}
 
 		logger.debug("Error occured at {}. Returned with {}, status text: {}", uri, getStatusCodeAsString(ex), ex.getStatusText());

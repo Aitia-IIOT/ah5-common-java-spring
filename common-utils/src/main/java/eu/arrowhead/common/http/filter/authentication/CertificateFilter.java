@@ -48,6 +48,7 @@ public class CertificateFilter extends ArrowheadFilter {
 
 			checkClientAuthorized(requesterData, requestTarget);
 			fillRequestAttributes(request, requesterData);
+
 			chain.doFilter(request, response);
 		} catch (final ArrowheadException ex) {
 			handleException(ex, response);

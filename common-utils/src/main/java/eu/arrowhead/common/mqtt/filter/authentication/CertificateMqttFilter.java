@@ -6,6 +6,9 @@ import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 public class CertificateMqttFilter implements ArrowheadMqttFilter {
 
+	//=================================================================================================
+	// methods
+
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public int order() {
@@ -17,5 +20,4 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 	public void doFilter(final String authKey, final MqttRequestModel request) {
 		// TODO Auto-generated method stub
 	}
-
 }
