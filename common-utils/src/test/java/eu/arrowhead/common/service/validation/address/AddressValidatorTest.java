@@ -25,17 +25,8 @@ public class AddressValidatorTest {
 	//=================================================================================================
 	// members
 
-    @Mock
-    private Environment environment;
-
     @Autowired
-    @InjectMocks
     private AddressValidator addressValidator;
-    
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
         
     //=================================================================================================
     // methods
