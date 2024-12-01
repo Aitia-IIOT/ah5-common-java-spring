@@ -2,20 +2,17 @@ package eu.arrowhead.common.service.validation.address;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import eu.arrowhead.common.exception.InvalidParameterException;
@@ -63,7 +60,7 @@ public class AddressValidatorTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void validateIPv6Test() {
-		assertAll("IPv4 address",
+		assertAll("IPv6 address",
 				// valid IPv6
 				() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.IPV6, "2001:11b8:96b3:0000:0000:8a2e:0370:7cf4");}),
 				// invalid IPv6
@@ -80,20 +77,69 @@ public class AddressValidatorTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void validateMACTest() {
-		//TODO
+		assertAll("MAC address",
+				// valid MAC
+				() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.MAC, "00:1a:2b:3c:4d:5e");}),
+				// invalid MAC
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.MAC, "00-1A-2B-3C-4D-5E");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.MAC, "192.168.2.1");}),
+				// local broadcast address
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.MAC, "ff:ff:ff:ff:ff:ff");}),
+				// IPv4 mapped multicast address
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.MAC, "01:00:5e:3c:4d:5e");}),
+				// IPv6 mapped
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.MAC, "33:33:5e:3c:4d:5e");}));
+		
 	}
 	
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void validateHostNameTest() {
-		//TODO
+		//valid hostname, invalid hostname, invalid length
+		assertAll("hostname",
+				// valid hostname
+				() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example.com");}),
+				() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "subdomain.example.hu");}),
+				() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "EXAMPLE.ORG");}),
+				() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "a.b.c");}),
+				// invalid hostname
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example..com");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, ".example.com");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example.com.");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "-example.com");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example-.com");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example.com-");}),
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example.invalid-segment-length-because-it-is-more-than-sixty-three-characters-long.com");}),
+				// invalid length (max: 253)
+				() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, 
+						"too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long."
+						+ "too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.com");}));
 	}
 	
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void detectTypeTest() {
-		//TODO
-	}
+    	assertAll("detect type",
+    			// empty address
+    			() -> assertThrows(java.lang.IllegalArgumentException.class, () -> {addressValidator.detectType(null);}),
+    			() -> assertThrows(java.lang.IllegalArgumentException.class, () -> {addressValidator.detectType("");}),
+    			// IPv4
+    			() -> assertEquals(AddressType.IPV4, addressValidator.detectType("192.168.2.1")),
+    			() -> assertEquals(AddressType.IPV4, addressValidator.detectType("0.0.0.0")),
+    			() -> assertEquals(AddressType.IPV4, addressValidator.detectType("255.255.255.255")),
+    			// IPv6
+    			() -> assertEquals(AddressType.IPV6, addressValidator.detectType("2001:11b8:96b3:0000:0000:8a2e:0370:7cf4")),
+    			() -> assertEquals(AddressType.IPV6, addressValidator.detectType("ff01:11b8:96b3:0000:0000:8a2e:0370:7cf4")),
+    			() -> assertEquals(AddressType.IPV6, addressValidator.detectType("0000:0000:0000:0000:0000:0000:0000:0000")),
+    			// MAC
+    			() -> assertEquals(AddressType.MAC, addressValidator.detectType("00:1a:2b:3c:4d:5e")),
+    			() -> assertEquals(AddressType.MAC, addressValidator.detectType("ff:ff:ff:ff:ff:ff")),
+    			() -> assertEquals(AddressType.MAC, addressValidator.detectType("00:00:00:00:00:00")),
+    			// hostname
+    			() -> assertEquals(AddressType.HOSTNAME, addressValidator.detectType("example.com")),
+    			() -> assertEquals(AddressType.HOSTNAME, addressValidator.detectType("1x5ä!?")),
+    			() -> assertEquals(AddressType.HOSTNAME, addressValidator.detectType("000")));
+    }
 	
     //-------------------------------------------------------------------------------------------------
     @Test
@@ -103,6 +149,12 @@ public class AddressValidatorTest {
     	
     	    	
     	assertAll("don't allow self addressing",
+    			// hostname
+    			() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "my-hostname.com");}),
+    			() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "loopback");}),    			
+    			() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "localhost");}),
+    			() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "LOOPBACK");}),    			
+    			() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "LOCALHOST");}),
     			// IPv4
     			() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.IPV4, "192.168.2.1");}),
     			() -> assertThrows(InvalidParameterException.class, () -> {addressValidator.validateNormalizedAddress(AddressType.IPV4, "127.0.0.1");}),
@@ -120,6 +172,9 @@ public class AddressValidatorTest {
     	ReflectionTestUtils.setField(addressValidator, "allowSelfAddressing", true);
     	
     	assertAll("allow self addressing",
+    			// hostname
+    			() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "loopback");}),    			
+    			() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "localhost");}),
     			// IPv4
     			() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.IPV4, "192.168.2.1");}),
     			() -> assertDoesNotThrow(() -> {addressValidator.validateNormalizedAddress(AddressType.IPV4, "127.0.0.1");}),
