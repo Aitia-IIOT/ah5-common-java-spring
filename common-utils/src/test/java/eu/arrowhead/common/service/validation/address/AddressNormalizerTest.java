@@ -34,8 +34,7 @@ public class AddressNormalizerTest {
 				// invalid characters
 				() -> assertEquals("ä1:a1:a1:a1:a1:a1", addressNormalizer.normalize("ä1:a1:a1:a1:a1:a1")),
 				// looks like IPv6, but contains more than one duplicated colons
-				() -> assertEquals("2001::96b3::8a2e:0370:7cf4", addressNormalizer.normalize("2001::96b3::8a2e:0370:7cf4"))
-				);
+				() -> assertEquals("2001::96b3::8a2e:0370:7cf4", addressNormalizer.normalize("2001::96b3::8a2e:0370:7cf4")));
 		
 	}
 	
