@@ -12,7 +12,6 @@ import eu.arrowhead.common.service.validation.meta.evaluator.IncludesIgnoreCaseE
 import eu.arrowhead.common.service.validation.meta.evaluator.LessThanEvaluator;
 import eu.arrowhead.common.service.validation.meta.evaluator.LessThanOrEqualsToEvaluator;
 import eu.arrowhead.common.service.validation.meta.evaluator.ListContainsEvaluator;
-import eu.arrowhead.common.service.validation.meta.evaluator.ListNotContainsEvaluator;
 import eu.arrowhead.common.service.validation.meta.evaluator.NotEvaluator;
 import eu.arrowhead.common.service.validation.meta.evaluator.RegExpEvaluator;
 import eu.arrowhead.common.service.validation.meta.evaluator.SizeEqualsEvaluator;
@@ -54,7 +53,7 @@ public enum MetaOps {
 
 	// list - any
 	CONTAINS(new ListContainsEvaluator()),
-	NOT_CONTAINS(new NotEvaluator(new ListNotContainsEvaluator())),
+	NOT_CONTAINS(new NotEvaluator(new ListContainsEvaluator())),
 
 	// any - list
 	IN(new InEvaluator()),
