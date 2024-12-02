@@ -6,5 +6,4 @@ public record ServiceInterfaceTemplateRequestDTO(
 		String name,
 		String protocol,
 		List<ServiceInterfaceTemplatePropertyDTO> propertyRequirements) {
-
 }

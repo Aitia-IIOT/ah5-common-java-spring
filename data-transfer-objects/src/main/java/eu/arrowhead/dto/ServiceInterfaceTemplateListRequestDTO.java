@@ -4,5 +4,4 @@ import java.util.List;
 
 public record ServiceInterfaceTemplateListRequestDTO(
 		List<ServiceInterfaceTemplateRequestDTO> interfaceTemplates) {
-
 }

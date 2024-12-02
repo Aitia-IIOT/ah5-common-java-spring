@@ -10,5 +10,4 @@ public record ServiceInstanceRequestDTO(
 		String expiresAt,
 		Map<String, Object> metadata,
 		List<ServiceInstanceInterfaceRequestDTO> interfaces) {
-
 }

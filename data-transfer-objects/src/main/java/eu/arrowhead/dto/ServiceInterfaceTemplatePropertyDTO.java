@@ -11,5 +11,4 @@ public record ServiceInterfaceTemplatePropertyDTO(
 		boolean mandatory,
 		String validator,
 		List<String> validatorParams) {
-
 }

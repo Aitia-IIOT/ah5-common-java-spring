@@ -9,5 +9,4 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public record ServiceDefinitionListResponseDTO(
 		List<ServiceDefinitionResponseDTO> entries,
 		long count) {
-
 }

@@ -9,5 +9,4 @@ public record SystemRequestDTO(
 		String version,
 		List<String> addresses,
 		String deviceName) {
-
 }

@@ -1,6 +1,7 @@
 package eu.arrowhead.dto.enums;
 
 public enum ExceptionType {
+
 	ARROWHEAD(500),
 	INVALID_PARAMETER(400),
 	AUTH(401),
@@ -17,15 +18,18 @@ public enum ExceptionType {
 	private final int errorCode;
 
 	//=================================================================================================
+	// methods
+
+	//-------------------------------------------------------------------------------------------------
+	public int getErrorCode() {
+		return errorCode;
+	}
+
+	//=================================================================================================
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	private ExceptionType(final int errorCode) {
 		this.errorCode = errorCode;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public int getErrorCode() {
-		return errorCode;
 	}
 }

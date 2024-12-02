@@ -1,7 +1,7 @@
 package eu.arrowhead.dto;
 
 public record MqttResponseTemplate(
-		Integer status,
+		int status,
 		String traceId,
 		String receiver,
 		Object payload) {
