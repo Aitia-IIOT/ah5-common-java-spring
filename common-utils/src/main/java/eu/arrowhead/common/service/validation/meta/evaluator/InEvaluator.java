@@ -12,7 +12,7 @@ public class InEvaluator implements IMetaEvaluator {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public boolean eval(final Object left, final Object right) {
-		if (right instanceof final  List<?> rightList) {
+		if (right instanceof final List<?> rightList) {
 			return rightList.contains(left);
 		}
 
