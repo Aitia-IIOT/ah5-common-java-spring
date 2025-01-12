@@ -38,6 +38,8 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	// members
 
 	private static final String SR_LOOKUP_PATH = "/serviceregistry/service-discovery/lookup";
+	private static final String VERBOSE_KEY = "verbose";
+	private static final String VERBOSE_VALUE = "true";
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -96,7 +98,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		logger.debug("acquireServiceFromSR started...");
 
 		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
-		final UriComponents uri = HttpUtilities.createURI(scheme, sysInfo.getServiceRegistryAddress(), sysInfo.getServiceRegistryPort(), SR_LOOKUP_PATH);
+		final UriComponents uri = HttpUtilities.createURI(scheme, sysInfo.getServiceRegistryAddress(), sysInfo.getServiceRegistryPort(), SR_LOOKUP_PATH, VERBOSE_KEY, VERBOSE_VALUE);
 
 		final ServiceInstanceLookupRequestDTO payload = createRequestPayload(serviceDefinitionName, interfaceTemplateName);
 
