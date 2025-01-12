@@ -180,6 +180,8 @@ public final class Constants {
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
+	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
+	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
 
 	// Operation related
 
@@ -187,6 +189,7 @@ public final class Constants {
 	public static final String SERVICE_OP_REGISTER = "register";
 	public static final String SERVICE_OP_LOOKUP = "lookup";
 	public static final String SERVICE_OP_REVOKE = "revoke";
+	public static final String SERVICE_OP_CHECK = "check";
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
 	public static final String SERVICE_OP_GET_CONFIG = "get-config";
@@ -208,6 +211,9 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_QUERY = "interface-template-query";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
+	public static final String SERVICE_OP_BLACKLIST_QUERY = "blacklist-query";
+	public static final String SERVICE_OP_BLACKLIST_CREATE = "blacklist-create";
+	public static final String SERVICE_OP_BLACKLIST_REMOVE = "blacklist-remove";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 
