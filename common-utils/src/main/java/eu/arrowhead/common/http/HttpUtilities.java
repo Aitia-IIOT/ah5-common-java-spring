@@ -195,7 +195,7 @@ public final class HttpUtilities {
 		
 		final Object isSysopObject = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST);
 		
-		return Boolean.getBoolean(isSysopObject.toString());
+		return (boolean) isSysopObject;
 	}
 	
 	//-------------------------------------------------------------------------------------------------
