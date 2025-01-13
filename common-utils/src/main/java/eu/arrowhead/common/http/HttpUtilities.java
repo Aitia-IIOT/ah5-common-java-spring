@@ -187,6 +187,18 @@ public final class HttpUtilities {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public static boolean isSysop(final HttpServletRequest request, final String origin) throws InvalidParameterException {
+		
+		if (request == null) {
+			throw new InvalidParameterException("Request is null", origin);
+		}
+		
+		final Object isSysopObject = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST);
+		
+		return Boolean.getBoolean(isSysopObject.toString());
+	}
+	
+	//-------------------------------------------------------------------------------------------------
 	public static boolean isValidHttpMethod(final String str) {
 		if (!Utilities.isEmpty(str)) {
 			final HttpMethod method = HttpMethod.valueOf(str.toUpperCase().trim());

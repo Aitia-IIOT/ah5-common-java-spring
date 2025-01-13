@@ -39,7 +39,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 	private static final String SR_LOOKUP_PATH = "/serviceregistry/service-discovery/lookup";
 	private static final String VERBOSE_KEY = "verbose";
-	private static final String VERBOSE_VALUE = "true";
+	private static final String VERBOSE_VALUE = "false";
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
