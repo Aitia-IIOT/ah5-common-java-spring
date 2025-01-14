@@ -24,9 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Order(Constants.REQUEST_FILTER_ORDER_AUTHORIZATION_MGMT_SERVICE)
 public class ManagementServiceFilter extends ArrowheadFilter {
 
-	// TODO: if an endpoint is management, then check sysop, whitelist or authorization (depending on management.policy config)
-	// requester comes from the request attribute "arrowhead.authenticated"
-
 	//=================================================================================================
 	// members
 
