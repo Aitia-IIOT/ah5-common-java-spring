@@ -206,13 +206,16 @@ public final class HttpUtilities {
 	public static String calculateAuthorizationHeader(final SystemInfo sysInfo) {
 		logger.debug("calculateAuthorizationHeader started...");
 
+		final String identityToken = sysInfo.getIdentityToken();
 		switch (sysInfo.getAuthenticationPolicy()) {
 		case DECLARED:
 			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + sysInfo.getSystemName();
 		case OUTSOURCED:
-			final String identityToken = sysInfo.getIdentityToken();
 			return identityToken == null ? null
 					: Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
+		case INTERNAL:
+			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER
+					+ sysInfo.getSystemName() + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
 		default:
 			return null;
 		}

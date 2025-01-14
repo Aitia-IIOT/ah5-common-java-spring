@@ -112,7 +112,7 @@ public abstract class SystemInfo {
 		}
 
 		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
-			throw new InvalidParameterException("MQTT Broker address is not defined.");
+			throw new InvalidParameterException("MQTT Broker address is not defined");
 		}
 
 		customInit();

@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Order(Constants.REQUEST_FILTER_ORDER_AUTHENTICATION)
-public class SelfDeclaredFilter extends ArrowheadFilter {
+public class SelfDeclaredFilter extends ArrowheadFilter implements IAuthenticationPolicyFilter {
 
 	//=================================================================================================
 	// assistant methods

@@ -123,7 +123,7 @@ public final class Constants {
 	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
-	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
 
 	public static final String HTTP_CLIENT_CONNECTION_TIMEOUT = "http.client.connection.timeout";
 	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":30000}";

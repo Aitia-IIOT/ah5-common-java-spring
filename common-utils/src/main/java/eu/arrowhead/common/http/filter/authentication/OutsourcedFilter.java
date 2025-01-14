@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Order(Constants.REQUEST_FILTER_ORDER_AUTHENTICATION)
-public class OutsourcedFilter extends ArrowheadFilter {
+public class OutsourcedFilter extends ArrowheadFilter implements IAuthenticationPolicyFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	@Override

@@ -4,14 +4,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import eu.arrowhead.common.collector.HttpCollectorDriver;
 import eu.arrowhead.common.collector.ICollectorDriver;
-import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authentication.CertificateFilter;
+import eu.arrowhead.common.http.filter.authentication.IAuthenticationPolicyFilter;
 import eu.arrowhead.common.http.filter.authentication.OutsourcedFilter;
 import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
@@ -33,7 +35,8 @@ public class CommonBeanConfig {
 
 	//-------------------------------------------------------------------------------------------------
 	@Bean
-	ArrowheadFilter authenticationPolicyFilter(@Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
+	@ConditionalOnExpression("'" + Constants.$AUTHENTICATION_POLICY_WD + "' != '" + AuthenticationPolicy.INTERNAL_VALUE + "'")
+	IAuthenticationPolicyFilter authenticationPolicyFilter(@Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
 		switch (policy) {
 		case CERTIFICATE:
 			return new CertificateFilter();
