@@ -10,11 +10,9 @@ public class GreaterThanOrEqualsToEvaluator implements IMetaEvaluator {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public boolean eval(final Object left, final Object right) {
-		if (left instanceof Number && right instanceof Number) {
-			final Number leftNum = (Number) left;
-			final Number rightNum = (Number) right;
-			boolean leftIsReal = (left instanceof Double || left instanceof Float);
-			boolean rightIsReal = (right instanceof Double || right instanceof Float);
+		if (left instanceof final Number leftNum && right instanceof final Number rightNum) {
+			final boolean leftIsReal = (left instanceof Double || left instanceof Float);
+			final boolean rightIsReal = (right instanceof Double || right instanceof Float);
 
 			if (leftIsReal) {
 				return leftNum.doubleValue() >= (rightIsReal ? rightNum.doubleValue() : rightNum.longValue());

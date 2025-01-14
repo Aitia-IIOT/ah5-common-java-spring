@@ -7,5 +7,4 @@ public record DeviceRequestDTO(
 		String name,
 		Map<String, Object> metadata,
 		List<String> addresses) {
-
 }

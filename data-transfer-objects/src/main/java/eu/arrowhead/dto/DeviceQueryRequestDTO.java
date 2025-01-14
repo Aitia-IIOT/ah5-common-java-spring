@@ -8,5 +8,4 @@ public record DeviceQueryRequestDTO(
 		List<String> addresses,
 		String addressType,
 		List<MetadataRequirementDTO> metadataRequirementList) {
-
 }

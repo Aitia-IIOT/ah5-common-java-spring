@@ -11,5 +11,4 @@ public record LogEntryDTO(
 		String severity,
 		String message,
 		String exception) {
-
 }

@@ -8,6 +8,9 @@ import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 public class SelfDeclaredMqttFilter implements ArrowheadMqttFilter {
 
+	//=================================================================================================
+	// methods
+
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public int order() {
@@ -27,7 +30,6 @@ public class SelfDeclaredMqttFilter implements ArrowheadMqttFilter {
 		}
 
 		request.setRequester(split[1]);
-
-		// TODO SYSOP beállítani
+		request.setSysOp(Constants.SYSOP.equals(split[1].toLowerCase().trim()));
 	}
 }

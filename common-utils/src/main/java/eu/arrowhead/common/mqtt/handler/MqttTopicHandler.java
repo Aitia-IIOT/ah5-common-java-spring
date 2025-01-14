@@ -87,7 +87,6 @@ public abstract class MqttTopicHandler extends Thread {
 
 							// API call
 							handle(request);
-
 						} catch (final Exception ex) {
 							errorResponse(ex, request);
 						} finally {
@@ -95,7 +94,6 @@ public abstract class MqttTopicHandler extends Thread {
 							resourceManager.registerLatency(endTime - startTime);
 						}
 					});
-
 				} catch (final RejectedExecutionException ex) {
 					Entry<String, MqttRequestModel> parsed = null;
 					try {
@@ -105,9 +103,9 @@ public abstract class MqttTopicHandler extends Thread {
 						errorResponse(ex, null);
 						continue;
 					}
+
 					errorResponse(ex, parsed.getValue());
 				}
-
 			} catch (final InterruptedException ex) {
 				logger.debug(ex.getMessage());
 				logger.debug(ex);
@@ -134,9 +132,15 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	protected void successResponse(final MqttRequestModel request, final MqttStatus status, final Object response) {
 		if (!Utilities.isEmpty(request.getResponseTopic())) {
-			ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), status, response);
+			ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID,
+					request.getRequester(),
+					request.getResponseTopic(),
+					request.getTraceId(),
+					request.getQosRequirement(),
+					status,
+					response);
 		} else {
-			logger.debug("No MQTT response topic was defined for success response.");
+			logger.debug("No MQTT response topic was defined for success response");
 		}
 	}
 
@@ -170,9 +174,6 @@ public abstract class MqttTopicHandler extends Thread {
 		}
 	}
 
-	//=================================================================================================
-	// assistant methods
-
 	//-------------------------------------------------------------------------------------------------
 	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessage message) {
 		if (message == null) {
@@ -196,13 +197,19 @@ public abstract class MqttTopicHandler extends Thread {
 		}
 
 		if (Utilities.isEmpty(request.getResponseTopic())) {
-			logger.error("MQTT request error occured, but no response topic has been defined.");
+			logger.error("MQTT request error occured, but no response topic has been defined");
 			logger.debug(ex);
 			return;
 		}
 
 		final MqttStatus status = calculateStatusFromException(ex);
-		ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID, request.getRequester(), request.getResponseTopic(), request.getTraceId(), request.getQosRequirement(), status, ex.getMessage());
+		ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID,
+				request.getRequester(),
+				request.getResponseTopic(),
+				request.getTraceId(),
+				request.getQosRequirement(),
+				status,
+				ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -239,8 +246,8 @@ public abstract class MqttTopicHandler extends Thread {
 			default:
 				status = MqttStatus.INTERNAL_SERVER_ERROR;
 			}
-
 		}
+
 		return status;
 	}
 }

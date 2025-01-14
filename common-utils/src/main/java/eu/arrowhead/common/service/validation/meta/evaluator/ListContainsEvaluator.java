@@ -12,8 +12,8 @@ public class ListContainsEvaluator implements IMetaEvaluator {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public boolean eval(final Object left, final Object right) {
-		if (left instanceof List<?>) {
-			return ((List<?>) left).contains(right);
+		if (left instanceof final List<?> leftList) {
+			return leftList.contains(right);
 		}
 
 		return false;

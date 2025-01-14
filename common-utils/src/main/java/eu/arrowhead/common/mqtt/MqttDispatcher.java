@@ -72,7 +72,6 @@ public class MqttDispatcher {
 		Assert.isTrue(topicQueueMap.containsKey(topic), "unknown topic");
 
 		topicQueueMap.get(topic).add(msg);
-
 	}
 
 	//-------------------------------------------------------------------------------------------------

@@ -13,6 +13,9 @@ public record ErrorMessageDTO(
 		ExceptionType exceptionType,
 		String origin) implements ErrorWrapperDTO {
 
+	//=================================================================================================
+	// methods
+
 	//-------------------------------------------------------------------------------------------------
 	@JsonIgnore
 	@Override

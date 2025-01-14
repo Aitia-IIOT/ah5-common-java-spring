@@ -28,8 +28,7 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
-		Object attribute = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
-		System.out.println(attribute);
+//		Object attribute = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
 
 		super.doFilterInternal(request, response, chain);
 	}

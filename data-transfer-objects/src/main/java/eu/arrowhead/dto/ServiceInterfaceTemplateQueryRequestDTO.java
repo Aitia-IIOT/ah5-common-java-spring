@@ -6,5 +6,4 @@ public record ServiceInterfaceTemplateQueryRequestDTO(
 		PageDTO pagination,
 		List<String> templateNames,
 		List<String> protocols) {
-
 }

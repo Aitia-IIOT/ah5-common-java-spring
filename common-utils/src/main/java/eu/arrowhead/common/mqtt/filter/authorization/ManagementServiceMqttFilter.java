@@ -8,8 +8,11 @@ import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 @Service
-@ConditionalOnProperty(name = {"mqtt.api.enabled", "enable.management.filter"}, havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = { "mqtt.api.enabled", "enable.management.filter" }, havingValue = "true", matchIfMissing = false)
 public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
+
+	//=================================================================================================
+	// methods
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
@@ -23,5 +26,4 @@ public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 		// TODO Auto-generated method stub
 
 	}
-
 }

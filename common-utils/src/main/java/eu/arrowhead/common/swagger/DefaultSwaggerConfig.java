@@ -46,6 +46,7 @@ public abstract class DefaultSwaggerConfig implements WebMvcConfigurer {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	// TODO: add Licence name here
 	protected License apiLicence() {
 		return new License()
 				.name("Licence: TODO")

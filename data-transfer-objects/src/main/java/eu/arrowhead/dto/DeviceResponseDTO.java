@@ -13,5 +13,4 @@ public record DeviceResponseDTO(
 		List<AddressDTO> addresses,
 		String createdAt,
 		String updatedAt) {
-
 }

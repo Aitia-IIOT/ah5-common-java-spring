@@ -32,9 +32,7 @@ public class PageValidator {
 		logger.debug("validatePageParameter started...");
 
 		if (page != null) {
-
 			if (page.size() != null) {
-
 				if (page.page() == null) {
 					throw new InvalidParameterException("If size parameter is defined then page parameter cannot be undefined", origin);
 				}
@@ -42,7 +40,6 @@ public class PageValidator {
 				if (page.size() > maxPageSize) {
 					throw new InvalidParameterException("The page size cannot be larger than " + maxPageSize, origin);
 				}
-
 			}
 
 			if (page.page() != null && page.size() == null) {

@@ -38,7 +38,7 @@ public class SSLProperties {
 	private String trustStorePassword;
 
 	//=================================================================================================
-	// methods
+	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	@PostConstruct
@@ -102,6 +102,7 @@ public class SSLProperties {
 		return keyPassword;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public String getKeyAlias() {
 		return keyAlias;
 	}

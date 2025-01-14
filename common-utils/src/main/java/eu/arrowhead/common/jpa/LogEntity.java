@@ -129,5 +129,4 @@ public class LogEntity {
 	public void setException(final String exception) {
 		this.exception = exception;
 	}
-
 }

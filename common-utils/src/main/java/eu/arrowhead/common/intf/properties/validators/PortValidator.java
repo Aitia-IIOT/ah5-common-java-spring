@@ -16,7 +16,7 @@ public class PortValidator implements IPropertyValidator {
 	// members
 
 	@SuppressWarnings("checkstyle:nowhitespaceafter")
-	private static String[] minMax = { String.valueOf(Constants.MIN_PORT), String.valueOf(Constants.MAX_PORT) };
+	private static final String[] MIN_MAX = { String.valueOf(Constants.MIN_PORT), String.valueOf(Constants.MAX_PORT) };
 
 	private final Logger logger = LogManager.getLogger(getClass());
 
@@ -33,7 +33,7 @@ public class PortValidator implements IPropertyValidator {
 		logger.debug("PortValidator.validateAndNormalize started...");
 
 		if (propertyValue instanceof Number && !(propertyValue instanceof Double || propertyValue instanceof Float)) {
-			return minMaxValidator.validateAndNormalize(propertyValue, minMax);
+			return minMaxValidator.validateAndNormalize(propertyValue, MIN_MAX);
 		}
 
 		throw new InvalidParameterException("Property value should be an integer");
