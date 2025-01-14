@@ -69,11 +69,9 @@ public class MqttResourceManager {
 		final boolean shouldFix = count >= MEASURE_SIZE;
 		if (shouldFix && threadpoolFixed) {
 			return;
-
 		} else if (shouldFix && !threadpoolFixed) {
 			threadpool.setMaximumPoolSize(threadpool.getActiveCount());
 			threadpoolFixed = true;
-
 		} else if (!shouldFix && threadpoolFixed) {
 			threadpool.setMaximumPoolSize(NO_LIMIT);
 			threadpoolFixed = false;

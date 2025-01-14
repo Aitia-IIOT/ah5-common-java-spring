@@ -15,5 +15,4 @@ public record SystemResponseDTO(
 		DeviceResponseDTO device,
 		String createdAt,
 		String updatedAt) {
-
 }

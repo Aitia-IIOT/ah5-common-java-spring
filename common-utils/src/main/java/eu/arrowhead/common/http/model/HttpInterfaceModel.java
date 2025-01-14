@@ -18,12 +18,13 @@ public record HttpInterfaceModel(
 		String basePath,
 		Map<String, HttpOperationModel> operations) implements InterfaceModel {
 
+	//-------------------------------------------------------------------------------------------------
 	public HttpInterfaceModel {
-		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty.");
-		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty.");
-		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid.");
-		Assert.isTrue(!Utilities.isEmpty(basePath), "'basePath' is missing.");
-		Assert.isTrue(!Utilities.isEmpty(operations), "'operations' is missing or empty.");
+		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty");
+		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty");
+		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid");
+		Assert.isTrue(!Utilities.isEmpty(basePath), "'basePath' is missing");
+		Assert.isTrue(!Utilities.isEmpty(operations), "'operations' is missing or empty");
 	}
 
 	//=================================================================================================
@@ -46,9 +47,9 @@ public record HttpInterfaceModel(
 	@Override
 	public Map<String, Object> properties() {
 		return Map.of(PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
-				      PROP_NAME_ACCESS_PORT, accessPort,
-				      PROP_NAME_BASE_PATH, basePath,
-				      PROP_NAME_OPERATIONS, operations);
+				PROP_NAME_ACCESS_PORT, accessPort,
+				PROP_NAME_BASE_PATH, basePath,
+				PROP_NAME_OPERATIONS, operations);
 	}
 
 	//=================================================================================================
@@ -127,6 +128,5 @@ public record HttpInterfaceModel(
 		public HttpInterfaceModel build() {
 			return new HttpInterfaceModel(templateName, accessAddresses, accessPort, basePath, operations);
 		}
-
 	}
 }

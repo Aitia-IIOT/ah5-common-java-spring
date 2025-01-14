@@ -59,7 +59,7 @@ public final class MetadataKeyEvaluator {
 						}
 					}
 				} else {
-					// Although key contains [] characters, but not used for indexing
+					// Although key contains [] characters, it is not used for indexing
 					arrayAccessor = false;
 				}
 			}
@@ -95,7 +95,7 @@ public final class MetadataKeyEvaluator {
 
 		try {
 			idxPart = Integer.parseInt(idxPartStr);
-		} catch (final NumberFormatException ex) {
+		} catch (final NumberFormatException __) {
 			// intentionally blank
 		}
 
@@ -106,7 +106,7 @@ public final class MetadataKeyEvaluator {
 	private static Map<?, ?> castToMap(final Object obj) {
 		try {
 			return (Map<?, ?>) obj;
-		} catch (final ClassCastException ex) {
+		} catch (final ClassCastException __) {
 			return null;
 		}
 	}
@@ -115,7 +115,7 @@ public final class MetadataKeyEvaluator {
 	private static List<?> castToList(final Object obj) {
 		try {
 			return (List<?>) obj;
-		} catch (final ClassCastException ex) {
+		} catch (final ClassCastException __) {
 			return null;
 		}
 	}

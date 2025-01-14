@@ -8,6 +8,7 @@ public final class Constants {
 	// members
 
 	// Framework version
+
 	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
 
 	// Global
@@ -218,5 +219,4 @@ public final class Constants {
 	private Constants() {
 		throw new UnsupportedOperationException();
 	}
-
 }

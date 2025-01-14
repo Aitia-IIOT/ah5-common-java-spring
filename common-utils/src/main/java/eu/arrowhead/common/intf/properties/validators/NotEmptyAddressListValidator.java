@@ -41,8 +41,7 @@ public class NotEmptyAddressListValidator implements IPropertyValidator {
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
 		logger.debug("NotEmptyAddressListValidator.validateAndNormalize started...");
 
-		if (propertyValue instanceof List<?>) {
-			final List<?> list = (List<?>) propertyValue;
+		if (propertyValue instanceof final List<?> list) {
 			if (list.isEmpty()) {
 				throw new InvalidParameterException("Property value should be a non-empty list of strings");
 			}
@@ -50,8 +49,7 @@ public class NotEmptyAddressListValidator implements IPropertyValidator {
 			final List<String> normalized = new ArrayList<>(list.size());
 
 			for (final Object element : list) {
-				if (element instanceof String) {
-					final String address = (String) element;
+				if (element instanceof final String address) {
 					if (Utilities.isEmpty(address)) {
 						throw new InvalidParameterException("Property value should be a list of non-blank strings");
 					}

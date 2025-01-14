@@ -13,5 +13,4 @@ public record ServiceInstanceQueryRequestDTO(
 		List<String> interfaceTemplateNames,
 		List<MetadataRequirementDTO> interfacePropertyRequirementsList,
 		List<String> policies) {
-
 }

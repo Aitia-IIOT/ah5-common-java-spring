@@ -7,5 +7,4 @@ public record DeviceLookupRequestDTO(
 		List<String> addresses,
 		String addressType,
 		List<MetadataRequirementDTO> metadataRequirementList) {
-
 }

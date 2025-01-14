@@ -38,7 +38,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getCertificateFromKeyStore(null, null);
 		});
-		assertEquals("Key store is not defined.", ex.getMessage());
+		assertEquals("Key store is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getCertificateFromKeyStore(KeyStore.getInstance(KeyStore.getDefaultType()), null);
 		});
-		assertEquals("Alias is not defined.", ex.getMessage());
+		assertEquals("Alias is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getCertificateFromKeyStore(KeyStore.getInstance(KeyStore.getDefaultType()), " ");
 		});
-		assertEquals("Alias is not defined.", ex.getMessage());
+		assertEquals("Alias is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getPrivateKeyFromKeyStore(null, null, null);
 		});
-		assertEquals("Key store is not defined.", ex.getMessage());
+		assertEquals("Key store is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getPrivateKeyFromKeyStore(KeyStore.getInstance(KeyStore.getDefaultType()), null, null);
 		});
-		assertEquals("Alias is not defined.", ex.getMessage());
+		assertEquals("Alias is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getPrivateKeyFromKeyStore(KeyStore.getInstance(KeyStore.getDefaultType()), " ", null);
 		});
-		assertEquals("Alias is not defined.", ex.getMessage());
+		assertEquals("Alias is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ public class SecurityUtilitiesTest {
 		final Throwable ex = assertThrows(IllegalArgumentException.class, () -> {
 			SecurityUtilities.getPrivateKeyFromKeyStore(KeyStore.getInstance(KeyStore.getDefaultType()), "test", null);
 		});
-		assertEquals("Password is not defined.", ex.getMessage());
+		assertEquals("Password is not defined", ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------

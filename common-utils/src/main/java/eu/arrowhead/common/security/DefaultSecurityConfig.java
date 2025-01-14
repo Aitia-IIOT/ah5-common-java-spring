@@ -19,8 +19,8 @@ public class DefaultSecurityConfig {
 	//=================================================================================================
 	// members
 
-	//	@Value(SentinelConstants.$SERVER_SSL_ENABLED_WD)
-	//	protected boolean sslEnabled;
+	@Value(Constants.$SERVER_SSL_ENABLED_WD)
+	protected boolean sslEnabled;
 
 	@Value(Constants.$LOG_ALL_REQUEST_AND_RESPONSE_WD)
 	protected boolean debugMode;
@@ -32,10 +32,10 @@ public class DefaultSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.NEVER));
 
-		//    	if (sslEnabled) {
-		//    		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
-		//    	}
-		//
+		if (sslEnabled) {
+			http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
+		}
+
 		if (debugMode) {
 			http.addFilterBefore(new OutboundDebugFilter(), ChannelProcessingFilter.class);
 			http.addFilterAfter(new InboundDebugFilter(), X509AuthenticationFilter.class);

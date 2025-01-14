@@ -8,8 +8,11 @@ import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 
 @Service
-@ConditionalOnProperty(name = {"mqtt.api.enabled", "enable.blacklist.filter"}, havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = { "mqtt.api.enabled", "enable.blacklist.filter" }, havingValue = "true", matchIfMissing = false)
 public class BlacklistMqttFilter implements ArrowheadMqttFilter {
+
+	//=================================================================================================
+	// methods
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
@@ -23,5 +26,4 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 		// TODO Auto-generated method stub
 		System.out.println("MQTT blacklist filter");
 	}
-
 }

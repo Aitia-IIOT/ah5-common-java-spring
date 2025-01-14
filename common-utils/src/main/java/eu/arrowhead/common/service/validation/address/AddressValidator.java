@@ -20,10 +20,11 @@ public class AddressValidator {
 	// members
 
 	public static final String ERROR_MSG_PREFIX = "Address verification failure: ";
-	private static final String MAC_REGEX_STRING = "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$";
 	public static final String IPV4_REGEX_STRING = "\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
 	public static final String IPV6_REGEX_STRING = "^([0-9a-fA-F]{4}:){7}[0-9a-fA-F]{4}$";
 	public static final String HOSTNAME_REGEX_STRING = "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)*((?!-)[A-Za-z0-9-]{1,63}(?<!-))$";
+	private static final String MAC_REGEX_STRING = "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$";
+
 	private static final Pattern macPattern;
 	private static final Pattern ipv4Pattern;
 	private static final Pattern ipv6Pattern;
@@ -69,7 +70,7 @@ public class AddressValidator {
 
 	//-------------------------------------------------------------------------------------------------
 	public void validateNormalizedAddress(final AddressType type, final String address) {
-		logger.debug("AddressTypeValidator.validateNormalizedAddress started...");
+		logger.debug("AddressValidator.validateNormalizedAddress started...");
 		Assert.notNull(type, "address type is null");
 		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
 
@@ -93,7 +94,7 @@ public class AddressValidator {
 
 	//-------------------------------------------------------------------------------------------------
 	public AddressType detectType(final String address) {
-		logger.debug("AddressTypeValidator.detectType started...");
+		logger.debug("AddressValidator.detectType started...");
 		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
 
 		if (macPattern.matcher(address).matches()) {
@@ -116,7 +117,7 @@ public class AddressValidator {
 
 	//-------------------------------------------------------------------------------------------------
 	private void validateMAC(final String address) {
-		logger.debug("AddressTypeValidator.validateMAC started...");
+		logger.debug("AddressValidator.validateMAC started...");
 
 		if (!macPattern.matcher(address).matches()) {
 			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " is not MAC address");
@@ -124,19 +125,19 @@ public class AddressValidator {
 
 		// Filter out local broadcast
 		if (address.equalsIgnoreCase(MAC_BROADCAST)) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " MAC address is invalid: broadcast address is denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " MAC address is invalid: broadcast address is denied");
 		}
 
 		// Filter out multicast
 		if (address.startsWith(MAC_IPV4_MAPPED_MULTICAST_PREFIX)
 				|| address.startsWith(MAC_IPV6_MAPPED_MULTICAST_PREFIX)) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " MAC address is invalid: multicast address is denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " MAC address is invalid: multicast address is denied");
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private void validateIPV4(final String address) {
-		logger.debug("AddressTypeValidator.validateIPV4 started...");
+		logger.debug("AddressValidator.validateIPV4 started...");
 
 		if (!ipv4Pattern.matcher(address).matches()) {
 			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " is not IPv4 address");
@@ -145,25 +146,25 @@ public class AddressValidator {
 		if (!allowSelfAddressing) {
 			// Filter out loopback (127.0.0.0 - 127.255.255.255)
 			if (address.startsWith(IPV4_LOOPBACK_1ST_OCTET)) {
-				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: self-addressing is disabled.");
+				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: self-addressing is disabled");
 			}
 		}
 
 		if (!allowNonRoutableAddressing) {
 			// Filter out APIPA (Automatic Private IP Address: 169.254.?.?)
 			if (address.startsWith(IPV4_APIPA_1ST_AND_2ND_OCTET)) {
-				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: non-routable-addressing is disabled.");
+				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: non-routable-addressing is disabled");
 			}
 		}
 
-		// Filter out IP placeholder(default route) (0.0.0.0)
+		// Filter out IP placeholder (default route) (0.0.0.0)
 		if (address.equalsIgnoreCase(IPV4_PLACEHOLDER)) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: placeholder address is denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: placeholder address is denied");
 		}
 
 		// Filter out local broadcast (255.255.255.255)
 		if (address.equalsIgnoreCase(IPV4_LOCAL_BROADCAST)) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: local broadcast address is denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: local broadcast address is denied");
 		}
 
 		// Could not filter out directed broadcast (cannot determine it without the subnet mask)
@@ -172,13 +173,13 @@ public class AddressValidator {
 		final String[] octets = address.split("\\.");
 		final Integer firstOctet = Integer.valueOf(octets[0]);
 		if (firstOctet >= IPV4_MULTICAST_1ST_OCTET_START && firstOctet <= IPV4_MULTICAST_1ST_OCTET_END) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: multicast addresses are denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: multicast addresses are denied");
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private void validateIPV6(final String address) {
-		logger.debug("AddressTypeValidator.validateIPV6 started...");
+		logger.debug("AddressValidator.validateIPV6 started...");
 
 		if (!ipv6Pattern.matcher(address).matches()) {
 			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " is not IPv6 address");
@@ -187,25 +188,25 @@ public class AddressValidator {
 		if (!allowSelfAddressing) {
 			// Filter out loopback address (0000:0000:0000:0000:0000:0000:0000:0001)
 			if (address.equalsIgnoreCase(IPV6_LOOPBACK)) {
-				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: self-addressing is disabled.");
+				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: self-addressing is disabled");
 			}
 		}
 
 		if (!allowNonRoutableAddressing) {
 			// Filter out link-local addresses (prefix fe80)
 			if (address.startsWith(IPV6_LINK_LOCAL_PREFIX)) {
-				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: non-routable-addressing is disabled.");
+				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: non-routable-addressing is disabled");
 			}
 		}
 
 		// Filter out unspecified address (0000:0000:0000:0000:0000:0000:0000:0000)
 		if (address.equalsIgnoreCase(IPV6_UNSPECIFIED)) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: unspecified address is denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: unspecified address is denied");
 		}
 
 		// Filter out multicast (prefix ff)
 		if (address.startsWith(IPV6_MULTICAST_PREFIX)) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: multicast addresses are denied.");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv6 address is invalid: multicast addresses are denied");
 		}
 
 		// Could not filter out anycast addresses (indistinguishable from other unicast addresses)
@@ -213,7 +214,7 @@ public class AddressValidator {
 
 	//-------------------------------------------------------------------------------------------------
 	private void validateHostName(final String address) {
-		logger.debug("AddressTypeValidator.validateHostName started...");
+		logger.debug("AddressValidator.validateHostName started...");
 
 		if (address.length() > HOSTNAME_MAX_LENGTH) {
 			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " hostname is invalid: max length is " + HOSTNAME_MAX_LENGTH);
@@ -226,7 +227,7 @@ public class AddressValidator {
 		if (!allowSelfAddressing) {
 			// Filter out 'localhost' and 'loopback'
 			if (address.equalsIgnoreCase(HOSTNAME_LOCALHOST) || address.equalsIgnoreCase(HOSTNAME_LOOPBACK)) {
-				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " hostname is invalid: self-addressing is disabled.");
+				throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " hostname is invalid: self-addressing is disabled");
 			}
 		}
 	}

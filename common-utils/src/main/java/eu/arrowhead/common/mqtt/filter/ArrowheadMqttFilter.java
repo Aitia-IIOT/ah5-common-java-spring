@@ -9,5 +9,4 @@ public interface ArrowheadMqttFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	public void doFilter(final String authKey, final MqttRequestModel request);
-
 }

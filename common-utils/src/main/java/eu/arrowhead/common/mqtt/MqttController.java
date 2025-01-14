@@ -52,20 +52,21 @@ public class MqttController {
 		logger.debug("MqttController.listen started");
 		Assert.notNull(model, "ServiceModel is null");
 
-		 final Optional<InterfaceModel> optional = model.interfaces().stream().filter(i -> i.templateName().equals(templateName)).findFirst();
-		 if (optional.isEmpty()) {
-			 logger.debug(model.serviceDefinition() + " has no MQTT interface.");
+		final Optional<InterfaceModel> optional = model.interfaces().stream().filter(i -> i.templateName().equals(templateName)).findFirst();
+		if (optional.isEmpty()) {
+			logger.debug(model.serviceDefinition() + " has no MQTT interface.");
 			return;
 		}
+
 		final MqttInterfaceModel interfaceModel = (MqttInterfaceModel) optional.get();
 
 		try {
 			if (client == null) {
 				initMqttClient(interfaceModel.accessAddresses().getFirst(), interfaceModel.accessPort());
 			}
+
 			mqttDispatcher.addTopic(interfaceModel.topic());
 			client.subscribe(interfaceModel.topic());
-
 		} catch (final MqttException ex) {
 			logger.debug(ex);
 			mqttDispatcher.revokeTopic(interfaceModel.topic());
@@ -82,7 +83,6 @@ public class MqttController {
 			final String[] topics = mqttDispatcher.getTopicSet().toArray(new String[0]);
 			client.unsubscribe(topics);
 			mqttService.disconnect(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID);
-
 		} catch (final MqttException ex) {
 			logger.debug(ex);
 			throw new ExternalServerError("Disconnecting MQTT Broker failed: " + ex.getMessage());

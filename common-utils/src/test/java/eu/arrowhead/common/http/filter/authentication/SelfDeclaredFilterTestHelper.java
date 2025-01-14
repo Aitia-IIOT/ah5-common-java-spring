@@ -12,7 +12,7 @@ public class SelfDeclaredFilterTestHelper extends SelfDeclaredFilter {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	// this method just re-throw the input exception which is easier to test than intercept the error response somehow
+	// this method just re-throws the input exception which is easier to test than intercept the error response somehow
 	@Override
 	protected void handleException(final ArrowheadException ex, final ServletResponse response) throws IOException {
 		throw ex;

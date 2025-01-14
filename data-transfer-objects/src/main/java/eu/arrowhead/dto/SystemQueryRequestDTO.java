@@ -10,5 +10,4 @@ public record SystemQueryRequestDTO(
 		List<MetadataRequirementDTO> metadataRequirementList,
 		List<String> versions,
 		List<String> deviceNames) {
-
 }
