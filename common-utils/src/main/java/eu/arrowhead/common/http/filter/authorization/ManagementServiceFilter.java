@@ -2,11 +2,17 @@ package eu.arrowhead.common.http.filter.authorization;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import eu.arrowhead.common.Constants;
+import eu.arrowhead.common.SystemInfo;
+import eu.arrowhead.common.exception.ForbiddenException;
+import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,14 +28,69 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 	// requester comes from the request attribute "arrowhead.authenticated"
 
 	//=================================================================================================
+	// members
+
+	@Autowired
+	private SystemInfo sysInfo;
+
+	private static final String mgmtPath = "/mgmt/";
+
+	private final Logger logger = LogManager.getLogger(this.getClass());
+
+	//=================================================================================================
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
+		logger.debug("ManagementServiceFilter.doFilterInternal started...");
 
-//		Object attribute = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
+		final String requestTarget = request.getRequestURL().toString();
+		if (requestTarget.contains(mgmtPath)) {
+			final String systemName = (String) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
+			boolean allowed = false;
+
+			switch (sysInfo.getManagementPolicy()) {
+			case SYSOP_ONLY:
+				allowed = isSystemOperator(request);
+				break;
+
+			case WHITELIST:
+				allowed = isSystemOperator(request) || isWhitelisted(systemName);
+				break;
+
+			case AUTHORIZATION:
+				allowed = isSystemOperator(request) || isWhitelisted(systemName) || isAuthorized(systemName);
+				break;
+
+			default:
+				throw new InternalServerError("Unimplemented management policy: " + sysInfo.getManagementPolicy(), requestTarget);
+			}
+
+			if (!allowed) {
+				throw new ForbiddenException("Requester has no management permission", requestTarget);
+			}
+
+		}
 
 		super.doFilterInternal(request, response, chain);
+
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private boolean isSystemOperator(final HttpServletRequest request) {
+		final Object isSysOp = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST);
+		return isSysOp == null ? false : (Boolean) isSysOp;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private boolean isWhitelisted(final String systemName) {
+		return sysInfo.getManagementWhitelist().contains(systemName);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private boolean isAuthorized(final String systemName) {
+		// TODO consume the authorization service
+		return false;
 	}
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
+import eu.arrowhead.common.http.filter.authorization.ManagementPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
 import eu.arrowhead.common.service.validation.address.AddressNormalizer;
@@ -38,6 +39,12 @@ public abstract class SystemInfo {
 
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
 	private AuthenticationPolicy authenticationPolicy;
+
+	@Value(Constants.$MANAGEMENT_POLICY)
+	private ManagementPolicy managementPolicy;
+
+	@Value(Constants.$MANAGEMENT_WHITELIST)
+	private List<String> managementWhitelist;
 
 	@Value(Constants.$MQTT_API_ENABLED_WD)
 	private boolean mqttEnabled;
@@ -149,6 +156,16 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public AuthenticationPolicy getAuthenticationPolicy() {
 		return authenticationPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public ManagementPolicy getManagementPolicy() {
+		return managementPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public List<String> getManagementWhitelist() {
+		return managementWhitelist;
 	}
 
 	//-------------------------------------------------------------------------------------------------
