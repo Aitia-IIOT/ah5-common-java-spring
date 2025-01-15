@@ -1,6 +1,7 @@
 package eu.arrowhead.common;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import eu.arrowhead.common.http.filter.authorization.ManagementPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
 import eu.arrowhead.common.service.validation.address.AddressNormalizer;
+import eu.arrowhead.common.service.validation.name.NameNormalizer;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
@@ -45,6 +47,7 @@ public abstract class SystemInfo {
 
 	@Value(Constants.$MANAGEMENT_WHITELIST)
 	private List<String> managementWhitelist;
+	private List<String> normalizedManagementWhitelist = new ArrayList<>();
 
 	@Value(Constants.$MQTT_API_ENABLED_WD)
 	private boolean mqttEnabled;
@@ -63,6 +66,9 @@ public abstract class SystemInfo {
 
 	@Autowired
 	private AddressNormalizer addressNormalizer;
+
+	@Autowired
+	private NameNormalizer nameNormalizer;
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	private Map<String, Object> arrowheadContext;
@@ -165,7 +171,14 @@ public abstract class SystemInfo {
 
 	//-------------------------------------------------------------------------------------------------
 	public List<String> getManagementWhitelist() {
-		return managementWhitelist;
+		if (!Utilities.isEmpty(managementWhitelist) && Utilities.isEmpty(normalizedManagementWhitelist)) {
+			for (final String name : managementWhitelist) {
+				if (!Utilities.isEmpty(name)) {
+					normalizedManagementWhitelist.add(nameNormalizer.normalize(name));
+				}
+			}
+		}
+		return normalizedManagementWhitelist;
 	}
 
 	//-------------------------------------------------------------------------------------------------

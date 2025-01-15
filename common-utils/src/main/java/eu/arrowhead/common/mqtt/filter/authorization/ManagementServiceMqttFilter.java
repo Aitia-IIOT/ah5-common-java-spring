@@ -12,6 +12,7 @@ import eu.arrowhead.common.exception.ForbiddenException;
 import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
+import eu.arrowhead.common.service.validation.name.NameNormalizer;
 
 @Service
 @ConditionalOnProperty(name = { "mqtt.api.enabled", "enable.management.filter" }, havingValue = "true", matchIfMissing = false)
@@ -22,6 +23,9 @@ public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 
 	@Autowired
 	private SystemInfo sysInfo;
+
+	@Autowired
+	private NameNormalizer nameNormalizer;
 
 	private static final String mgmtPath = "/management";
 
@@ -42,7 +46,7 @@ public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 		logger.debug("ManagementServiceMqttFilter.doFilter started...");
 
 		if (request.getRequestTopic().contains(mgmtPath)) {
-			final String systemName = request.getRequester();
+			final String normalizedSystemName = nameNormalizer.normalize(request.getRequester());
 			boolean allowed = false;
 
 			switch (sysInfo.getManagementPolicy()) {
@@ -51,11 +55,11 @@ public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 				break;
 
 			case WHITELIST:
-				allowed = request.isSysOp() || isWhitelisted(systemName);
+				allowed = request.isSysOp() || isWhitelisted(normalizedSystemName);
 				break;
 
 			case AUTHORIZATION:
-				allowed = request.isSysOp() || isWhitelisted(systemName) || isAuthorized(systemName);
+				allowed = request.isSysOp() || isWhitelisted(normalizedSystemName) || isAuthorized(normalizedSystemName);
 				break;
 
 			default:

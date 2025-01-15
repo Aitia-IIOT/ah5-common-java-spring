@@ -14,6 +14,7 @@ import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.exception.ForbiddenException;
 import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.http.filter.ArrowheadFilter;
+import eu.arrowhead.common.service.validation.name.NameNormalizer;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,9 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 	@Autowired
 	private SystemInfo sysInfo;
 
+	@Autowired
+	private NameNormalizer nameNormalizer;
+
 	private static final String mgmtPath = "/mgmt/";
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
@@ -45,6 +49,7 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 		final String requestTarget = request.getRequestURL().toString();
 		if (requestTarget.contains(mgmtPath)) {
 			final String systemName = (String) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
+			final String normalizedSystemName = nameNormalizer.normalize(systemName);
 			boolean allowed = false;
 
 			switch (sysInfo.getManagementPolicy()) {
@@ -53,11 +58,11 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 				break;
 
 			case WHITELIST:
-				allowed = isSystemOperator(request) || isWhitelisted(systemName);
+				allowed = isSystemOperator(request) || isWhitelisted(normalizedSystemName);
 				break;
 
 			case AUTHORIZATION:
-				allowed = isSystemOperator(request) || isWhitelisted(systemName) || isAuthorized(systemName);
+				allowed = isSystemOperator(request) || isWhitelisted(normalizedSystemName) || isAuthorized(normalizedSystemName);
 				break;
 
 			default:
