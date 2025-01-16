@@ -56,8 +56,8 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 			throw new AuthException("Unauthenticated access attempt: " + request.getRequestTopic());
 		}
 
-		checkClientAuthorized(requesterData, request.getRequestTopic());
 		fillRequestAttributes(request, requesterData);
+		checkClientAuthorized(requesterData, request.getRequestTopic());
 	}
 
 	//=================================================================================================
@@ -112,6 +112,5 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 
 		request.setSysOp(CertificateProfileType.OPERATOR == requesterData.profileType());
 		request.setRequester(SecurityUtilities.getClientNameFromClientCN(requesterData.commonName()));
-		System.out.println(SecurityUtilities.getClientNameFromClientCN(requesterData.commonName()));
 	}
 }
