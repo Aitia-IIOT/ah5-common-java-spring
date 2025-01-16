@@ -74,6 +74,10 @@ public final class Constants {
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
+	public static final String MANAGEMENT_POLICY = "management.policy";
+	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":SYSOP_ONLY}";
+	public static final String MANAGEMENT_WHITELIST = "management.whitelist";
+	public static final String $MANAGEMENT_WHITELIST = "${" + MANAGEMENT_WHITELIST + "}";
 	public static final String ALLOW_SELF_ADDRESSING = "allow.self.addressing";
 	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
 	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
