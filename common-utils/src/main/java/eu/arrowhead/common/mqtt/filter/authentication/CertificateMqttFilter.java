@@ -78,7 +78,7 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 		final byte[] decodedX509RawContent = Base64.getDecoder().decode(decodedX509PEM);
 
 		try {
-			final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+			final CertificateFactory certificateFactory = CertificateFactory.getInstance(Constants.X_509);
 			final ByteArrayInputStream certStream = new ByteArrayInputStream(decodedX509RawContent);
 			return (X509Certificate) certificateFactory.generateCertificate(certStream);
 

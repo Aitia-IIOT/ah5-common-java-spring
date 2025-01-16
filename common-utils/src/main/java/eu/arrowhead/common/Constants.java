@@ -89,6 +89,7 @@ public final class Constants {
 
 	// SSL related
 
+	public static final String X_509 = "X.509";
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
 	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":false}";
 	public static final String KEYSTORE_TYPE = "server.ssl.key-store-type";

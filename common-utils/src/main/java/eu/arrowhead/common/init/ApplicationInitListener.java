@@ -158,7 +158,7 @@ public abstract class ApplicationInitListener {
 		logger.debug("validateServerConfiguration started...");
 
 		if (!sysInfo.isSslEnabled() && sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE) {
-			throw new ConfigurationException("Authentication policy cannot be 'CERTIFICATE' while ssl is disabled");
+			throw new ConfigurationException("Authentication policy cannot be 'CERTIFICATE' while SSL is disabled");
 		}
 	}
 
