@@ -52,6 +52,7 @@ public class CommonBeanConfig {
 
 	//-------------------------------------------------------------------------------------------------
 	@Bean
+	@ConditionalOnExpression("'" + Constants.$AUTHENTICATION_POLICY_WD + "' != '" + AuthenticationPolicy.INTERNAL_VALUE + "'")
 	ArrowheadMqttFilter authenticationPolicyMqttFilter(@Value(Constants.$MQTT_API_ENABLED_WD) final boolean isMqttEnabled, @Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
 		if (!isMqttEnabled) {
 			return null;
@@ -64,6 +65,8 @@ public class CommonBeanConfig {
 			return new OutsourcedMqttFilter();
 		case DECLARED:
 			return new SelfDeclaredMqttFilter();
+		case INTERNAL:
+			throw new IllegalArgumentException("Invalid policy: " + policy.name());
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}
