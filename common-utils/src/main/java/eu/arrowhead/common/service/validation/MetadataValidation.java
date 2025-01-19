@@ -9,7 +9,7 @@ public final class MetadataValidation {
 	//=================================================================================================
 	// members
 
-	private static final String DOT = ".";
+	public static final String DOT = ".";
 
 	//=================================================================================================
 	// methods

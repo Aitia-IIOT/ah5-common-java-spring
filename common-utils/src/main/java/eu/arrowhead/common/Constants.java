@@ -53,6 +53,7 @@ public final class Constants {
 	// System related
 
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
+	public static final String SYS_NAME_BLACKLIST = "blacklist";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -79,6 +80,7 @@ public final class Constants {
 	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":true}";
 	public static final String HTTP_COLLECTOR_MODE = "http.collector.mode";
 	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":SR_AND_ORCH}";
+	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 
