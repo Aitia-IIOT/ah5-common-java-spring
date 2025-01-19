@@ -81,6 +81,8 @@ public final class Constants {
 	public static final String HTTP_COLLECTOR_MODE = "http.collector.mode";
 	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":SR_AND_ORCH}";
 	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
+	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
+	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":false}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 

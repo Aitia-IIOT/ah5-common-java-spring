@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.exception.ArrowheadException;
+import eu.arrowhead.common.exception.AuthException;
 import eu.arrowhead.common.exception.ForbiddenException;
 import eu.arrowhead.common.http.ArrowheadHttpService;
-import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,29 +34,31 @@ public class BlacklistFilter extends ArrowheadFilter {
 	
 	@Autowired
 	protected ArrowheadHttpService arrowheadHttpService;
+	
+	@Value(Constants.$FORCE_BLACKLIST_FILTER_WD)
+	private boolean force;
 
 	//=================================================================================================
 	// assistant methods
 
-	// TODO this filter should lookup for the blacklist service and use it against to the system name
-	// if system name is found on the blacklist throw ForbiddenException
-	// if requester is sysop, no need for check
-	// if request is for lookup for authentication, no need for check
-	// blacklist entry can be temporary (with expiration)
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {	
 		log.debug("BlacklistFilter is active");
 		
-		// if requester is sysop, no need for blacklist check
-		final Boolean isSysop = Boolean.valueOf(request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST).toString());
-		//TODO: check if BL system unreachable (app.props) force.blacklist.filter
-		if (!isSysop && !sysInfo.getSystemName().equals(Constants.SYS_NAME_BLACKLIST)) {
+		// if requester is sysop, no need for check
+		final boolean isSysop = Boolean.valueOf(request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST).toString());
+		
+		// if request is for lookup for authentication, no need for check
+		final boolean isAuthLookup = false; //TODO
+		
+		if (!isSysop && !isAuthLookup) {
 			log.debug("checking Blacklist");
 			try {
 					
 				final String systemName = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString();
 				
+				// if requester is blacklist, no need for check
 				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)) {
 						
 					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, boolean.class, List.of(systemName));
@@ -65,9 +67,16 @@ public class BlacklistFilter extends ArrowheadFilter {
 						throw new ForbiddenException(systemName + " system is blacklisted!");
 					}
 				}
-				
+			} catch (final ForbiddenException | AuthException ex) {
+				throw ex;
 			} catch (final ArrowheadException ex) {
-				handleException(ex, response);
+				logger.info("Blacklist server is not available.");
+				logger.debug("Blacklist server is not available, force blacklist filter: " + force);
+				if (force) {
+					throw new ForbiddenException("Blacklist system is not available, the system might be blacklisted.");
+				} else {
+					chain.doFilter(request, response);
+				}
 			}
 		}
 		chain.doFilter(request, response);
