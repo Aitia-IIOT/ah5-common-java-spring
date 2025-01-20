@@ -15,6 +15,7 @@ import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.naming.ConfigurationException;
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.logging.log4j.LogManager;
@@ -84,12 +85,14 @@ public abstract class ApplicationInitListener {
 	//-------------------------------------------------------------------------------------------------
 	@EventListener
 	@Order(10)
-	public void onApplicationEvent(final ContextRefreshedEvent event) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, InterruptedException {
+	public void onApplicationEvent(final ContextRefreshedEvent event) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, InterruptedException, ConfigurationException {
 		logger.debug("Initialization in onApplicationEvent()...");
 
 		logger.info("System name: {}", sysInfo.getSystemName());
 		logger.info("SSL mode: {}", getSSLString());
 		logger.info("Authentication policy: {}", sysInfo.getAuthenticationPolicy().name());
+
+		validateServerConfiguration();
 
 		if (arrowheadContext.containsKey(Constants.SERVER_STANDALONE_MODE)) {
 			standaloneMode = (boolean) arrowheadContext.get(Constants.SERVER_STANDALONE_MODE);
@@ -148,6 +151,15 @@ public abstract class ApplicationInitListener {
 	//-------------------------------------------------------------------------------------------------
 	protected String getSSLString() {
 		return sysInfo.isSslEnabled() ? "ENABLED" : "DISABLED";
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void validateServerConfiguration() throws ConfigurationException {
+		logger.debug("validateServerConfiguration started...");
+
+		if (!sysInfo.isSslEnabled() && sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE) {
+			throw new ConfigurationException("Authentication policy cannot be 'CERTIFICATE' while SSL is disabled");
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------

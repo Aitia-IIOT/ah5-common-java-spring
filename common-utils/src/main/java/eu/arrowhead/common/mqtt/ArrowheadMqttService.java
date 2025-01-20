@@ -95,7 +95,6 @@ public class ArrowheadMqttService {
 			final Object payload) {
 		logger.debug("response started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
-		Assert.isTrue(!Utilities.isEmpty(receiver), "receiver is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
 		final MqttClient client = mqttService.client(connectId);

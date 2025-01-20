@@ -130,6 +130,19 @@ public final class SecurityUtilities {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	@Nullable
+	public static CommonNameAndType getIdentificationDataFromCertificate(final X509Certificate certificate) {
+		Assert.notNull(certificate, "certificate must not be null");
+		final CommonNameAndType requesterData = getIdentificationDataFromSubjectDN(certificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
+
+		if (requesterData == null || !isValidSystemCommonName(requesterData.commonName())) {
+			return null;
+		}
+
+		return requesterData;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public static boolean isValidSystemCommonName(final String commonName) {
 		if (Utilities.isEmpty(commonName)) {
 			return false;
