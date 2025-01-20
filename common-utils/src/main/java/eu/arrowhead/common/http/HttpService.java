@@ -155,8 +155,7 @@ public class HttpService {
 					.bodyToMono(responseType)
 					.block();
 		} catch (final WebClientResponseException ex) {
-			//throw convertWebClientException(ex, uri.toString()); //TODO: rosszul convertal, exception type null lesz
-			throw new ExternalServerError("WebClientResponseException: " + ex.getMessage() + ", " + uri.toUriString());
+			throw convertWebClientException(ex, uri.toString());
 		} catch (final Exception ex) {
 			if (ex.getCause() != null) {
 				final Throwable throwable = ex.getCause();
@@ -245,8 +244,7 @@ public class HttpService {
 					.bodyToMono(responseType)
 					.block();
 		} catch (final WebClientResponseException ex) {
-			//throw convertWebClientException(ex, uri.toString()); //TODO: rosszul convertal, exception type null lesz
-			throw new ExternalServerError("WebClientResponseException: " + ex.getMessage() + ", " + uri.toUriString());
+			throw convertWebClientException(ex, uri.toString());
 		} catch (final Exception ex) {
 			if (ex.getCause() != null) {
 				final Throwable throwable = ex.getCause();
