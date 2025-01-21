@@ -2,7 +2,7 @@ package eu.arrowhead.dto;
 
 import java.util.Map;
 
-public record IdentityLoginRequestDTO(
+public record IdentityRequestDTO(
 		String systemName,
 		Map<String, String> credentials) {
 }
