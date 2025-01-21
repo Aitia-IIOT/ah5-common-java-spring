@@ -70,7 +70,7 @@ public final class Constants {
 	public static final String SERVICEREGISTRY_ADDRESS = "service.registry.address";
 	public static final String $SERVICEREGISTRY_ADDRESS_WD = "${" + SERVICEREGISTRY_ADDRESS + ":" + LOCALHOST + "}";
 	public static final String SERVICEREGISTRY_PORT = "service.registry.port";
-	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8843}";
+	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8443}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
@@ -187,6 +187,8 @@ public final class Constants {
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
 
+	public static final String SERVICE_DEF_ORCHESTRATION = "orchestration";
+
 	// Operation related
 
 	public static final String SERVICE_OP_ECHO = "echo";
@@ -214,6 +216,10 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_QUERY = "interface-template-query";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
+
+	public static final String SERVICE_OP_ORCHESTRATION_PULL = "pull";
+	public static final String SERVICE_OP_ORCHESTRATION_PUSH_SUBSCRIBE = "push-subscribe";
+	public static final String SERVICE_OP_ORCHESTRATION_PUSH_UNSUBSCRIBE = "push-unsubscribe";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 
