@@ -130,16 +130,16 @@ public final class HttpUtilities {
 				.host(Utilities.isEmpty(host) ? Constants.LOCALHOST : host.trim())
 				.port(port <= 0 ? Constants.HTTP_PORT : port);
 
-		if (queryParams != null) {
-			builder.queryParams(queryParams);
+		if (!Utilities.isEmpty(path)) {
+			builder.path(path);
 		}
 
 		if (pathSegments != null && pathSegments.length > 0) {
 			builder.pathSegment(pathSegments);
 		}
 
-		if (!Utilities.isEmpty(path)) {
-			builder.path(path);
+		if (queryParams != null) {
+			builder.queryParams(queryParams);
 		}
 
 		return builder.build();

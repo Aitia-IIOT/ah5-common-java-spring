@@ -322,8 +322,8 @@ public abstract class ApplicationInitListener {
 				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class, List.of(serviceInstanceId));
 			}
 
-			registeredServices.clear();
 			logger.info("Core system {} revoked {} service(s)", sysInfo, registeredServices.size());
+			registeredServices.clear();
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());
 			logger.debug(t);
