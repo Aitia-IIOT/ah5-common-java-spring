@@ -182,6 +182,7 @@ public final class Constants {
 
 	// Service related
 
+	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "general-management";
 	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
