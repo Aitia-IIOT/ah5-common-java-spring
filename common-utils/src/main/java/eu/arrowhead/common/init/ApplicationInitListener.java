@@ -89,6 +89,7 @@ public abstract class ApplicationInitListener {
 		logger.debug("Initialization in onApplicationEvent()...");
 
 		logger.info("System name: {}", sysInfo.getSystemName());
+		logger.info("System port: {}", sysInfo.getServerPort());
 		logger.info("SSL mode: {}", getSSLString());
 		logger.info("Authentication policy: {}", sysInfo.getAuthenticationPolicy().name());
 
