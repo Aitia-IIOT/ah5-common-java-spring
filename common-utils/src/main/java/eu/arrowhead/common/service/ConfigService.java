@@ -45,7 +45,7 @@ public class ConfigService {
 			final Map<String, String> result = new HashMap<>();
 
 			for (final String key : normalized) {
-				if (!forbiddenKeys.contains(key) && environment.getProperty(key) != null) {
+				if (!forbiddenKeys.contains(key) && !Utilities.isEmpty(environment.getProperty(key))) {
 					result.put(key, environment.getProperty(key));
 				}
 			}
