@@ -120,6 +120,7 @@ public final class Constants {
 	public static final String HTTP_STATUS_NOT_FOUND = "404";
 	public static final String HTTP_STATUS_LOCKED = "423";
 	public static final String HTTP_STATUS_INTERNAL_SERVER_ERROR = "500";
+	public static final String HTTP_STATUS_SERVICE_UNAVAILABLE = "503";
 
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
 	public static final String HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST = "arrowhead.sysop.request";
@@ -151,6 +152,7 @@ public final class Constants {
 	public static final String SWAGGER_HTTP_404_MESSAGE = "Not found";
 	public static final String SWAGGER_HTTP_423_MESSAGE = "Locked";
 	public static final String SWAGGER_HTTP_500_MESSAGE = "Internal server error";
+	public static final String SWAGGER_HTTP_503_MESSAGE = "Service unavailable";
 
 	// CORS defaults
 
