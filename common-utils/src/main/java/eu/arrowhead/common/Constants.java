@@ -219,6 +219,8 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
+	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
+
 
 	//=================================================================================================
 	// assistant methods
