@@ -108,17 +108,17 @@ public class BlacklistFilter extends ArrowheadFilter {
 		// is the request lookup?
 
 		final String requestTarget = Utilities.stripEndSlash(request.getRequestURL().toString());
-		// finding the path of the lookup operation
-		String lookupPath = null;
+		// finding the path and method of the lookup operation
+		HttpOperationModel lookupOp = null;
 		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME);
 		for (final InterfaceModel intf : model.interfaces()) {
 			final Map<String, HttpOperationModel> ops = (Map<String, HttpOperationModel>) intf.properties().get(HttpInterfaceModel.PROP_NAME_OPERATIONS);
 			if (ops.containsKey(Constants.SERVICE_OP_LOOKUP)) {
-				// if there is a lookup operation, we can get its path
-				lookupPath = ops.get(Constants.SERVICE_OP_LOOKUP).path();
+				// if there is a lookup operation, we can get its path and method
+				lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
 			}
 		}
-		if (lookupPath == null || !requestTarget.endsWith(lookupPath)) {
+		if (lookupOp == null || !requestTarget.endsWith(lookupOp.path()) || !request.getMethod().equalsIgnoreCase(lookupOp.method())) {
 		// SR does not provide lookup operation or the request is not lookup
 			return false;
 		}
