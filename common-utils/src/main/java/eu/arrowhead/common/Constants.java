@@ -82,7 +82,7 @@ public final class Constants {
 	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":SR_AND_ORCH}";
 	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
-	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":false}";
+	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":true}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 
@@ -186,6 +186,7 @@ public final class Constants {
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
 	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
 	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
+	public static final String SERVICE_DEF_IDENTITY = "identity";
 
 	// Operation related
 

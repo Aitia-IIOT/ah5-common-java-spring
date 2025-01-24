@@ -141,7 +141,7 @@ public class HttpService {
 		try {
 			final WebClient client = createWebClient(usedClient);
 			final RequestBodySpec spec = client.method(method)
-					.uri(uri.toUri()); 
+					.uri(uri.toUri());
 
 			RequestHeadersSpec<?> headersSpec = (payload != null) ? spec.bodyValue(payload) : spec;
 
