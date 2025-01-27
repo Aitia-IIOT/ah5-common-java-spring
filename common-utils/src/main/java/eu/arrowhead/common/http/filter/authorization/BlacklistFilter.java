@@ -59,13 +59,13 @@ public class BlacklistFilter extends ArrowheadFilter {
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		log.debug("BlacklistFilter is active");
 
-        final MultiReadRequestWrapper requestWrapper = new MultiReadRequestWrapper((HttpServletRequest) request);
+		final MultiReadRequestWrapper requestWrapper = (request instanceof MultiReadRequestWrapper) ? (MultiReadRequestWrapper) request :  new MultiReadRequestWrapper(request);
 
 		// if requester is sysop, no need for check
 		final boolean isSysop = HttpUtilities.isSysop(requestWrapper, "BlacklistFilter.doFilterInternal");
 
 		// if request is for lookup for authentication, no need for check
-		final boolean isAuthLookup = isAuthLookup(requestWrapper);
+		final boolean isAuthLookup = isAuthenticationLookup(requestWrapper);
 
 		if (!isSysop && !isAuthLookup) {
 			log.debug("checking Blacklist");
@@ -97,7 +97,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	@SuppressWarnings("unchecked")
-	private boolean isAuthLookup(final MultiReadRequestWrapper request) {
+	private boolean isAuthenticationLookup(final MultiReadRequestWrapper request) {
 
 		// is the filter running inside SR?
 
