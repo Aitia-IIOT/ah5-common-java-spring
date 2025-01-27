@@ -3,5 +3,6 @@ package eu.arrowhead.dto;
 import java.util.List;
 
 public record IdentityListMgmtRequestDTO(
-		List<IdentityMgmtRequestDTO> identites) {
+		String authenticationMethod,
+		List<IdentityMgmtRequestDTO> identities) {
 }
