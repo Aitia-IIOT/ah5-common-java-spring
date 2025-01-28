@@ -12,7 +12,7 @@ public record IdentityMgmtResponseDTO(
 		String createdAt,
 		String updatedBy,
 		String updatedAt
-		// credentials and extra field is omitted intentionally
+		// credentials and extra field are omitted intentionally
 		) {
 
 }
