@@ -131,7 +131,7 @@ public final class Utilities {
 					return mapper.writeValueAsString(tempObj);
 				}
 			}
-		} catch (final IOException ex) {
+		} catch (final IOException __) {
 			// it seems it is not a JSON string, so we just return untouched
 		}
 
@@ -178,10 +178,11 @@ public final class Utilities {
 		if (value == null || enumClass == null) {
 			return false;
 		}
+
 		try {
 			Enum.valueOf(enumClass, value);
 			return true;
-		} catch (final IllegalArgumentException ex) {
+		} catch (final IllegalArgumentException __) {
 			return false;
 		}
 	}

@@ -9,5 +9,4 @@ public record SystemLookupRequestDTO(
 		List<MetadataRequirementDTO> metadataRequirementList,
 		List<String> versions,
 		List<String> deviceNames) {
-
 }

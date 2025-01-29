@@ -21,6 +21,7 @@ public class ArrowheadResponseEntityExceptionHandler extends ResponseEntityExcep
 	// members
 
 	private Logger log = LogManager.getLogger(ArrowheadResponseEntityExceptionHandler.class);
+
 	private static final HttpHeaders headers = new HttpHeaders();
 	static {
 		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -33,10 +34,12 @@ public class ArrowheadResponseEntityExceptionHandler extends ResponseEntityExcep
 	@ExceptionHandler(ArrowheadException.class)
 	public ResponseEntity<Object> handleArrowheadException(final ArrowheadException ex, final WebRequest request) {
 		final String origin = ex.getOrigin() != null ? ex.getOrigin() : request.getContextPath();
-		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
 		log.debug("{} at {}: {}", ex.getClass().getName(), origin, ex.getMessage());
 		log.debug("Exception", ex);
+
 		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex);
+		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
+
 		return handleExceptionInternal(ex, dto, headers, status, request);
 	}
 }

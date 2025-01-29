@@ -84,7 +84,6 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		ServiceModel result = acquireServiceFromSR(serviceDefinitionName, interfaceTemplateName);
 		if (result == null && HttpCollectorMode.SR_AND_ORCH == mode) {
 			result = acquireServiceFromOrchestrator(serviceDefinitionName, interfaceTemplateName);
-
 		}
 
 		return result;

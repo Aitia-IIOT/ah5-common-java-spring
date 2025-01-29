@@ -83,11 +83,12 @@ public class ArrowheadHttpService {
 			throw new ExternalServerError("Service does not define the specified operation");
 		}
 
-		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
 		final Map<String, String> actualHeaders = new HashMap<>();
 		if (customHeaders != null) {
 			actualHeaders.putAll(customHeaders);
 		}
+
+		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
 		if (authorizationHeader != null) {
 			actualHeaders.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
 		}

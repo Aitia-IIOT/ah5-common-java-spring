@@ -85,10 +85,16 @@ public class ArrowheadMqttService {
 	/**
 	 * Publish a response for a request-response service when it is provided via MQTT
 	 */
-	public void response(final String connectId, final String receiver, final String topic, final String traceId, final MqttQoS qos, final MqttStatus status, final Object payload) {
+	public void response(
+			final String connectId,
+			final String receiver,
+			final String topic,
+			final String traceId,
+			final MqttQoS qos,
+			final MqttStatus status,
+			final Object payload) {
 		logger.debug("response started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
-		Assert.isTrue(!Utilities.isEmpty(receiver), "receiver is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
 		final MqttClient client = mqttService.client(connectId);
@@ -99,11 +105,9 @@ public class ArrowheadMqttService {
 			final MqttMessage msg = new MqttMessage(mapper.writeValueAsBytes(template));
 			msg.setQos(qos == null ? Constants.MQTT_DEFAULT_QOS : qos.value());
 			client.publish(topic, msg);
-
 		} catch (final JsonProcessingException ex) {
 			logger.debug(ex);
 			throw new InternalServerError("MQTT service response message creation failed: " + ex.getMessage());
-
 		} catch (final MqttException ex) {
 			logger.debug(ex);
 			throw new ExternalServerError("MQTT service response failed: " + ex.getMessage());

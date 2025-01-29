@@ -17,5 +17,4 @@ public record ServiceInstanceResponseDTO(
 		List<ServiceInstanceInterfaceResponseDTO> interfaces,
 		String createdAt,
 		String updatedAt) {
-
 }

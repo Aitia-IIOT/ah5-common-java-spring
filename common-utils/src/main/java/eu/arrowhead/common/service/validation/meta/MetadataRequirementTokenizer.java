@@ -40,8 +40,7 @@ public final class MetadataRequirementTokenizer {
 
 	//-------------------------------------------------------------------------------------------------
 	private static MetadataRequirementExpression parseRequirement(final String key, final Object value) throws InvalidParameterException {
-		if (value instanceof Map<?, ?>) {
-			final Map<?, ?> opMap = (Map<?, ?>) value;
+		if (value instanceof final Map<?, ?> opMap) {
 			if (opMap.containsKey(OP) && opMap.containsKey(VALUE)) {
 				final String opStr = opMap.get(OP).toString();
 				final Object valueReq = opMap.get(VALUE);

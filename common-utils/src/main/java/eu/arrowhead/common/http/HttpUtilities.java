@@ -112,13 +112,19 @@ public final class HttpUtilities {
 	//-------------------------------------------------------------------------------------------------
 	/**
 	 * @param scheme       default: http
-	 * @param host         default: 127.0.0.1
+	 * @param host         default: localhost
 	 * @param port         default: 80
 	 * @param queryParams  default: null
 	 * @param path         default: null
 	 * @param pathSegments default: null
 	 */
-	public static UriComponents createURI(final String scheme, final String host, final int port, final MultiValueMap<String, String> queryParams, final String path, final String... pathSegments) {
+	public static UriComponents createURI(
+			final String scheme,
+			final String host,
+			final int port,
+			final MultiValueMap<String, String> queryParams,
+			final String path,
+			final String... pathSegments) {
 		final UriComponentsBuilder builder = UriComponentsBuilder.newInstance();
 		builder.scheme(Utilities.isEmpty(scheme) ? Constants.HTTP : scheme.trim())
 				.host(Utilities.isEmpty(host) ? Constants.LOCALHOST : host.trim())
@@ -149,20 +155,21 @@ public final class HttpUtilities {
 		if (queryParams == null || queryParams.length == 0) {
 			return createURI(scheme, host, port, path);
 		}
+
 		if (queryParams.length % 2 != 0) {
-			throw new InvalidParameterException("queryParams variable arguments conatins a key without value");
+			throw new InvalidParameterException("queryParams variable arguments contains a key without value");
 		}
 
 		final LinkedMultiValueMap<String, String> query = new LinkedMultiValueMap<>();
 
 		int count = 1;
 		String key = "";
-		for (final String vararg : queryParams) {
+		for (final String varArg : queryParams) {
 			if (count % 2 != 0) {
-				query.putIfAbsent(vararg, new ArrayList<>());
-				key = vararg;
+				query.putIfAbsent(varArg, new ArrayList<>());
+				key = varArg;
 			} else {
-				query.get(key).add(vararg);
+				query.get(key).add(varArg);
 			}
 			count++;
 		}
@@ -172,13 +179,11 @@ public final class HttpUtilities {
 
 	//-------------------------------------------------------------------------------------------------
 	public static String acquireName(final HttpServletRequest request, final String origin) throws InvalidParameterException {
-
 		if (request == null) {
 			throw new InvalidParameterException("Request is null", origin);
 		}
 
 		final Object nameObject = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
-
 		if (nameObject == null) {
 			throw new InvalidParameterException("Name is missing", origin);
 		}

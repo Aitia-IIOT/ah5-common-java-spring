@@ -8,5 +8,4 @@ public record ServiceInstanceUpdateRequestDTO(
 		String expiresAt,
 		Map<String, Object> metadata,
 		List<ServiceInstanceInterfaceRequestDTO> interfaces) {
-
 }

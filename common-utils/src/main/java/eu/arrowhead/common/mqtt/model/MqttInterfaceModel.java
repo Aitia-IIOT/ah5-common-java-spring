@@ -19,12 +19,13 @@ public record MqttInterfaceModel(
 		String topic,
 		Set<String> operations) implements InterfaceModel {
 
+	//-------------------------------------------------------------------------------------------------
 	public MqttInterfaceModel {
-		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty.");
-		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty.");
-		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid.");
-		Assert.isTrue(!Utilities.isEmpty(topic), "'topic' is missing or empty.");
-		Assert.isTrue(!Utilities.isEmpty(operations), "'operations' is missing or empty.");
+		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty");
+		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty");
+		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid");
+		Assert.isTrue(!Utilities.isEmpty(topic), "'topic' is missing or empty");
+		Assert.isTrue(!Utilities.isEmpty(operations), "'operations' is missing or empty");
 	}
 
 	//=================================================================================================
@@ -48,9 +49,9 @@ public record MqttInterfaceModel(
 	@Override
 	public Map<String, Object> properties() {
 		return Map.of(PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
-				      PROP_NAME_ACCESS_PORT, accessPort,
-				      PROP_NAME_TOPIC, topic,
-				      PROP_NAME_OPERATIONS, operations);
+				PROP_NAME_ACCESS_PORT, accessPort,
+				PROP_NAME_TOPIC, topic,
+				PROP_NAME_OPERATIONS, operations);
 	}
 
 	//=================================================================================================
@@ -94,6 +95,7 @@ public record MqttInterfaceModel(
 			if (accessAddresses == null) {
 				accessAddresses = new ArrayList<>();
 			}
+
 			accessAddresses.add(address);
 			return this;
 		}
@@ -121,6 +123,7 @@ public record MqttInterfaceModel(
 			if (operations == null) {
 				operations = new HashSet<>();
 			}
+
 			operations.add(operationName);
 			return this;
 		}
@@ -129,6 +132,5 @@ public record MqttInterfaceModel(
 		public MqttInterfaceModel build() {
 			return new MqttInterfaceModel(templateName, accessAddresses, accessPort, topic, operations);
 		}
-
 	}
 }

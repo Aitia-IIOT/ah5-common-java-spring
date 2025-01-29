@@ -8,6 +8,7 @@ public final class Constants {
 	// members
 
 	// Framework version
+
 	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
 
 	// Global
@@ -74,6 +75,10 @@ public final class Constants {
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
+	public static final String MANAGEMENT_POLICY = "management.policy";
+	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":SYSOP_ONLY}";
+	public static final String MANAGEMENT_WHITELIST = "management.whitelist";
+	public static final String $MANAGEMENT_WHITELIST = "${" + MANAGEMENT_WHITELIST + ":\"\"}";
 	public static final String ALLOW_SELF_ADDRESSING = "allow.self.addressing";
 	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
 	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
@@ -88,6 +93,7 @@ public final class Constants {
 
 	// SSL related
 
+	public static final String X_509 = "X.509";
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
 	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":false}";
 	public static final String KEYSTORE_TYPE = "server.ssl.key-store-type";
@@ -180,6 +186,7 @@ public final class Constants {
 
 	// Service related
 
+	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "general-management";
 	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
@@ -229,5 +236,4 @@ public final class Constants {
 	private Constants() {
 		throw new UnsupportedOperationException();
 	}
-
 }
