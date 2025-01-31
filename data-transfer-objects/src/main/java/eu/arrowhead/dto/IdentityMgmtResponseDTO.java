@@ -14,5 +14,4 @@ public record IdentityMgmtResponseDTO(
 		String updatedAt
 		// credentials and extra field are omitted intentionally
 		) {
-
 }
