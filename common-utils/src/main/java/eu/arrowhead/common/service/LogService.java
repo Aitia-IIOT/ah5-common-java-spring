@@ -57,6 +57,7 @@ public class LogService {
 
 		try {
 			final Page<LogEntity> page = dbService.getLogEntries(pageRequest, logLevels, from, to, logger);
+
 			return convertPageToResponse(page);
 		} catch (final InternalServerError ex) {
 			throw new InternalServerError(ex.getMessage(), origin);

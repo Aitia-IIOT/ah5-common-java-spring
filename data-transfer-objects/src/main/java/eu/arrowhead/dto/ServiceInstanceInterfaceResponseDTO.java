@@ -11,5 +11,4 @@ public record ServiceInstanceInterfaceResponseDTO(
 		String protocol,
 		String policy,
 		Map<String, Object> properties) {
-
 }

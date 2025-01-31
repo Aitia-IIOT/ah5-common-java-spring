@@ -7,5 +7,4 @@ public record ServiceInstanceInterfaceRequestDTO(
 		String protocol,
 		String policy,
 		Map<String, Object> properties) {
-
 }

@@ -1,6 +1,7 @@
 package eu.arrowhead.common;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
+import eu.arrowhead.common.http.filter.authorization.ManagementPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
 import eu.arrowhead.common.service.validation.address.AddressNormalizer;
+import eu.arrowhead.common.service.validation.name.NameNormalizer;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
@@ -39,11 +42,33 @@ public abstract class SystemInfo {
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
 	private AuthenticationPolicy authenticationPolicy;
 
+	@Value(Constants.$MANAGEMENT_POLICY)
+	private ManagementPolicy managementPolicy;
+
+	@Value(Constants.$MANAGEMENT_WHITELIST)
+	private List<String> managementWhitelist;
+	private List<String> normalizedManagementWhitelist = new ArrayList<>();
+
+	@Value(Constants.$MQTT_API_ENABLED_WD)
+	private boolean mqttEnabled;
+
+	@Value(Constants.$MQTT_BROKER_ADDRESS_WD)
+	private String mqttBrokerAddress;
+
+	@Value(Constants.$MQTT_BROKER_PORT_WD)
+	private int mqttBrokerPort;
+
+	@Value(Constants.$MQTT_CLIENT_PASSWORD)
+	private String mqttClientPassword;
+
 	@Autowired
 	private SSLProperties sslProperties;
 
 	@Autowired
 	private AddressNormalizer addressNormalizer;
+
+	@Autowired
+	private NameNormalizer nameNormalizer;
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	private Map<String, Object> arrowheadContext;
@@ -94,8 +119,13 @@ public abstract class SystemInfo {
 		if (Utilities.isEmpty(getSystemName())) {
 			throw new InvalidParameterException("'systemName' is missing or empty");
 		}
+
 		if (Utilities.isEmpty(domainAddress)) {
 			throw new InvalidParameterException("'domainAddress' is missing or empty");
+		}
+
+		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
+			throw new InvalidParameterException("MQTT Broker address is not defined.");
 		}
 
 		customInit();
@@ -132,6 +162,43 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public AuthenticationPolicy getAuthenticationPolicy() {
 		return authenticationPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public ManagementPolicy getManagementPolicy() {
+		return managementPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public List<String> getManagementWhitelist() {
+		if (!Utilities.isEmpty(managementWhitelist) && Utilities.isEmpty(normalizedManagementWhitelist)) {
+			for (final String name : managementWhitelist) {
+				if (!Utilities.isEmpty(name)) {
+					normalizedManagementWhitelist.add(nameNormalizer.normalize(name));
+				}
+			}
+		}
+		return normalizedManagementWhitelist;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public boolean isMqttApiEnabled() {
+		return this.mqttEnabled;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getMqttBrokerAddress() {
+		return this.mqttBrokerAddress;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public String getMqttClientPassword() {
+		return this.mqttClientPassword;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public int getMqttBrokerPort() {
+		return this.mqttBrokerPort;
 	}
 
 	//-------------------------------------------------------------------------------------------------

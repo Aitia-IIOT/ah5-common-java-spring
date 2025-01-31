@@ -45,7 +45,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
 		logger.debug("HttpOperationsValidator.validateAndNormalize started...");
 
-		if (propertyValue instanceof Map<?, ?> map) {
+		if (propertyValue instanceof final Map<?, ?> map) {
 			if (map.isEmpty()) {
 				throw new InvalidParameterException("Property value should be a non-empty map");
 			}
@@ -84,15 +84,14 @@ public class HttpOperationsValidator implements IPropertyValidator {
 			// value should be a map which has the exact same structure that a HttpOperationModel => try to convert it
 			final HttpOperationModel model = Utilities.fromJson(Utilities.toJson(value), HttpOperationModel.class);
 			if (Utilities.isEmpty(model.path())) {
-				throw new InvalidParameterException("Path should be non-empty.");
+				throw new InvalidParameterException("Path should be non-empty");
 			}
 
 			if (!HttpUtilities.isValidHttpMethod(model.method())) {
-				throw new InvalidParameterException("Method should be a standard HTTP method.");
+				throw new InvalidParameterException("Method should be a standard HTTP method");
 			}
 
 			return new HttpOperationModel(model.path().trim(), model.method().toUpperCase().trim());
-
 		} catch (final ArrowheadException ex) {
 			throw new InvalidParameterException("Value should be a HttpOperationModel record");
 		}

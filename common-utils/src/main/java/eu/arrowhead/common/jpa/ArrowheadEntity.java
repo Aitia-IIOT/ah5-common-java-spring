@@ -68,13 +68,13 @@ public class ArrowheadEntity {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public ZonedDateTime getUpdatedAt() {
-		return updatedAt;
+	public void setCreatedAt(final ZonedDateTime createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public void setCreatedAt(final ZonedDateTime createdAt) {
-		this.createdAt = createdAt;
+	public ZonedDateTime getUpdatedAt() {
+		return updatedAt;
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -94,12 +94,15 @@ public class ArrowheadEntity {
 		if (this == obj) {
 			return true;
 		}
+
 		if (obj == null) {
 			return false;
 		}
+
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
+
 		final ArrowheadEntity other = (ArrowheadEntity) obj;
 		return id == other.id;
 	}

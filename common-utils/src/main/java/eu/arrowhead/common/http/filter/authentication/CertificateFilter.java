@@ -20,7 +20,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Order(15)
+@Order(Constants.REQUEST_FILTER_ORDER_AUTHENTICATION)
 public class CertificateFilter extends ArrowheadFilter {
 
 	//=================================================================================================
@@ -48,6 +48,7 @@ public class CertificateFilter extends ArrowheadFilter {
 
 			checkClientAuthorized(requesterData, requestTarget);
 			fillRequestAttributes(request, requesterData);
+
 			chain.doFilter(request, response);
 		} catch (final ArrowheadException ex) {
 			handleException(ex, response);

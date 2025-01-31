@@ -12,5 +12,4 @@ public record ServiceInterfaceTemplateResponseDTO(
 		List<ServiceInterfaceTemplatePropertyDTO> propertyRequirements,
 		String createdAt,
 		String updatedAt) {
-
 }

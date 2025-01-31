@@ -54,11 +54,13 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	protected void handleException(final ArrowheadException ex, final ServletResponse response) throws IOException {
-		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
 		final String origin = ex.getOrigin() == null ? Constants.UNKNOWN : ex.getOrigin();
 		log.debug("{} at {}: {}", ex.getClass().getName(), origin, ex.getMessage());
 		log.debug("Exception", ex);
+
+		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
 		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex);
+
 		sendError(status, dto, (HttpServletResponse) response);
 	}
 

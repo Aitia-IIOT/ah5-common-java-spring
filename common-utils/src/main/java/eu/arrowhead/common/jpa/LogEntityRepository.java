@@ -18,5 +18,10 @@ public interface LogEntityRepository<T extends LogEntity> extends RefreshableRep
 	public Page<LogEntity> findAllByLogLevelInAndEntryDateBetween(final List<LogLevel> levels, final ZonedDateTime from, final ZonedDateTime to, final Pageable pageable);
 
 	//-------------------------------------------------------------------------------------------------
-	public Page<LogEntity> findAllByLogLevelInAndEntryDateBetweenAndLoggerContainsIgnoreCase(final List<LogLevel> levels, final ZonedDateTime from, final ZonedDateTime to, final String logger, final Pageable pageable);
+	public Page<LogEntity> findAllByLogLevelInAndEntryDateBetweenAndLoggerContainsIgnoreCase(
+			final List<LogLevel> levels,
+			final ZonedDateTime from,
+			final ZonedDateTime to,
+			final String logger,
+			final Pageable pageable);
 }

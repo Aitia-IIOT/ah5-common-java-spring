@@ -1,15 +1,19 @@
 package eu.arrowhead.common;
 
+import java.util.UUID;
+
 public final class Constants {
 
 	//=================================================================================================
 	// members
 
 	// Framework version
+
 	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
 
 	// Global
 
+	public static final String SYSOP = "sysop";
 	public static final String UTC = "UTC";
 	public static final String LOCALHOST = "localhost";
 	public static final String PKCS12 = "PKCS12";
@@ -19,6 +23,7 @@ public final class Constants {
 	public static final String HTTP = "http";
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
+	public static final String VERBOSE = "verbose";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
 	public static final String SERVER_STANDALONE_MODE = "server.standalone.mode";
 	public static final String SERVER_COMMON_NAME = "server.common.name";
@@ -31,6 +36,12 @@ public final class Constants {
 
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic-http";
 	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic-https";
+	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic-mqtt";
+	public static final String GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME = "generic-mqtts";
+
+	public static final int REQUEST_FILTER_ORDER_AUTHENTICATION = 15;
+	public static final int REQUEST_FILTER_ORDER_AUTHORIZATION_BLACKLIST = 20;
+	public static final int REQUEST_FILTER_ORDER_AUTHORIZATION_MGMT_SERVICE = 25;
 
 	public static final int MIN_PORT = 1;
 	public static final int MAX_PORT = 65535;
@@ -63,6 +74,10 @@ public final class Constants {
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
+	public static final String MANAGEMENT_POLICY = "management.policy";
+	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":SYSOP_ONLY}";
+	public static final String MANAGEMENT_WHITELIST = "management.whitelist";
+	public static final String $MANAGEMENT_WHITELIST = "${" + MANAGEMENT_WHITELIST + ":\"\"}";
 	public static final String ALLOW_SELF_ADDRESSING = "allow.self.addressing";
 	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
 	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
@@ -74,6 +89,7 @@ public final class Constants {
 
 	// SSL related
 
+	public static final String X_509 = "X.509";
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
 	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":false}";
 	public static final String KEYSTORE_TYPE = "server.ssl.key-store-type";
@@ -144,8 +160,29 @@ public final class Constants {
 	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
 	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
 
+	// MQTT related
+
+	public static final String MQTT_AUTH_INFO_DELIMITER = "//";
+	public static final String MQTT_AUTH_INFO_PREFIX_SYSTEM = "SYSTEM";
+	public static final String MQTT_AUTH_INFO_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
+	public static final String MQTT_AUTH_INFO_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	public static final String MQTT_AUTH_INFO_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
+	public static final String MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID = "SERVICE-PROVIDING-" + UUID.randomUUID().toString();
+	public static final String MQTT_TOPIC_UNSUPPORTED = UUID.randomUUID().toString();
+	public static final int MQTT_DEFAULT_QOS = 0;
+
+	public static final String MQTT_API_ENABLED = "mqtt.api.enabled";
+	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":false}";
+	public static final String MQTT_BROKER_ADDRESS = "mqtt.broker.address";
+	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":}";
+	public static final String MQTT_BROKER_PORT = "mqtt.broker.port";
+	public static final String $MQTT_BROKER_PORT_WD = "${" + MQTT_BROKER_PORT + ":1883}";
+	public static final String MQTT_CLIENT_PASSWORD = "mqtt.client.password";
+	public static final String $MQTT_CLIENT_PASSWORD = "${" + MQTT_CLIENT_PASSWORD + ":123456}";
+
 	// Service related
 
+	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "general-management";
 	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
@@ -153,6 +190,7 @@ public final class Constants {
 
 	// Operation related
 
+	public static final String SERVICE_OP_ECHO = "echo";
 	public static final String SERVICE_OP_REGISTER = "register";
 	public static final String SERVICE_OP_LOOKUP = "lookup";
 	public static final String SERVICE_OP_REVOKE = "revoke";
@@ -187,5 +225,4 @@ public final class Constants {
 	private Constants() {
 		throw new UnsupportedOperationException();
 	}
-
 }

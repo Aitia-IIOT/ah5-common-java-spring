@@ -6,5 +6,4 @@ public record LogRequestDTO(
 		String to,
 		String severity,
 		String logger) {
-
 }

@@ -44,11 +44,12 @@ public final class SecurityUtilities {
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
 	public static X509Certificate getCertificateFromKeyStore(final KeyStore keystore, final String alias) {
-		Assert.notNull(keystore, "Key store is not defined.");
-		Assert.isTrue(!Utilities.isEmpty(alias), "Alias is not defined.");
+		Assert.notNull(keystore, "Key store is not defined");
+		Assert.isTrue(!Utilities.isEmpty(alias), "Alias is not defined");
 
 		try {
 			final Certificate[] chain = keystore.getCertificateChain(alias);
+
 			return chain == null ? null : (X509Certificate) chain[0];
 		} catch (final KeyStoreException ex) {
 			logger.error("Accessing certificate from key store failed...", ex);
@@ -59,9 +60,9 @@ public final class SecurityUtilities {
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
 	public static PrivateKey getPrivateKeyFromKeyStore(final KeyStore keystore, final String alias, final String keyPass) {
-		Assert.notNull(keystore, "Key store is not defined.");
-		Assert.isTrue(!Utilities.isEmpty(alias), "Alias is not defined.");
-		Assert.notNull(keyPass, "Password is not defined.");
+		Assert.notNull(keystore, "Key store is not defined");
+		Assert.isTrue(!Utilities.isEmpty(alias), "Alias is not defined");
+		Assert.notNull(keyPass, "Password is not defined");
 
 		try {
 			return (PrivateKey) keystore.getKey(alias, keyPass.toCharArray());
@@ -79,7 +80,7 @@ public final class SecurityUtilities {
 		}
 
 		String commonName = null;
-		List<String> dnQualifiers = new ArrayList<>();
+		final List<String> dnQualifiers = new ArrayList<>();
 		try {
 			// DN is in LDAP format, we can use the LdapName object for parsing
 			final LdapName ldapname = new LdapName(dn);
@@ -126,6 +127,19 @@ public final class SecurityUtilities {
 		}
 
 		return null;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Nullable
+	public static CommonNameAndType getIdentificationDataFromCertificate(final X509Certificate certificate) {
+		Assert.notNull(certificate, "certificate must not be null");
+		final CommonNameAndType requesterData = getIdentificationDataFromSubjectDN(certificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
+
+		if (requesterData == null || !isValidSystemCommonName(requesterData.commonName())) {
+			return null;
+		}
+
+		return requesterData;
 	}
 
 	//-------------------------------------------------------------------------------------------------

@@ -43,8 +43,8 @@ public class AddressNormalizer {
 		if (Utilities.isEmpty(address)) {
 			return "";
 		}
-		final String candidate = address.toLowerCase().trim();
 
+		final String candidate = address.toLowerCase().trim();
 		if (!candidate.contains(DOT) && !candidate.contains(COLON) && !candidate.contains(DASH)) {
 			// Simple string
 			return candidate;
@@ -136,7 +136,6 @@ public class AddressNormalizer {
 
 		final int candidateSize = groups.size();
 		if (lastAbbreviatedGroupIdx == -1) {
-
 			// Handle invalid size
 			if (candidateSize != IPV6_SIZE) {
 				return candidate; // not IPv6
@@ -172,7 +171,7 @@ public class AddressNormalizer {
 		// handle invalid IPv4 size
 		if (ip4parts.length != IPV4_PARTS_LENGTH) {
 			logger.debug("unprocessable IPv6-IPv4 hybrid. Invalid IPv4 part: " + ip4str);
-			return candidate; // AddressTypeValidator will filter it out
+			return candidate; // AddressValidator will filter it out
 		}
 
 		// transform IPv4 to Hexadecimal
@@ -183,7 +182,7 @@ public class AddressNormalizer {
 				final int octet = Integer.parseInt(ip4parts[i]);
 				if (octet > OCTET_MAX_LENGTH || octet < OCTET_MIN_LENGTH) {
 					logger.debug("unprocessable IPv6-IPv4 hybrid. Invalid IPv4 part: " + ip4str);
-					return candidate; // AddressTypeValidator will filter it out
+					return candidate; // AddressValidator will filter it out
 				}
 
 				final String hex = Integer.toHexString(octet);
@@ -196,7 +195,7 @@ public class AddressNormalizer {
 				}
 			} catch (final NumberFormatException ex) {
 				logger.debug("unprocessable IPv6-IPv4 hybrid. Not number octet: " + ip4str);
-				return candidate; // AddressTypeValidator will filter it out
+				return candidate; // AddressValidator will filter it out
 			}
 		}
 

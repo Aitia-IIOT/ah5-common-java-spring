@@ -15,6 +15,7 @@ import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.naming.ConfigurationException;
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +37,7 @@ import eu.arrowhead.common.http.ArrowheadHttpService;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
+import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
@@ -53,10 +55,10 @@ public abstract class ApplicationInitListener {
 	//=================================================================================================
 	// members
 
-	protected final Logger logger = LogManager.getLogger(getClass());
-
 	private static final int MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES = 3;
 	private static final int WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS = 15;
+
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	protected Map<String, Object> arrowheadContext;
@@ -70,6 +72,9 @@ public abstract class ApplicationInitListener {
 	@Autowired
 	protected ArrowheadHttpService arrowheadHttpService;
 
+	@Autowired(required = false)
+	protected MqttController mqttController;
+
 	protected boolean standaloneMode = false;
 
 	protected Set<String> registeredServices = new HashSet<>();
@@ -80,12 +85,14 @@ public abstract class ApplicationInitListener {
 	//-------------------------------------------------------------------------------------------------
 	@EventListener
 	@Order(10)
-	public void onApplicationEvent(final ContextRefreshedEvent event) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, InterruptedException {
+	public void onApplicationEvent(final ContextRefreshedEvent event) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, InterruptedException, ConfigurationException {
 		logger.debug("Initialization in onApplicationEvent()...");
 
 		logger.info("System name: {}", sysInfo.getSystemName());
 		logger.info("SSL mode: {}", getSSLString());
 		logger.info("Authentication policy: {}", sysInfo.getAuthenticationPolicy().name());
+
+		validateServerConfiguration();
 
 		if (arrowheadContext.containsKey(Constants.SERVER_STANDALONE_MODE)) {
 			standaloneMode = (boolean) arrowheadContext.get(Constants.SERVER_STANDALONE_MODE);
@@ -102,6 +109,10 @@ public abstract class ApplicationInitListener {
 
 		registerToServiceRegistry();
 
+		if (sysInfo.isMqttApiEnabled()) {
+			subscribeToMqttServiceTopics();
+		}
+
 		customInit(event);
 
 		logger.debug("Initialization in onApplicationEvent() is done.");
@@ -113,6 +124,10 @@ public abstract class ApplicationInitListener {
 		logger.debug("destroy called...");
 
 		revokeServices();
+
+		if (sysInfo.isMqttApiEnabled()) {
+			mqttController.disconnect();
+		}
 
 		try {
 			customDestroy();
@@ -139,13 +154,22 @@ public abstract class ApplicationInitListener {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	private void validateServerConfiguration() throws ConfigurationException {
+		logger.debug("validateServerConfiguration started...");
+
+		if (!sysInfo.isSslEnabled() && sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE) {
+			throw new ConfigurationException("Authentication policy cannot be 'CERTIFICATE' while SSL is disabled");
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	private KeyStore initializeKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		logger.debug("initializeKeyStore started...");
-		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled.");
-		final String messageNotDefined = " is not defined.";
+		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled");
+		final String messageNotDefined = " is not defined";
 		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
 		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found.");
+		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
 		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
 
 		final KeyStore keystore = KeyStore.getInstance(sysInfo.getSslProperties().getKeyStoreType());
@@ -157,19 +181,20 @@ public abstract class ApplicationInitListener {
 	//-------------------------------------------------------------------------------------------------
 	private void checkServerCertificate(final KeyStore keyStore) {
 		logger.debug("checkServerCertificate started...");
+
 		final X509Certificate serverCertificate = (X509Certificate) arrowheadContext.get(Constants.SERVER_CERTIFICATE);
 		final CommonNameAndType serverData = SecurityUtilities.getIdentificationDataFromSubjectDN(serverCertificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
 
 		if (serverData == null) {
-			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, common name and profile type not found.");
+			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, common name and profile type not found");
 		}
 		if (CertificateProfileType.SYSTEM != serverData.profileType()) {
 			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, invalid profile type: " + serverData.profileType());
 		}
 
 		if (!SecurityUtilities.isValidSystemCommonName(serverData.commonName())) {
-			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have 5 parts.", serverData.commonName());
-			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have 5 parts.");
+			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have 5 parts", serverData.commonName());
+			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have 5 parts");
 		}
 		logger.info("Server CN: {}", serverData.commonName());
 
@@ -183,7 +208,7 @@ public abstract class ApplicationInitListener {
 		final X509Certificate serverCertificate = SecurityUtilities.getCertificateFromKeyStore(keyStore, sysInfo.getSslProperties().getKeyAlias());
 		if (serverCertificate == null) {
 			// never happens because checkServer
-			throw new ServiceConfigurationError("Cannot find server certificate in the specified key store.");
+			throw new ServiceConfigurationError("Cannot find server certificate in the specified key store");
 		}
 
 		arrowheadContext.put(Constants.SERVER_CERTIFICATE, serverCertificate);
@@ -192,9 +217,23 @@ public abstract class ApplicationInitListener {
 
 		final PrivateKey privateKey = SecurityUtilities.getPrivateKeyFromKeyStore(keyStore, sysInfo.getSslProperties().getKeyAlias(), sysInfo.getSslProperties().getKeyPassword());
 		if (privateKey == null) {
-			throw new ServiceConfigurationError("Cannot find private key in the specified key store.");
+			throw new ServiceConfigurationError("Cannot find private key in the specified key store");
 		}
 		arrowheadContext.put(Constants.SERVER_PRIVATE_KEY, privateKey);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void subscribeToMqttServiceTopics() {
+		logger.debug("subscribeToMqttServiceTopics started...");
+		Assert.notNull(mqttController, "mqttController is null");
+
+		if (Utilities.isEmpty(sysInfo.getServices())) {
+			return;
+		}
+
+		for (final ServiceModel serviceModel : sysInfo.getServices()) {
+			mqttController.listen(serviceModel);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -222,7 +261,7 @@ public abstract class ApplicationInitListener {
 			}
 		}
 
-		logger.info("System {} published {} service(s).", sysInfo.getSystemName(), registeredServices.size());
+		logger.info("System {} published {} service(s)", sysInfo.getSystemName(), registeredServices.size());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -284,7 +323,7 @@ public abstract class ApplicationInitListener {
 			}
 
 			registeredServices.clear();
-			logger.info("Core system {} revoked {} service(s).", sysInfo, registeredServices.size());
+			logger.info("Core system {} revoked {} service(s)", sysInfo, registeredServices.size());
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());
 			logger.debug(t);

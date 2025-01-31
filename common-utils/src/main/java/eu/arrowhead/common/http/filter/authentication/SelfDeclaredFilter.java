@@ -15,13 +15,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Order(15)
+@Order(Constants.REQUEST_FILTER_ORDER_AUTHENTICATION)
 public class SelfDeclaredFilter extends ArrowheadFilter {
-
-	//=================================================================================================
-	// members
-
-	private static final String SYSOP = "sysop";
 
 	//=================================================================================================
 	// assistant methods
@@ -34,7 +29,7 @@ public class SelfDeclaredFilter extends ArrowheadFilter {
 
 			final String systemName = processAuthHeader(request);
 			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, systemName);
-			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST, SYSOP.equals(systemName.toLowerCase().trim()));
+			request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST, Constants.SYSOP.equals(systemName.toLowerCase().trim()));
 
 			chain.doFilter(request, response);
 		} catch (final ArrowheadException ex) {

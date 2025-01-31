@@ -8,9 +8,10 @@ public record HttpOperationModel(
 		String path,
 		String method) {
 
+	//-------------------------------------------------------------------------------------------------
 	public HttpOperationModel {
-		Assert.isTrue(!Utilities.isEmpty(path), "'path' is missing.");
-		Assert.isTrue(!Utilities.isEmpty(method), "'method' is missing.");
+		Assert.isTrue(!Utilities.isEmpty(path), "'path' is missing");
+		Assert.isTrue(!Utilities.isEmpty(method), "'method' is missing");
 	}
 
 	//=================================================================================================

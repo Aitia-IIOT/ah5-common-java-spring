@@ -22,8 +22,8 @@ public class SizeEqualsEvaluator implements IMetaEvaluator {
 			return left.toString().length() == size;
 		}
 
-		if (left instanceof List<?>) {
-			return ((List<?>) left).size() == size;
+		if (left instanceof final List<?> leftList) {
+			return leftList.size() == size;
 		}
 
 		return false;

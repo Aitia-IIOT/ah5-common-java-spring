@@ -14,7 +14,7 @@ public enum CertificateProfileType {
 	//=================================================================================================
 	// members
 
-	private String code;
+	private final String code;
 
 	//=================================================================================================
 	// methods
@@ -26,7 +26,7 @@ public enum CertificateProfileType {
 
 	//-------------------------------------------------------------------------------------------------
 	public static CertificateProfileType fromCode(final String code) {
-		for (CertificateProfileType candidate : CertificateProfileType.values()) {
+		for (final CertificateProfileType candidate : CertificateProfileType.values()) {
 			if (candidate.getCode().equals(code)) {
 				return candidate;
 			}

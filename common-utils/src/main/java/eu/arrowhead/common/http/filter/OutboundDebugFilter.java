@@ -20,6 +20,7 @@ public class OutboundDebugFilter extends ArrowheadFilter {
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		log.trace("Entering OutboundDebugFilter...");
+
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		if (response.getCharacterEncoding() == null) {
 			response.setCharacterEncoding(StandardCharsets.UTF_8.name());

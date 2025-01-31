@@ -15,6 +15,7 @@ public record ServiceModel(
 		List<InterfaceModel> interfaces,
 		Map<String, Object> metadata) {
 
+	//-------------------------------------------------------------------------------------------------
 	public ServiceModel {
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinition), "Service definition is null or blank");
 		Assert.isTrue(!Utilities.isEmpty(version), "Version null or blank");
@@ -55,7 +56,11 @@ public record ServiceModel(
 			if (interfaces == null) {
 				interfaces = new ArrayList<>();
 			}
-			interfaces.add(serviceInterface);
+
+			if (serviceInterface != null) {
+				interfaces.add(serviceInterface);
+			}
+
 			return this;
 		}
 
@@ -70,7 +75,11 @@ public record ServiceModel(
 			if (metadata == null) {
 				metadata = new HashMap<>();
 			}
-			metadata.put(key, value);
+
+			if (!Utilities.isEmpty(key)) {
+				metadata.put(key, value);
+			}
+
 			return this;
 		}
 
