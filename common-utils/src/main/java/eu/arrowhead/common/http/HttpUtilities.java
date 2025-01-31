@@ -133,11 +133,11 @@ public final class HttpUtilities {
 		if (!Utilities.isEmpty(path)) {
 			builder.path(path);
 		}
-		
+
 		if (pathSegments != null && pathSegments.length > 0) {
 			builder.pathSegment(pathSegments);
 		}
-		
+
 		if (queryParams != null) {
 			builder.queryParams(queryParams);
 		}
@@ -193,16 +193,16 @@ public final class HttpUtilities {
 
 	//-------------------------------------------------------------------------------------------------
 	public static boolean isSysop(final HttpServletRequest request, final String origin) throws InvalidParameterException {
-		
+
 		if (request == null) {
 			throw new InvalidParameterException("Request is null", origin);
 		}
-		
+
 		final Object isSysopObject = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST);
-		
+
 		return isSysopObject == null ? false : (boolean) isSysopObject;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	public static boolean isValidHttpMethod(final String str) {
 		if (!Utilities.isEmpty(str)) {

@@ -194,6 +194,7 @@ public final class Constants {
 	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
 	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
 	public static final String SERVICE_DEF_IDENTITY = "identity";
+	public static final String SERVICE_DEF_MONITOR = "monitor";
 
 	// Operation related
 
@@ -228,6 +229,7 @@ public final class Constants {
 	public static final String SERVICE_OP_BLACKLIST_REMOVE = "blacklist-remove";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
+	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
 
 	//=================================================================================================
 	// assistant methods
