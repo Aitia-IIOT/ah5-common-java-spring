@@ -54,6 +54,7 @@ public final class Constants {
 	// System related
 
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
+	public static final String SYS_NAME_BLACKLIST = "blacklist";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -70,7 +71,7 @@ public final class Constants {
 	public static final String SERVICEREGISTRY_ADDRESS = "service.registry.address";
 	public static final String $SERVICEREGISTRY_ADDRESS_WD = "${" + SERVICEREGISTRY_ADDRESS + ":" + LOCALHOST + "}";
 	public static final String SERVICEREGISTRY_PORT = "service.registry.port";
-	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8843}";
+	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8443}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
@@ -84,6 +85,9 @@ public final class Constants {
 	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":true}";
 	public static final String HTTP_COLLECTOR_MODE = "http.collector.mode";
 	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":SR_AND_ORCH}";
+	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
+	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
+	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":true}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 
@@ -187,6 +191,10 @@ public final class Constants {
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
+	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
+	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
+	public static final String SERVICE_DEF_IDENTITY = "identity";
+	public static final String SERVICE_DEF_MONITOR = "monitor";
 
 	// Operation related
 
@@ -194,6 +202,7 @@ public final class Constants {
 	public static final String SERVICE_OP_REGISTER = "register";
 	public static final String SERVICE_OP_LOOKUP = "lookup";
 	public static final String SERVICE_OP_REVOKE = "revoke";
+	public static final String SERVICE_OP_CHECK = "check";
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
 	public static final String SERVICE_OP_GET_CONFIG = "get-config";
@@ -215,8 +224,12 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_QUERY = "interface-template-query";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
+	public static final String SERVICE_OP_BLACKLIST_QUERY = "blacklist-query";
+	public static final String SERVICE_OP_BLACKLIST_CREATE = "blacklist-create";
+	public static final String SERVICE_OP_BLACKLIST_REMOVE = "blacklist-remove";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
+	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
 
 	//=================================================================================================
 	// assistant methods
