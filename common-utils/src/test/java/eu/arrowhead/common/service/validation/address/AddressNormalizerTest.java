@@ -7,25 +7,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes=AddressNormalizer.class)
+@SpringBootTest(classes = AddressNormalizer.class)
 public class AddressNormalizerTest {
-	
+
 	//=================================================================================================
 	// members
 
 	@Autowired
 	private AddressNormalizer addressNormalizer;
-	
+
 	//=================================================================================================
 	// methods
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void normalizeInvalidAddressTest() {
 		// If the address is not MAC, IPv4, IPv6 or hybrid, the normalizer shouldn't change it (besides trim and toLowerCase).
 		assertAll("Invalid address",
 				// incorrect number of separators
-				() -> assertEquals("a1:a1:a1:a1:a1a1", addressNormalizer.normalize("a1:a1:a1:a1:a1a1")), 
+				() -> assertEquals("a1:a1:a1:a1:a1a1", addressNormalizer.normalize("a1:a1:a1:a1:a1a1")),
 				// mixed separators
 				() -> assertEquals("a1-a1:a1.a1-a1:a1", addressNormalizer.normalize("a1-a1:a1.a1-a1:a1")),
 				() -> assertEquals("128.0.0.11:a:a:a:a:a", addressNormalizer.normalize("128.0.0.11:a:a:a:a:a")),
@@ -35,9 +35,9 @@ public class AddressNormalizerTest {
 				() -> assertEquals("ä1:a1:a1:a1:a1:a1", addressNormalizer.normalize("ä1:a1:a1:a1:a1:a1")),
 				// looks like IPv6, but contains more than one duplicated colons
 				() -> assertEquals("2001::96b3::8a2e:0370:7cf4", addressNormalizer.normalize("2001::96b3::8a2e:0370:7cf4")));
-		
+
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void normalizeMACTest() {
@@ -47,14 +47,14 @@ public class AddressNormalizerTest {
 				// change dashes to colons
 				() -> assertEquals("ab:cd:ef:11:22:33", addressNormalizer.normalize(" \n\tAB-CD-EF-11-22-33 \r")));
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void normalizeIPv4Test() {
 		// remove whitespaces
 		assertEquals("192.168.0.1", addressNormalizer.normalize(" \n\t192.168.0.1 \r"));
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void normalizeIPv6Test() {
@@ -70,7 +70,7 @@ public class AddressNormalizerTest {
 				// normalize unspecified address
 				() -> assertEquals("0000:0000:0000:0000:0000:0000:0000:0000", addressNormalizer.normalize("::")));
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void normalizeIPv6IPv4HybridTest() {
