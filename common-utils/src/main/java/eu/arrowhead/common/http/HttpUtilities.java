@@ -82,7 +82,10 @@ public final class HttpUtilities {
 	//-------------------------------------------------------------------------------------------------
 	public static ArrowheadException createExceptionFromErrorMessageDTO(final ErrorMessageDTO dto) {
 		Assert.notNull(dto, "Error message object is null.");
-		Assert.notNull(dto.exceptionType(), "Exception type is null.");
+
+		if (dto.exceptionType() == null) {
+			return new ArrowheadException(dto.errorMessage(), dto.origin());
+		}
 
 		switch (dto.exceptionType()) {
 		case ARROWHEAD:

@@ -185,20 +185,25 @@ public final class Constants {
 	// Service related
 
 	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "general-management";
+
 	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
 
+	public static final String SERVICE_DEF_IDENTITY = "identity";
+	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identity-management";
+
 	// Operation related
+
+	public static final String SERVICE_OP_GET_LOG = "get-log";
+	public static final String SERVICE_OP_GET_CONFIG = "get-config";
 
 	public static final String SERVICE_OP_ECHO = "echo";
 	public static final String SERVICE_OP_REGISTER = "register";
 	public static final String SERVICE_OP_LOOKUP = "lookup";
 	public static final String SERVICE_OP_REVOKE = "revoke";
 
-	public static final String SERVICE_OP_GET_LOG = "get-log";
-	public static final String SERVICE_OP_GET_CONFIG = "get-config";
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
 	public static final String SERVICE_OP_DEVICE_UPDATE = "device-update";
@@ -218,9 +223,20 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
 
+	public static final String SERVICE_OP_IDENTITY_LOGIN = "identity-login";
+	public static final String SERVICE_OP_IDENTITY_LOGOUT = "identity-logout";
+	public static final String SERVICE_OP_IDENTITY_CHANGE = "identity-change-credentials";
+	public static final String SERVICE_OP_IDENTITY_VERIFY = "identity-verify";
+
+	public static final String SERVICE_OP_IDENTITY_MGMT_CREATE = "identity-mgmt-create";
+	public static final String SERVICE_OP_IDENTITY_MGMT_UPDATE = "identity-mgmt-update";
+	public static final String SERVICE_OP_IDENTITY_MGMT_REMOVE = "identity-mgmt-remove";
+	public static final String SERVICE_OP_IDENTITY_MGMT_QUERY = "identity-mgmt-query";
+	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_CLOSE = "identity-mgmt-session-close";
+	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_QUERY = "identity-mgmt-session-query";
+
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
-
 
 	//=================================================================================================
 	// assistant methods
