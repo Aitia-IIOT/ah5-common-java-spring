@@ -6,7 +6,7 @@ public record OrchestrationSubscriptionResponseDTO(
 		String targetSystemName,
 		OrchestrationRequestDTO orchestrationRequest,
 		OrchestrationNotifyInterfaceDTO notifyInterface,
-		Long duration,
+		String expiredAt,
 		String createdAt) {
 
 }
