@@ -24,6 +24,8 @@ public class SelfDeclaredFilter extends ArrowheadFilter implements IAuthenticati
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
+		log.debug("checking access in SelfDeclaredFilter...");
+
 		try {
 			initializeRequestAttributes(request);
 
@@ -39,6 +41,8 @@ public class SelfDeclaredFilter extends ArrowheadFilter implements IAuthenticati
 
 	//-------------------------------------------------------------------------------------------------
 	private String processAuthHeader(final HttpServletRequest request) {
+		log.debug("SelfDeclaredFilter.processAuthHeader started...");
+
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		if (Utilities.isEmpty(authHeader)) {
 			throw new AuthException("No authorization header has been provided");

@@ -73,6 +73,8 @@ public final class Constants {
 	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8843}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
+	public static final String AUTHENTICATOR_SECRET_KEYS = "authenticator.secret.keys";
+	public static final String $AUTHENTICATOR_SECRET_KEYS = "#{${" + AUTHENTICATOR_SECRET_KEYS + "}}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
 	public static final String MANAGEMENT_POLICY = "management.policy";
 	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":SYSOP_ONLY}";
