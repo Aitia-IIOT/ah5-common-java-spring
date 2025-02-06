@@ -51,6 +51,8 @@ public final class Constants {
 	public static final String MAX_PAGE_SIZE = "max.page.size";
 	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":1000}";
 
+	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestricted-discovery";
+
 	// System related
 
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
@@ -198,7 +200,6 @@ public final class Constants {
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
 	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
 	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
-	public static final String SERVICE_DEF_IDENTITY = "identity";
 	public static final String SERVICE_DEF_MONITOR = "monitor";
 
 	public static final String SERVICE_DEF_IDENTITY = "identity";
@@ -249,6 +250,7 @@ public final class Constants {
 	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_CLOSE = "identity-mgmt-session-close";
 	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_QUERY = "identity-mgmt-session-query";
 
+	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
 
