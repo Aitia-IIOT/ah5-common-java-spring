@@ -62,11 +62,11 @@ public class ArrowheadHttpService {
 			final Map<String, String> customHeaders) {
 		logger.debug("consumeService started...");
 
-		if (!Utilities.isEmpty(serviceDefinition)) {
+		if (Utilities.isEmpty(serviceDefinition)) {
 			throw new InvalidParameterException("Service definition is not specified.");
 		}
 
-		if (!Utilities.isEmpty(operation)) {
+		if (Utilities.isEmpty(operation)) {
 			throw new InvalidParameterException("Service operation is not specified.");
 		}
 
