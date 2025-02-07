@@ -78,6 +78,12 @@ public final class Constants {
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
 	public static final String AUTHENTICATOR_SECRET_KEYS = "authenticator.secret.keys";
 	public static final String $AUTHENTICATOR_SECRET_KEYS = "#{${" + AUTHENTICATOR_SECRET_KEYS + "}}";
+	public static final String AUTHENTICATOR_CREDENTIALS = "authenticator.credentials";
+	public static final String $AUTHENTICATOR_CREDENTIALS = "#{${" + AUTHENTICATOR_CREDENTIALS + ":null}}";
+	public static final String AUTHENTICATIOR_LOGIN_INTERVAL = "authenticator.login.interval";
+	public static final String $AUTHENTICATOR_LOGIN_INTERVAL_WD = "${" + AUTHENTICATIOR_LOGIN_INTERVAL + ":10000}";
+	public static final String AUTHENTICATOR_LOGIN_DELAY = "authenticator.login.delay";
+	public static final String $AUTHENTICATOR_LOGIN_DELAY_WD = "${" + AUTHENTICATOR_LOGIN_DELAY + ":3000}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
 	public static final String MANAGEMENT_POLICY = "management.policy";
 	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":SYSOP_ONLY}";
@@ -253,6 +259,11 @@ public final class Constants {
 	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
+
+	// Quartz related
+
+	public static final String OUTSOURCED_LOGIN_TRIGGER = "outsourcedLoginTrigger";
+	public static final String OUTSOURCED_LOGIN_JOB = "outsourcedLoginJob";
 
 	//=================================================================================================
 	// assistant methods

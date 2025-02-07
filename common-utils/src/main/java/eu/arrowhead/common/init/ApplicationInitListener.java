@@ -41,6 +41,7 @@ import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
+import eu.arrowhead.dto.IdentityRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceCreateRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceInterfaceRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceResponseDTO;
@@ -125,12 +126,17 @@ public abstract class ApplicationInitListener {
 
 		revokeServices();
 
-		if (sysInfo.isMqttApiEnabled()) {
-			mqttController.disconnect();
-		}
-
 		try {
 			customDestroy();
+
+			if (sysInfo.isMqttApiEnabled()) {
+				mqttController.disconnect();
+			}
+
+			// logout attempt
+			if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
+				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_IDENTITY, Constants.SERVICE_OP_IDENTITY_LOGOUT, Void.TYPE, getLogoutPayload());
+			}
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());
 			logger.debug(t);
@@ -244,6 +250,11 @@ public abstract class ApplicationInitListener {
 			return;
 		}
 
+		// if authentication is handled by an other system, we have to wait a little to give time to running login job
+		if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
+			Thread.sleep(sysInfo.getAuthenticatorLoginDelay());
+		}
+
 		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
 
 		// revoke system (if any)
@@ -328,5 +339,14 @@ public abstract class ApplicationInitListener {
 			logger.error(t.getMessage());
 			logger.debug(t);
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private IdentityRequestDTO getLogoutPayload() {
+		logger.debug("getLogoutPayload started...");
+
+		return new IdentityRequestDTO(
+				sysInfo.getSystemName(),
+				sysInfo.getAuthencticatorCredentials());
 	}
 }

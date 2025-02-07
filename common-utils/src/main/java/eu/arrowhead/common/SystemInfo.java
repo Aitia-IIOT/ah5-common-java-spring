@@ -3,6 +3,7 @@ package eu.arrowhead.common;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,12 @@ public abstract class SystemInfo {
 
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
 	private AuthenticationPolicy authenticationPolicy;
+
+	@Value(Constants.$AUTHENTICATOR_LOGIN_DELAY_WD)
+	private long authenticatorLoginDelay;
+
+	@Value(Constants.$AUTHENTICATOR_CREDENTIALS)
+	private Map<String, String> authencticatorCredentials;
 
 	@Value(Constants.$MANAGEMENT_POLICY)
 	private ManagementPolicy managementPolicy;
@@ -90,6 +97,18 @@ public abstract class SystemInfo {
 		return authenticationPolicy == AuthenticationPolicy.OUTSOURCED ? (String) arrowheadContext.get(Constants.KEY_IDENTITY_TOKEN) : null;
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	public List<String> getManagementWhitelist() {
+		if (!Utilities.isEmpty(managementWhitelist) && Utilities.isEmpty(normalizedManagementWhitelist)) {
+			for (final String name : managementWhitelist) {
+				if (!Utilities.isEmpty(name)) {
+					normalizedManagementWhitelist.add(nameNormalizer.normalize(name));
+				}
+			}
+		}
+		return normalizedManagementWhitelist;
+	}
+
 	//=================================================================================================
 	// assistant methods
 
@@ -126,6 +145,10 @@ public abstract class SystemInfo {
 
 		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
 			throw new InvalidParameterException("MQTT Broker address is not defined");
+		}
+
+		if (AuthenticationPolicy.OUTSOURCED == authenticationPolicy && Utilities.isEmpty(authencticatorCredentials)) {
+			throw new InvalidParameterException("No credentials are specified to login to the authentication system");
 		}
 
 		customInit();
@@ -170,18 +193,6 @@ public abstract class SystemInfo {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public List<String> getManagementWhitelist() {
-		if (!Utilities.isEmpty(managementWhitelist) && Utilities.isEmpty(normalizedManagementWhitelist)) {
-			for (final String name : managementWhitelist) {
-				if (!Utilities.isEmpty(name)) {
-					normalizedManagementWhitelist.add(nameNormalizer.normalize(name));
-				}
-			}
-		}
-		return normalizedManagementWhitelist;
-	}
-
-	//-------------------------------------------------------------------------------------------------
 	public boolean isMqttApiEnabled() {
 		return this.mqttEnabled;
 	}
@@ -214,5 +225,15 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public boolean isSslEnabled() {
 		return sslProperties != null && sslProperties.isSslEnabled();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public long getAuthenticatorLoginDelay() {
+		return authenticatorLoginDelay;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public Map<String, String> getAuthencticatorCredentials() {
+		return Collections.unmodifiableMap(authencticatorCredentials);
 	}
 }
