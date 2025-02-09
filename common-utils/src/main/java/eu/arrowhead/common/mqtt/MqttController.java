@@ -121,7 +121,7 @@ public class MqttController {
 			//-------------------------------------------------------------------------------------------------
 			@Override
 			public void deliveryComplete(final IMqttDeliveryToken token) {
-				logger.debug("MQTT message delivered to broker " + brokerUri + ". Topic(s): " + token.getTopics());
+				logger.debug("MQTT message delivered to broker " + brokerUri + ". Topic(s): " + String.join(", ", token.getTopics()));
 			}
 
 			//-------------------------------------------------------------------------------------------------
