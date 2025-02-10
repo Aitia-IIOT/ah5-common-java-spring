@@ -32,6 +32,7 @@ public final class Constants {
 	public static final String SERVER_CERTIFICATE = "server.certificate";
 
 	public static final String KEY_IDENTITY_TOKEN = "identity-token";
+	public static final String KEY_IDENTITY_RENEWAL_THRESHOLD = "identity-renewal-threshold";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic-http";
@@ -263,7 +264,7 @@ public final class Constants {
 	// Quartz related
 
 	public static final String OUTSOURCED_LOGIN_TRIGGER = "outsourcedLoginTrigger";
-	public static final String OUTSOURCED_LOGIN_JOB = "outsourcedLoginJob";
+	public static final String OUTSOURCED_LOGIN_JOB_FACTORY = "outsourcedLoginJobFactory";
 
 	//=================================================================================================
 	// assistant methods
