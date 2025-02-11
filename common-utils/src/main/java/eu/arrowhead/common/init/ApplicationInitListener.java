@@ -347,6 +347,6 @@ public abstract class ApplicationInitListener {
 
 		return new IdentityRequestDTO(
 				sysInfo.getSystemName(),
-				sysInfo.getAuthencticatorCredentials());
+				sysInfo.getAuthenticatorCredentials());
 	}
 }

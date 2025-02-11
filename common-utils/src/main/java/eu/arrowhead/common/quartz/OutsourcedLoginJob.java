@@ -102,6 +102,6 @@ public class OutsourcedLoginJob implements Job {
 
 		return new IdentityRequestDTO(
 				systemInfo.getSystemName(),
-				systemInfo.getAuthencticatorCredentials());
+				systemInfo.getAuthenticatorCredentials());
 	}
 }

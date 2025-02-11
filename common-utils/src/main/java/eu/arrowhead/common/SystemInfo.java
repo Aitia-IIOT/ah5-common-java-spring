@@ -47,7 +47,7 @@ public abstract class SystemInfo {
 	private long authenticatorLoginDelay;
 
 	@Value(Constants.$AUTHENTICATOR_CREDENTIALS)
-	private Map<String, String> authencticatorCredentials;
+	private Map<String, String> authenticatorCredentials;
 
 	@Value(Constants.$MANAGEMENT_POLICY)
 	private ManagementPolicy managementPolicy;
@@ -147,7 +147,7 @@ public abstract class SystemInfo {
 			throw new InvalidParameterException("MQTT Broker address is not defined");
 		}
 
-		if (AuthenticationPolicy.OUTSOURCED == authenticationPolicy && Utilities.isEmpty(authencticatorCredentials)) {
+		if (AuthenticationPolicy.OUTSOURCED == authenticationPolicy && Utilities.isEmpty(authenticatorCredentials)) {
 			throw new InvalidParameterException("No credentials are specified to login to the authentication system");
 		}
 
@@ -233,7 +233,7 @@ public abstract class SystemInfo {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public Map<String, String> getAuthencticatorCredentials() {
-		return Collections.unmodifiableMap(authencticatorCredentials);
+	public Map<String, String> getAuthenticatorCredentials() {
+		return Collections.unmodifiableMap(authenticatorCredentials);
 	}
 }
