@@ -13,8 +13,8 @@ public final class MetadataRequirementTokenizer {
 	//=================================================================================================
 	// members
 
-	private static final String OP = "op";
-	private static final String VALUE = "value";
+	public static final String OP = "op";
+	public static final String VALUE = "value";
 
 	//=================================================================================================
 	// methods
