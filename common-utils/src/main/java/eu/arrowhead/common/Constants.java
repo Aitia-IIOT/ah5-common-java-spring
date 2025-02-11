@@ -90,6 +90,7 @@ public final class Constants {
 	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":true}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
+	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allow-exclusivity";
 
 	// SSL related
 
