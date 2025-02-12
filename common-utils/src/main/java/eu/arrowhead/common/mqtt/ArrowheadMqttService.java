@@ -17,6 +17,7 @@ import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ExternalServerError;
 import eu.arrowhead.common.exception.InternalServerError;
+import eu.arrowhead.dto.MqttPublishTemplate;
 import eu.arrowhead.dto.MqttResponseTemplate;
 
 @Service
@@ -71,14 +72,28 @@ public class ArrowheadMqttService {
 
 	//-------------------------------------------------------------------------------------------------
 	/**
-	 * Publish a service message
+	 * Publish a non-response service message
 	 */
-	public void publish(final String connectId, final String sender, final String topic, final MqttQoS qos, final Object payload) {
+	public void publish(final String topic, final String operation, final String sender, final MqttQoS qos, final Object payload) {
 		logger.debug("publish started");
-		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
+		Assert.isTrue(!Utilities.isEmpty(operation), "operation is empty");
 
-		// TODO needs an MqttPublishTemplate
+		final MqttClient client = mqttService.client(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID);
+		Assert.notNull(client, "Main broker is not initialized");
+
+		try {
+			final MqttPublishTemplate template = new MqttPublishTemplate(sender, operation, payload);
+			final MqttMessage msg = new MqttMessage(mapper.writeValueAsBytes(template));
+			msg.setQos(qos == null ? Constants.MQTT_DEFAULT_QOS : qos.value());
+			client.publish(topic, msg);
+		} catch (final JsonProcessingException ex) {
+			logger.debug(ex);
+			throw new InternalServerError("MQTT service publish message creation failed: " + ex.getMessage());
+		} catch (final MqttException ex) {
+			logger.debug(ex);
+			throw new ExternalServerError("MQTT service publish failed: " + ex.getMessage());
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -86,7 +101,6 @@ public class ArrowheadMqttService {
 	 * Publish a response for a request-response service when it is provided via MQTT
 	 */
 	public void response(
-			final String connectId,
 			final String receiver,
 			final String topic,
 			final String traceId,
@@ -94,11 +108,10 @@ public class ArrowheadMqttService {
 			final MqttStatus status,
 			final Object payload) {
 		logger.debug("response started");
-		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
-		final MqttClient client = mqttService.client(connectId);
-		Assert.notNull(client, "Unknown connectId: " + connectId);
+		final MqttClient client = mqttService.client(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID);
+		Assert.notNull(client, "Main broker is not initialized");
 
 		try {
 			final MqttResponseTemplate template = new MqttResponseTemplate(status.value(), traceId, receiver, payload == null ? "" : payload);

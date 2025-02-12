@@ -17,7 +17,6 @@ import org.springframework.util.Assert;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
@@ -132,7 +131,7 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	protected void successResponse(final MqttRequestModel request, final MqttStatus status, final Object response) {
 		if (!Utilities.isEmpty(request.getResponseTopic())) {
-			ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID,
+			ahMqttService.response(
 					request.getRequester(),
 					request.getResponseTopic(),
 					request.getTraceId(),
@@ -203,7 +202,7 @@ public abstract class MqttTopicHandler extends Thread {
 		}
 
 		final MqttStatus status = calculateStatusFromException(ex);
-		ahMqttService.response(Constants.MQTT_SERVICE_PROVIDING_BROKER_CONNECT_ID,
+		ahMqttService.response(
 				request.getRequester(),
 				request.getResponseTopic(),
 				request.getTraceId(),
