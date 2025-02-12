@@ -1,5 +1,8 @@
 package eu.arrowhead.dto;
 
-public record OrchestrationResponseDTO() {
-	//TODO
+import java.util.List;
+
+public record OrchestrationResponseDTO(
+		List<OrchestrationResultDTO> results,
+		List<String> warnings) {
 }
