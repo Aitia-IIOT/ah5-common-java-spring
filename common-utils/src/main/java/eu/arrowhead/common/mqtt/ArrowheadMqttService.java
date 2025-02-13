@@ -1,5 +1,11 @@
 package eu.arrowhead.common.mqtt;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -33,6 +39,8 @@ public class ArrowheadMqttService {
 	@Autowired
 	private ObjectMapper mapper;
 
+	private Map<String, MqttSubscriptionHandler> subscriptionMap = new ConcurrentHashMap<>();
+
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	//=================================================================================================
@@ -42,28 +50,57 @@ public class ArrowheadMqttService {
 	/**
 	 * Subscribe for consuming a push service
 	 */
-	public void subscribe(final String connectId, final String topic, final MqttQoS qos) {
+	public LinkedBlockingQueue<MqttMessage> subscribe(final String address, final int port, final boolean isSSl, final String topic) {
 		logger.debug("subscribe started");
-		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
+		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
-		// TODO
+		final String connectionId = calculateConnectionId(address, port, isSSl);
+
+		try {
+
+			// Find or create subscription handler
+			if (!subscriptionMap.containsKey(connectionId)) {
+				MqttClient client = mqttService.client(connectionId);
+				if (client == null) {
+					mqttService.connect(connectionId, address, port, isSSl);
+					client = mqttService.client(connectionId);
+				}
+				subscriptionMap.put(connectionId, new MqttSubscriptionHandler(connectionId, client));
+			}
+
+			final MqttSubscriptionHandler subscriptionHandler = subscriptionMap.get(connectionId);
+
+			// Subscribe
+			return subscriptionHandler.addSubscription(topic);
+
+		} catch (final MqttException ex) {
+			logger.debug(ex);
+			throw new ExternalServerError("MQTT service publish failed: " + ex.getMessage());
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	/**
 	 * Unsubscribe from consuming a push service
 	 */
-	public void unsubscribe(final String connectId, final String[] topics) {
+	public void unsubscribe(final String address, final int port, final boolean isSSl, final String topic) {
 		logger.debug("unsubscribe started");
-		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
-		Assert.notNull(topics, "topic array is null");
+		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
+		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
-		final MqttClient client = mqttService.client(connectId);
-		Assert.notNull(client, "Unknown connectId: " + connectId);
+		final String connectionId = calculateConnectionId(address, port, isSSl);
 
 		try {
-			client.unsubscribe(topics);
+			if (subscriptionMap.containsKey(topic)) {
+				final MqttSubscriptionHandler subscriptionHandler = subscriptionMap.get(connectionId);
+				subscriptionHandler.removeSubscription(topic);
+				if (Utilities.isEmpty(subscriptionHandler.getSubscribedTopics())) {
+					mqttService.client(connectionId).disconnect();
+					subscriptionMap.remove(connectionId);
+				}
+			}
+
 		} catch (final MqttException ex) {
 			logger.debug(ex);
 			throw new ExternalServerError("MQTT unsubscribe failed: " + ex.getMessage());
@@ -98,7 +135,8 @@ public class ArrowheadMqttService {
 
 	//-------------------------------------------------------------------------------------------------
 	/**
-	 * Publish a response for a request-response service when it is provided via MQTT
+	 * Publish a response for a request-response service when it is provided via
+	 * MQTT
 	 */
 	public void response(
 			final String receiver,
@@ -125,5 +163,15 @@ public class ArrowheadMqttService {
 			logger.debug(ex);
 			throw new ExternalServerError("MQTT service response failed: " + ex.getMessage());
 		}
+	}
+
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	private String calculateConnectionId(final String address, final int port, final boolean isSSl) {
+		logger.debug("calculateConnectionId started...");
+
+		return new String(Base64.getDecoder().decode(address + port + String.valueOf(isSSl)), StandardCharsets.UTF_8);
 	}
 }

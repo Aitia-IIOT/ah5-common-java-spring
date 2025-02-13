@@ -2,7 +2,7 @@ package eu.arrowhead.common.mqtt;
 
 import eu.arrowhead.dto.MqttRequestTemplate;
 
-public interface MqttHandler {
+public interface MqttRequestHandler {
 
 	//=================================================================================================
 	// methods
