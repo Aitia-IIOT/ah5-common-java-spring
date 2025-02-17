@@ -115,7 +115,7 @@ public class AddressValidatorTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void validateHostNameTest() {
-		//valid hostname, invalid hostname, invalid length
+		// valid hostname, invalid hostname, invalid length
 		assertAll("hostname",
 				// valid hostname
 				() -> assertDoesNotThrow(() -> {
