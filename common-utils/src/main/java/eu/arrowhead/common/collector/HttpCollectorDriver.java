@@ -82,7 +82,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	@Nullable
-	public ServiceModel acquireService(final String serviceDefinitionName, final String interfaceTemplateName) throws ArrowheadException {
+	public ServiceModel acquireService(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) throws ArrowheadException {
 		logger.debug("acquireService started...");
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinitionName), "service definition is empty");
 
@@ -90,9 +90,9 @@ public class HttpCollectorDriver implements ICollectorDriver {
 			throw new InvalidParameterException("This collector only supports the following interfaces: " + String.join(", ", supportedInterfaces));
 		}
 
-		ServiceModel result = acquireServiceFromSR(serviceDefinitionName, interfaceTemplateName);
+		ServiceModel result = acquireServiceFromSR(serviceDefinitionName, interfaceTemplateName, providerName);
 		if (result == null && HttpCollectorMode.SR_AND_ORCH == mode) {
-			result = acquireServiceFromOrchestrator(serviceDefinitionName, interfaceTemplateName);
+			result = acquireServiceFromOrchestrator(serviceDefinitionName, interfaceTemplateName, providerName);
 		}
 
 		return result;
@@ -102,7 +102,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel acquireServiceFromSR(final String serviceDefinitionName, final String interfaceTemplateName) {
+	private ServiceModel acquireServiceFromSR(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		logger.debug("acquireServiceFromSR started...");
 
 		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
@@ -117,11 +117,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		final ServiceInstanceListResponseDTO response = httpService.sendRequest(uri, HttpMethod.POST, ServiceInstanceListResponseDTO.class, payload, null, headers);
-		return convertLookupResponse(response);
+		return convertLookupResponse(response, providerName);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel acquireServiceFromOrchestrator(final String serviceDefinitionName, final String interfaceTemplateName) {
+	private ServiceModel acquireServiceFromOrchestrator(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		// TODO Auto-generated method stub
 		// try to orchestrate the service (if no orchestration service is cached, it will lookup for it first)
 		return null;
@@ -139,14 +139,28 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 	//-------------------------------------------------------------------------------------------------
 	@SuppressWarnings("unchecked")
-	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response) {
+	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response, final String providerName) {
 		logger.debug("convertLookupResponse started...");
 
 		if (response.entries().isEmpty()) {
 			return null;
 		}
 
-		final ServiceInstanceResponseDTO instance = response.entries().get(0);
+		// only the first instance or the first matching system name entry will be returned
+		ServiceInstanceResponseDTO instance = null;
+		if (Utilities.isEmpty(providerName)) {
+			instance = response.entries().getFirst();
+		} else {
+			final List<ServiceInstanceResponseDTO> matchingProvider = response.entries().stream().filter(i -> i.provider().name().equalsIgnoreCase(providerName)).toList();
+			if (!Utilities.isEmpty(matchingProvider)) {
+				instance = matchingProvider.getFirst();
+			}
+		}
+
+		if (instance == null) {
+			return null;
+		}
+
 		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
 
 		// create the list of interface models
@@ -194,8 +208,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				: Map.of();
 
 		// create the interface model
-		final HttpInterfaceModel model = new HttpInterfaceModel
-				.Builder(templateName)
+		final HttpInterfaceModel model = new HttpInterfaceModel.Builder(templateName)
 				.accessAddresses(accessAddresses)
 				.accessPort(accessPort)
 				.basePath(basePath)
@@ -220,11 +233,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		// operations
 		final Set<String> operations = properties.containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)
-				? new HashSet<String>((Collection<? extends String>) properties.get(MqttInterfaceModel.PROP_NAME_OPERATIONS)) : Set.of();
+				? new HashSet<String>((Collection<? extends String>) properties.get(MqttInterfaceModel.PROP_NAME_OPERATIONS))
+				: Set.of();
 
 		// create the interface model
-		MqttInterfaceModel model = new MqttInterfaceModel
-				.Builder(templateName)
+		final MqttInterfaceModel model = new MqttInterfaceModel.Builder(templateName)
 				.accessAddresses(accessAddresses)
 				.accessPort(accessPort)
 				.topic(topic)

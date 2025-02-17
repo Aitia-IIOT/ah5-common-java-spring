@@ -248,12 +248,12 @@ public abstract class ApplicationInitListener {
 		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
 
 		// revoke system (if any)
-		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class);
+		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REVOKE, Constants.SYS_NAME_SERVICE_REGISTRY, Void.class);
 
 		// register system
 		final SystemModel model = sysInfo.getSystemModel();
 		final SystemRegisterRequestDTO payload = new SystemRegisterRequestDTO(model.metadata(), model.version(), model.addresses(), model.deviceName());
-		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, SystemResponseDTO.class, payload);
+		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, Constants.SYS_NAME_SERVICE_REGISTRY, SystemResponseDTO.class, payload);
 
 		// register services
 		if (sysInfo.getServices() != null) {
@@ -279,7 +279,7 @@ public abstract class ApplicationInitListener {
 		final String templateName = secure ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
 		for (int i = 0; i <= retries; ++i) {
 			try {
-				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName);
+				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
 				logger.info("Service Registry is accessable...");
 				break;
 			} catch (final ForbiddenException | AuthException ex) {
@@ -304,7 +304,7 @@ public abstract class ApplicationInitListener {
 				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), ServiceInterfacePolicy.NONE.name(), i.properties()))
 				.collect(Collectors.toList());
 		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
-		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, ServiceInstanceResponseDTO.class, payload);
+		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, Constants.SYS_NAME_SERVICE_REGISTRY, ServiceInstanceResponseDTO.class, payload);
 		registeredServices.add(response.instanceId());
 	}
 
@@ -320,7 +320,7 @@ public abstract class ApplicationInitListener {
 			checkServiceRegistryConnection(sysInfo.isSslEnabled(), 0, 1);
 
 			for (final String serviceInstanceId : registeredServices) {
-				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class, List.of(serviceInstanceId));
+				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Constants.SYS_NAME_SERVICE_REGISTRY, Void.class, List.of(serviceInstanceId));
 			}
 
 			logger.info("Core system {} revoked {} service(s)", sysInfo, registeredServices.size());

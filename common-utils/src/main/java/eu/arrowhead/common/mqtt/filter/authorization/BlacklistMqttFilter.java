@@ -73,7 +73,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 				// if requester is blacklist, no need for check
 				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)) {
 
-					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Boolean.TYPE, List.of(systemName));
+					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Constants.SYS_NAME_BLACKLIST, Boolean.TYPE, List.of(systemName));
 
 					if (isBlacklisted) {
 						throw new ForbiddenException(systemName + " system is blacklisted!");
@@ -114,7 +114,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 		// finding the topic of the lookup operation
 		final String templateName = sysInfo.isSslEnabled() ? Constants.GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME;
 		String lookupTopic = null;
-		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, templateName);
+		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
 		for (final InterfaceModel intf : model.interfaces()) {
 			if (intf.templateName().equals(templateName) && intf.properties().containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)) {
 				final Set<String> ops = (Set<String>) intf.properties().get(MqttInterfaceModel.PROP_NAME_OPERATIONS);

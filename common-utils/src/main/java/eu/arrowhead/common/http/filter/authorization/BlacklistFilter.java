@@ -76,7 +76,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 				// if requester is blacklist, no need for check
 				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)) {
 
-					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Boolean.TYPE, List.of(systemName));
+					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Constants.SYS_NAME_BLACKLIST, Boolean.TYPE, List.of(systemName));
 
 					if (isBlacklisted) {
 						throw new ForbiddenException(systemName + " system is blacklisted!");
@@ -112,7 +112,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 		HttpOperationModel lookupOp = null;
 		String lookupBasePath = null;
 		final String templateName = sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
-		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, templateName);
+		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
 		for (final InterfaceModel intf : model.interfaces()) {
 			if (intf.templateName().equals(templateName) && intf.properties().containsKey(HttpInterfaceModel.PROP_NAME_OPERATIONS)) {
 				final Map<String, HttpOperationModel> ops = (Map<String, HttpOperationModel>) intf.properties().get(HttpInterfaceModel.PROP_NAME_OPERATIONS);

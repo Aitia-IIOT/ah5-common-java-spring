@@ -13,7 +13,7 @@ import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.service.validation.address.AddressValidator;
 
 @Service
-public class ServiceInterfaceAddressTypeFilter {
+public class ServiceInterfaceAddressPropertyProcessor {
 
 	//=================================================================================================
 	// members
@@ -28,13 +28,55 @@ public class ServiceInterfaceAddressTypeFilter {
 	//=================================================================================================
 	// methods
 
+	//-------------------------------------------------------------------------------------------------
 	public void setAddressAliasNames(final List<String> addressAliasNames) {
 		this.addressAliasNames = addressAliasNames;
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public boolean filter(final Map<String, Object> interfaceProps, final List<String> addressTypeFilters) {
+	public AddressData findAddresses(final Map<String, Object> interfaceProps) {
+		logger.debug("findAddresses started...");
+		return discover(interfaceProps);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public boolean filterOnAddressTypes(final Map<String, Object> interfaceProps, final List<String> addressTypeFilters) {
 		logger.debug("filter started...");
+
+		final AddressData addressData = discover(interfaceProps);
+
+		if (Utilities.isEmpty(addressData.addresses())) {
+			return false;
+		}
+
+		// Filter on address type
+		final List<String> matchingAddresses = new ArrayList<>();
+		for (final String address : addressData.addresses()) {
+			final String detectedType = addressValidator.detectType(address).name();
+			if (!addressTypeFilters.stream().filter(tf -> tf.equalsIgnoreCase(detectedType)).toList().isEmpty()) {
+				matchingAddresses.add(address);
+			}
+		}
+
+		if (Utilities.isEmpty(matchingAddresses)) {
+			return false;
+		}
+
+		if (addressData.isList()) {
+			interfaceProps.put(addressData.addressKey(), matchingAddresses);
+		} else {
+			interfaceProps.put(addressData.addressKey(), matchingAddresses.getFirst());
+		}
+
+		return true;
+	}
+
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	private AddressData discover(final Map<String, Object> interfaceProps) {
+		logger.debug("discover started...");
 
 		final List<String> addresses = new ArrayList<>();
 		String addressKey = null;
@@ -77,37 +119,13 @@ public class ServiceInterfaceAddressTypeFilter {
 
 		}
 
-		if (Utilities.isEmpty(addresses)) {
-			return false;
-		}
-
-		// Filter on address type
-		final List<String> matchingAddresses = new ArrayList<>();
-		for (final String address : addresses) {
-			final String detectedType = addressValidator.detectType(address).name();
-			if (!addressTypeFilters.stream().filter(tf -> tf.equalsIgnoreCase(detectedType)).toList().isEmpty()) {
-				matchingAddresses.add(address);
-			}
-		}
-
-		if (Utilities.isEmpty(matchingAddresses)) {
-			return false;
-		}
-
-		if (isList) {
-			interfaceProps.put(addressKey, matchingAddresses);
-		} else {
-			interfaceProps.put(addressKey, matchingAddresses.getFirst());
-		}
-
-		return true;
+		return new AddressData(addresses, addressKey, isList);
 	}
-
-	//=================================================================================================
-	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	private List<?> castToList(final Object obj) {
+		logger.debug("castToList started...");
+
 		try {
 			return (List<?>) obj;
 		} catch (final ClassCastException __) {
@@ -117,10 +135,21 @@ public class ServiceInterfaceAddressTypeFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	private String castToString(final Object obj) {
+		logger.debug("castToString started...");
+
 		try {
 			return (String) obj;
 		} catch (final ClassCastException __) {
 			return null;
 		}
+	}
+
+	//=================================================================================================
+	// nested record
+
+	public record AddressData(
+			List<String> addresses,
+			String addressKey,
+			boolean isList) {
 	}
 }

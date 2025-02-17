@@ -39,17 +39,18 @@ public class ServiceCollector {
 
 	//-------------------------------------------------------------------------------------------------
 	@Nullable
-	public ServiceModel getServiceModel(final String serviceDefinition, final String templateName) throws ArrowheadException {
+	public ServiceModel getServiceModel(final String serviceDefinition, final String templateName, final String providerName) throws ArrowheadException {
 		logger.debug("getServiceModel started...");
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinition), "service definition is empty");
 		Assert.isTrue(!Utilities.isEmpty(templateName), "template name is empty");
 
 		final String nServiceDefinition = nameNormalizer.normalize(serviceDefinition);
 		final String nTemplateName = nameNormalizer.normalize(templateName);
+		final String nProviderName =  !Utilities.isEmpty(providerName) ? nameNormalizer.normalize(templateName) : null;
 
 		final String key = Constants.KEY_PREFIX_FOR_SERVICE_MODEL + nServiceDefinition;
 		if (!arrowheadContext.containsKey(key)) {
-			final ServiceModel model = driver.acquireService(nServiceDefinition, nTemplateName);
+			final ServiceModel model = driver.acquireService(nServiceDefinition, nTemplateName, nProviderName);
 			if (model != null) {
 				arrowheadContext.put(key, model);
 			}
