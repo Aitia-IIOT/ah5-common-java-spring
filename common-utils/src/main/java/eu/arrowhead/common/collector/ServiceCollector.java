@@ -46,7 +46,7 @@ public class ServiceCollector {
 
 		final String nServiceDefinition = nameNormalizer.normalize(serviceDefinition);
 		final String nTemplateName = nameNormalizer.normalize(templateName);
-		final String nProviderName =  !Utilities.isEmpty(providerName) ? nameNormalizer.normalize(templateName) : null;
+		final String nProviderName =  !Utilities.isEmpty(providerName) ? nameNormalizer.normalize(providerName) : null;
 
 		final String key = Constants.KEY_PREFIX_FOR_SERVICE_MODEL + nServiceDefinition;
 		if (!arrowheadContext.containsKey(key)) {

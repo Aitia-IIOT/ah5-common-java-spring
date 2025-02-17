@@ -74,7 +74,7 @@ public class ArrowheadHttpService {
 
 		final ServiceModel model = collector.getServiceModel(serviceDefinition, templateName, providerName);
 		if (model == null) {
-			throw new DataNotFoundException("Service definition/operation is not found.");
+			throw new DataNotFoundException("Service definition is not found: " + serviceDefinition);
 		}
 
 		final HttpInterfaceModel interfaceModel = (HttpInterfaceModel) model.interfaces().get(0);

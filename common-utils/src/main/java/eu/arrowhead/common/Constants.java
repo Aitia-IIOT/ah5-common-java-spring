@@ -89,7 +89,7 @@ public final class Constants {
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
 	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":true}";
 	public static final String SERVICE_ADDRESS_ALIAS = "service.address.alias";
-	public static final String $SERVICE_ADDRESS_ALIAS_WD = "${" + SERVICE_ADDRESS_ALIAS + ":address,addresses,accessAddress,accessAddresses,host,hosts}";
+	public static final String $SERVICE_ADDRESS_ALIAS = "${" + SERVICE_ADDRESS_ALIAS + "}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allow-exclusivity";
