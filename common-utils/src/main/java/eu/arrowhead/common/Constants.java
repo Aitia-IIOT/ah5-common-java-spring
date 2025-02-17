@@ -88,6 +88,8 @@ public final class Constants {
 	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
 	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":true}";
+	public static final String SERVICE_ADDRESS_ALIAS = "service.address.alias";
+	public static final String $SERVICE_ADDRESS_ALIAS_WD = "${" + SERVICE_ADDRESS_ALIAS + ":address,addresses,accessAddress,accessAddresses,host,hosts}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allow-exclusivity";
@@ -209,6 +211,7 @@ public final class Constants {
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
 	public static final String SERVICE_OP_GET_CONFIG = "get-config";
+	public static final String SERVICE_OP_GET_CONFIG_REQ_PARAM = "keys";
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
 	public static final String SERVICE_OP_DEVICE_UPDATE = "device-update";

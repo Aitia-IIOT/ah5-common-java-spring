@@ -10,6 +10,7 @@ public record ServiceInstanceLookupRequestDTO(
 		List<String> versions,
 		String alivesAt,
 		List<MetadataRequirementDTO> metadataRequirementsList,
+		List<String> addressTypes,
 		List<String> interfaceTemplateNames,
 		List<MetadataRequirementDTO> interfacePropertyRequirementsList,
 		List<String> policies) {
@@ -29,6 +30,7 @@ public record ServiceInstanceLookupRequestDTO(
 		private List<String> versions;
 		private String alivesAt;
 		private List<MetadataRequirementDTO> metadataRequirementsList;
+		private List<String> addressTypes;
 		private List<String> interfaceTemplateNames;
 		private List<MetadataRequirementDTO> interfacePropertyRequirementsList;
 		private List<String> policies;
@@ -123,6 +125,21 @@ public record ServiceInstanceLookupRequestDTO(
 		}
 
 		//-------------------------------------------------------------------------------------------------
+		public Builder addressTypes(final List<String> addressTypes) {
+			this.addressTypes = addressTypes;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder addressType(final String addressType) {
+			if (this.addressTypes == null) {
+				this.addressTypes = new ArrayList<>();
+			}
+			this.addressTypes.add(addressType);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
 		public Builder interfaceTemplateNames(final List<String> interfaceTemplateNames) {
 			this.interfaceTemplateNames = interfaceTemplateNames;
 			return this;
@@ -179,6 +196,7 @@ public record ServiceInstanceLookupRequestDTO(
 					versions,
 					alivesAt,
 					metadataRequirementsList,
+					addressTypes,
 					interfaceTemplateNames,
 					interfacePropertyRequirementsList,
 					policies);
