@@ -230,7 +230,7 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_QUERY = "interface-template-query";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
-	
+
 	public static final String SERVICE_OP_BLACKLIST_QUERY = "query";
 	public static final String SERVICE_OP_BLACKLIST_CREATE = "create";
 	public static final String SERVICE_OP_BLACKLIST_REMOVE = "remove";
