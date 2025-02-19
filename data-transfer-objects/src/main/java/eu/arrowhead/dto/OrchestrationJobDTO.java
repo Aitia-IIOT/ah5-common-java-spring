@@ -1,6 +1,6 @@
 package eu.arrowhead.dto;
 
-public record OrchestrationPushJobResponseDTO(
+public record OrchestrationJobDTO(
 		String id,
 		String status,
 		String type,

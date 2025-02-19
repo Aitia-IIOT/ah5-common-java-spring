@@ -2,6 +2,6 @@ package eu.arrowhead.dto;
 
 import java.util.List;
 
-public record OrchestrationPushJobListResponseDTO(List<OrchestrationPushJobResponseDTO> jobs) {
+public record OrchestrationPushJobListResponseDTO(List<OrchestrationJobDTO> jobs) {
 
 }
