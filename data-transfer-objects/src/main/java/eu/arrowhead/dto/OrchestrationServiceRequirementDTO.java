@@ -13,6 +13,4 @@ public record OrchestrationServiceRequirementDTO(
 		List<MetadataRequirementDTO> interfacePropertyRequirements,
 		List<String> securityPolicies,
 		List<String> prefferedProviders) {
-
-	// TODO
 }

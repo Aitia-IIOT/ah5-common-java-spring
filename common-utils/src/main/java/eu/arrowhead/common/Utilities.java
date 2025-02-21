@@ -202,6 +202,16 @@ public final class Utilities {
 		}
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	public static int parseToInt(final Object obj) {
+	    return switch (obj) {
+	        case final Integer i -> i;
+	        case final Number n -> n.intValue();
+	        case final String s -> Integer.parseInt(s);
+	        case null, default -> throw new NumberFormatException("Invalid input: " + obj);
+	    };
+	}
+
 	//=================================================================================================
 	// assistant methods
 

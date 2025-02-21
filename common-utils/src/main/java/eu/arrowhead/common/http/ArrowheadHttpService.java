@@ -108,6 +108,11 @@ public class ArrowheadHttpService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public <T, P> T consumeService(final String serviceDefinition, final String operation, final String providerName, final Class<T> responseType, final P payload, final MultiValueMap<String, String> queryParams) {
+		return consumeService(serviceDefinition, operation, providerName, responseType, payload, queryParams, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public <T, P> T consumeService(final String serviceDefinition, final String operation, final String providerName, final Class<T> responseType, final MultiValueMap<String, String> queryParams) {
 		return consumeService(serviceDefinition, operation, providerName, responseType, null, queryParams, null, null);
 	}
