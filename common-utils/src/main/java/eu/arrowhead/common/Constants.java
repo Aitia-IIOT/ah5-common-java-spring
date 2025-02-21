@@ -200,6 +200,9 @@ public final class Constants {
 	public static final String SERVICE_DEF_MONITOR = "monitor";
 
 	public static final String SERVICE_DEF_ORCHESTRATION = "orchestration";
+	public static final String SERVICE_DEF_ORCHESTRATION_PUSH_MANAGEMENT = "orchestration-push-management";
+	public static final String SERVICE_DEF_ORCHESTRATION_LOCK_MANAGEMENT = "orchestration-lock-management";
+	public static final String SERVICE_DEF_ORCHESTRATION_HISTORY_MANAGEMENT = "orchestration-history-management";
 
 	// Operation related
 
@@ -236,8 +239,12 @@ public final class Constants {
 	public static final String SERVICE_OP_BLACKLIST_REMOVE = "remove";
 
 	public static final String SERVICE_OP_ORCHESTRATION_PULL = "pull";
-	public static final String SERVICE_OP_ORCHESTRATION_PUSH_SUBSCRIBE = "push-subscribe";
-	public static final String SERVICE_OP_ORCHESTRATION_PUSH_UNSUBSCRIBE = "push-unsubscribe";
+	public static final String SERVICE_OP_ORCHESTRATION_SUBSCRIBE = "subscribe";
+	public static final String SERVICE_OP_ORCHESTRATION_UNSUBSCRIBE = "unsubscribe";
+	public static final String SERVICE_OP_ORCHESTRATION_TRIGGER = "trigger";
+	public static final String SERVICE_OP_ORCHESTRATION_QUERY = "query";
+	public static final String SERVICE_OP_ORCHESTRATION_REMOVE = "remove";
+	public static final String SERVICE_OP_ORCHESTRATION_CREATE = "create";
 
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
