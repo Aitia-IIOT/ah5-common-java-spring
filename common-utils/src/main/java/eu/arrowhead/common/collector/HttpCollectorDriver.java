@@ -229,7 +229,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final int accessPort = (int) properties.get(MqttInterfaceModel.PROP_NAME_ACCESS_PORT);
 
 		// topic
-		final String topic = (String) properties.get(MqttInterfaceModel.PROP_NAME_TOPIC);
+		final String topic = (String) properties.get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
 
 		// operations
 		final Set<String> operations = properties.containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)
@@ -240,7 +240,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final MqttInterfaceModel model = new MqttInterfaceModel.Builder(templateName)
 				.accessAddresses(accessAddresses)
 				.accessPort(accessPort)
-				.topic(topic)
+				.baseTopic(topic)
 				.operations(operations)
 				.build();
 

@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -24,6 +23,7 @@ import eu.arrowhead.common.mqtt.ArrowheadMqttService;
 import eu.arrowhead.common.mqtt.MqttResourceManager;
 import eu.arrowhead.common.mqtt.MqttStatus;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
+import eu.arrowhead.common.mqtt.model.MqttMessageContainer;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.dto.MqttRequestTemplate;
 
@@ -41,7 +41,7 @@ public abstract class MqttTopicHandler extends Thread {
 	@Autowired
 	private List<ArrowheadMqttFilter> filters;
 
-	private BlockingQueue<MqttMessage> queue;
+	private BlockingQueue<MqttMessageContainer> queue;
 
 	private boolean doWork = false;
 
@@ -55,7 +55,7 @@ public abstract class MqttTopicHandler extends Thread {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public void init(final BlockingQueue<MqttMessage> queue) {
+	public void init(final BlockingQueue<MqttMessageContainer> queue) {
 		this.queue = queue;
 		this.threadpool = resourceManager.getThreadpool();
 		filters.sort((a, b) -> a.order() - b.order());
@@ -69,14 +69,15 @@ public abstract class MqttTopicHandler extends Thread {
 		doWork = true;
 		while (doWork) {
 			try {
-				final MqttMessage message = queue.take();
+				final MqttMessageContainer msgContainer = queue.take();
+
 				try {
 					threadpool.execute(() -> {
 						final long startTime = System.currentTimeMillis();
 						long endTime = 0;
 						MqttRequestModel request = null;
 						try {
-							final Entry<String, MqttRequestModel> parsed = parseMqttMessage(message);
+							final Entry<String, MqttRequestModel> parsed = parseMqttMessage(msgContainer);
 							request = parsed.getValue();
 
 							// Filter chain
@@ -96,7 +97,7 @@ public abstract class MqttTopicHandler extends Thread {
 				} catch (final RejectedExecutionException ex) {
 					Entry<String, MqttRequestModel> parsed = null;
 					try {
-						parsed = parseMqttMessage(message);
+						parsed = parseMqttMessage(msgContainer);
 					} catch (final InvalidParameterException invalidEx) {
 						logger.debug(invalidEx);
 						errorResponse(ex, null);
@@ -120,7 +121,7 @@ public abstract class MqttTopicHandler extends Thread {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public abstract String topic();
+	public abstract String baseTopic();
 
 	//-------------------------------------------------------------------------------------------------
 	public abstract void handle(final MqttRequestModel request) throws ArrowheadException;
@@ -174,14 +175,14 @@ public abstract class MqttTopicHandler extends Thread {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessage message) {
-		if (message == null) {
+	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessageContainer msgContainer) {
+		if (msgContainer.getMessage() == null) {
 			throw new InvalidParameterException("Invalid message template: null message");
 		}
 
 		try {
-			final MqttRequestTemplate template = mapper.readValue(message.getPayload(), MqttRequestTemplate.class);
-			return Map.entry(template.authentication(), new MqttRequestModel(topic(), template));
+			final MqttRequestTemplate template = mapper.readValue(msgContainer.getMessage().getPayload(), MqttRequestTemplate.class);
+			return Map.entry(template.authentication(), new MqttRequestModel(msgContainer.getBaseTopic(), msgContainer.getOperation(), template));
 		} catch (final IOException ex) {
 			throw new InvalidParameterException("Invalid message template. Reason: " + ex.getMessage());
 		}
