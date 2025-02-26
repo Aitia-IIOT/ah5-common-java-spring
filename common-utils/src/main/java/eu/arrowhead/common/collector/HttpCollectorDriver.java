@@ -64,7 +64,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 			Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME,
 			Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME,
 			Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME,
-			Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME);
+			Constants.GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME);
 
 	//=================================================================================================
 	// methods
@@ -157,12 +157,12 @@ public class HttpCollectorDriver implements ICollectorDriver {
 			final Map<String, Object> properties = interf.properties();
 
 			// HTTP or HTTPS
-			if (templateName.contains(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME)) {
+			if (templateName.equals(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME) || templateName.equals(Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME)) {
 				interfaceModelList.add(createHttpInterfaceModel(templateName, properties));
 			}
 
 			// MQTT or MQTTS
-			if (templateName.contains(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME)) {
+			if (templateName.equals(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME) || templateName.equals(Constants.GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME)) {
 				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
 			}
 		}
