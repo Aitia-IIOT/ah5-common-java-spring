@@ -94,6 +94,9 @@ public abstract class SystemInfo {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
+	protected abstract PublicConfigurationKeysAndDefaults getPublicConfigurationKeysAndDefaults();
+
+	//-------------------------------------------------------------------------------------------------
 	protected void customInit() {
 	};
 
@@ -214,5 +217,12 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public boolean isSslEnabled() {
 		return sslProperties != null && sslProperties.isSslEnabled();
+	}
+
+	//=================================================================================================
+	// nested structures
+
+	//-------------------------------------------------------------------------------------------------
+	public record PublicConfigurationKeysAndDefaults(List<String> configKeys, Class<?> defaultsClass) {
 	}
 }
