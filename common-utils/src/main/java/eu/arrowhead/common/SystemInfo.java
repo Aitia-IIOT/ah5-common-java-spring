@@ -1,11 +1,16 @@
 package eu.arrowhead.common;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +29,10 @@ public abstract class SystemInfo {
 
 	//=================================================================================================
 	// members
+
+	private static final String DEFAULT_SUFFIX = "DEFAULT";
+	private static final String KEY_DELIMITER_REGEX = "\\.";
+	private static final String FIELD_DELIMITER = "_";
 
 	@Value(Constants.$SERVER_ADDRESS)
 	private String serverAddress;
@@ -54,7 +63,7 @@ public abstract class SystemInfo {
 
 	@Value(Constants.$MANAGEMENT_WHITELIST)
 	private List<String> managementWhitelist;
-	private List<String> normalizedManagementWhitelist = new ArrayList<>();
+	private final List<String> normalizedManagementWhitelist = new ArrayList<>();
 
 	@Value(Constants.$MQTT_API_ENABLED_WD)
 	private boolean mqttEnabled;
@@ -79,6 +88,8 @@ public abstract class SystemInfo {
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	private Map<String, Object> arrowheadContext;
+
+	private Map<String, String> configDefaultsMap = new HashMap<>();
 
 	//=================================================================================================
 	// methods
@@ -111,6 +122,9 @@ public abstract class SystemInfo {
 
 	//=================================================================================================
 	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	protected abstract PublicConfigurationKeysAndDefaults getPublicConfigurationKeysAndDefaults();
 
 	//-------------------------------------------------------------------------------------------------
 	protected void customInit() {
@@ -151,7 +165,51 @@ public abstract class SystemInfo {
 			throw new InvalidParameterException("No credentials are specified to login to the authentication system");
 		}
 
+		collectConfigDefaults();
+
 		customInit();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void collectConfigDefaults() {
+		final PublicConfigurationKeysAndDefaults configInfo = getPublicConfigurationKeysAndDefaults();
+		if (configInfo != null && configInfo.defaultsClass() != null && !Utilities.isEmpty(configInfo.configKeys())) {
+			final Class<?> defaults = configInfo.defaultsClass;
+			final Set<String> configKeys = configInfo.configKeys();
+
+			final Map<String, String> defaultsMap = new HashMap<>(configKeys.size());
+			for (final String key : configKeys) {
+				final String fieldName = transformConfigKeyToDefaultFieldName(key);
+				try {
+					final Field field = defaults.getField(fieldName);
+					if (!Modifier.isStatic(field.getModifiers())) {
+						// field is not static => ignore
+						defaultsMap.put(key, null);
+					} else {
+						defaultsMap.put(key, field.get(null).toString());
+					}
+				} catch (final NoSuchFieldException __) {
+					// no default
+					defaultsMap.put(key, null);
+				} catch (final IllegalArgumentException __) {
+					// never happens
+					throw new IllegalStateException("Something that should never happen, happened.");
+				} catch (final IllegalAccessException ex) {
+					throw new ServiceConfigurationError("Java security does not allow to read the default values from class " + defaults.getName());
+				}
+			}
+
+			this.configDefaultsMap = Collections.unmodifiableMap(defaultsMap);
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private String transformConfigKeyToDefaultFieldName(final String key) {
+		return key.trim()
+				.toUpperCase()
+				.replaceAll(KEY_DELIMITER_REGEX, FIELD_DELIMITER)
+				+ FIELD_DELIMITER
+				+ DEFAULT_SUFFIX;
 	}
 
 	//=================================================================================================
@@ -190,6 +248,11 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public ManagementPolicy getManagementPolicy() {
 		return managementPolicy;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public Map<String, String> getConfigDefaultsMap() {
+		return configDefaultsMap;
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -235,5 +298,12 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public Map<String, String> getAuthenticatorCredentials() {
 		return Collections.unmodifiableMap(authenticatorCredentials);
+	}
+
+	//=================================================================================================
+	// nested structures
+
+	//-------------------------------------------------------------------------------------------------
+	public record PublicConfigurationKeysAndDefaults(Set<String> configKeys, Class<?> defaultsClass) {
 	}
 }
