@@ -21,6 +21,7 @@ public class Defaults {
 	public static final String SERVICEREGISTRY_ADDRESS_DEFAULT = Constants.LOCALHOST;
 	public static final String SERVICEREGISTRY_PORT_DEFAULT = "8443";
 	public static final String AUTHENTICATION_POLICY_DEFAULT = AuthenticationPolicy.CERTIFICATE_VALUE;
+	public static final String ENABLE_MANAGEMENT_FILTER_DEFAULT = "false";
 	public static final String MANAGEMENT_POLICY_DEFAULT = ManagementPolicy.SYSOP_ONLY_VALUE;
 	public static final String MANAGEMENT_WHITELIST_DEFAULT = "\"\"";
 	public static final String ALLOW_SELF_ADDRESSING_DEFAULT = "true";
@@ -28,6 +29,7 @@ public class Defaults {
 	public static final String HTTP_COLLECTOR_MODE_DEFAULT = HttpCollectorMode.SR_AND_ORCH_VALUE;
 	public static final String ENABLE_BLACKLIST_FILTER_DEFAULT = "false";
 	public static final String FORCE_BLACKLIST_FILTER_DEFAULT = "true";
+	public static final String SERVICE_ADDRESS_ALIAS_DEFAULT = "\"\"";
 
 	// SSL related
 
