@@ -97,20 +97,34 @@ public final class Constants {
 	public static final String X_509 = "X.509";
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
 	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":" + Defaults.SERVER_SSL_ENABLED_DEFAULT + "}";
-	public static final String KEYSTORE_TYPE = "server.ssl.key-store-type";
-	public static final String $KEYSTORE_TYPE_WD = "${" + KEYSTORE_TYPE + ":" + Defaults.KEYSTORE_TYPE_DEFAULT + "}";
-	public static final String KEYSTORE_PATH = "server.ssl.key-store";
-	public static final String $KEYSTORE_PATH_WD = "${" + KEYSTORE_PATH + ":" + Defaults.KEYSTORE_PATH_DEFAULT + "}";
-	public static final String KEYSTORE_PASSWORD = "server.ssl.key-store-password";
-	public static final String $KEYSTORE_PASSWORD_WD = "${" + KEYSTORE_PASSWORD + ":" + Defaults.KEYSTORE_PASSWORD_DEFAULT + "}";
-	public static final String KEY_PASSWORD = "server.ssl.key-password";
-	public static final String $KEY_PASSWORD_WD = "${" + KEY_PASSWORD + ":" + Defaults.KEY_PASSWORD_DEFAULT + "}";
-	public static final String KEY_ALIAS = "server.ssl.key-alias";
-	public static final String $KEY_ALIAS_WD = "${" + KEY_ALIAS + ":" + Defaults.KEY_ALIAS_DEFAULT + "}";
-	public static final String TRUSTSTORE_PATH = "server.ssl.trust-store";
-	public static final String $TRUSTSTORE_PATH_WD = "${" + TRUSTSTORE_PATH + ":" + Defaults.TRUSTSTORE_PATH_DEFAULT + "}";
-	public static final String TRUSTSTORE_PASSWORD = "server.ssl.trust-store-password";
-	public static final String $TRUSTSTORE_PASSWORD_WD = "${" + TRUSTSTORE_PASSWORD + ":" + Defaults.TRUSTSTORE_PASSWORD_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE__TYPE = "server.ssl.key-store-type";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__STORE_TYPE_WD = "${" + SERVER_SSL_KEY__STORE__TYPE + ":" + Defaults.SERVER_SSL_KEY__STORE__TYPE_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE = "server.ssl.key-store";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__STORE_WD = "${" + SERVER_SSL_KEY__STORE + ":" + Defaults.SERVER_SSL_KEY__STORE_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE__PASSWORD = "server.ssl.key-store-password";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__STORE__PASSWORD_WD = "${" + SERVER_SSL_KEY__STORE__PASSWORD + ":" + Defaults.SERVER_SSL_KEY__STORE__PASSWORD_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__PASSWORD = "server.ssl.key-password";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__PASSWORD_WD = "${" + SERVER_SSL_KEY__PASSWORD + ":" + Defaults.SERVER_SSL_KEY__PASSWORD_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__ALIAS = "server.ssl.key-alias";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__ALIAS_WD = "${" + SERVER_SSL_KEY__ALIAS + ":" + Defaults.SERVER_SSL_KEY__ALIAS_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_TRUST__STORE = "server.ssl.trust-store";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_TRUST__STORE_WD = "${" + SERVER_SSL_TRUST__STORE + ":" + Defaults.SERVER_SSL_TRUST__STORE_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_TRUST__STORE__PASSWORD = "server.ssl.trust-store-password";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_TRUST__STORE__PASSWORD_WD = "${" + SERVER_SSL_TRUST__STORE__PASSWORD + ":" + Defaults.SERVER_SSL_TRUST__STORE__PASSWORD_DEFAULT + "}";
 	public static final String DISABLE_HOSTNAME_VERIFIER = "disable.hostname.verifier";
 	public static final String $DISABLE_HOSTNAME_VERIFIER_WD = "${" + DISABLE_HOSTNAME_VERIFIER + ":" + Defaults.DISABLE_HOSTNAME_VERIFIER_DEFAULT + "}";
 
