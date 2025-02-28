@@ -32,6 +32,7 @@ public abstract class SystemInfo {
 
 	private static final String DEFAULT_SUFFIX = "DEFAULT";
 	private static final String KEY_DELIMITER_REGEX = "\\.";
+	private static final String KEY_HYPHEN_REGEX = "-";
 	private static final String FIELD_DELIMITER = "_";
 
 	@Value(Constants.$SERVER_ADDRESS)
@@ -208,6 +209,7 @@ public abstract class SystemInfo {
 		return key.trim()
 				.toUpperCase()
 				.replaceAll(KEY_DELIMITER_REGEX, FIELD_DELIMITER)
+				.replaceAll(KEY_HYPHEN_REGEX, FIELD_DELIMITER + FIELD_DELIMITER)
 				+ FIELD_DELIMITER
 				+ DEFAULT_SUFFIX;
 	}

@@ -16,25 +16,25 @@ public class SSLProperties {
 	@Value(Constants.$SERVER_SSL_ENABLED_WD)
 	private boolean sslEnabled;
 
-	@Value(Constants.$KEYSTORE_TYPE_WD)
+	@Value(Constants.$SERVER_SSL_KEY__STORE_TYPE_WD)
 	private String keyStoreType;
 
-	@Value(Constants.$KEYSTORE_PATH_WD)
+	@Value(Constants.$SERVER_SSL_KEY__STORE_WD)
 	private Resource keyStore;
 
-	@Value(Constants.$KEYSTORE_PASSWORD_WD)
+	@Value(Constants.$SERVER_SSL_KEY__STORE__PASSWORD_WD)
 	private String keyStorePassword;
 
-	@Value(Constants.$KEY_PASSWORD_WD)
+	@Value(Constants.$SERVER_SSL_KEY__PASSWORD_WD)
 	private String keyPassword;
 
-	@Value(Constants.$KEY_ALIAS_WD)
+	@Value(Constants.$SERVER_SSL_KEY__ALIAS_WD)
 	private String keyAlias;
 
-	@Value(Constants.$TRUSTSTORE_PATH_WD)
+	@Value(Constants.$SERVER_SSL_TRUST__STORE_WD)
 	private Resource trustStore;
 
-	@Value(Constants.$TRUSTSTORE_PASSWORD_WD)
+	@Value(Constants.$SERVER_SSL_TRUST__STORE__PASSWORD_WD)
 	private String trustStorePassword;
 
 	//=================================================================================================

@@ -34,13 +34,20 @@ public class Defaults {
 	// SSL related
 
 	public static final String SERVER_SSL_ENABLED_DEFAULT = "false";
-	public static final String KEYSTORE_TYPE_DEFAULT = Constants.PKCS12;
-	public static final String KEYSTORE_PATH_DEFAULT = "";
-	public static final String KEYSTORE_PASSWORD_DEFAULT = "";
-	public static final String KEY_PASSWORD_DEFAULT = "";
-	public static final String KEY_ALIAS_DEFAULT = "";
-	public static final String TRUSTSTORE_PATH_DEFAULT = "";
-	public static final String TRUSTSTORE_PASSWORD_DEFAULT = "";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE__TYPE_DEFAULT = Constants.PKCS12;
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE_DEFAULT = "";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE__PASSWORD_DEFAULT = "";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__PASSWORD_DEFAULT = "";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__ALIAS_DEFAULT = "";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_TRUST__STORE_DEFAULT = "";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_TRUST__STORE__PASSWORD_DEFAULT = "";
 	public static final String DISABLE_HOSTNAME_VERIFIER_DEFAULT = "false";
 
 	// HTTP related
