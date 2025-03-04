@@ -172,6 +172,6 @@ public class ArrowheadMqttService {
 	private String calculateConnectionId(final String address, final int port, final boolean isSSl) {
 		logger.debug("calculateConnectionId started...");
 
-		return new String(Base64.getDecoder().decode(address + port + String.valueOf(isSSl)), StandardCharsets.UTF_8);
+		return new String(Base64.getEncoder().encode((address + port + String.valueOf(isSSl)).getBytes()), StandardCharsets.UTF_8);
 	}
 }

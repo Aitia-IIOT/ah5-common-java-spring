@@ -4,6 +4,6 @@ import java.util.List;
 
 public record OrchestrationSubscriptionListResponseDTO(
 		List<OrchestrationSubscriptionResponseDTO> entries,
-		Long count) {
+		long count) {
 
 }

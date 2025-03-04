@@ -36,7 +36,7 @@ public class MqttSubscriptionHandler {
 		this.connectionId = connectionId;
 		this.client = client;
 
-		if (!client.isConnected()) {
+		if (client == null || !client.isConnected()) {
 			throw new ExternalServerError("Cannot initialize MqttSubscriptionHandler, because client is not connected");
 		}
 		client.setCallback(createMqttCallback(client.getServerURI()));

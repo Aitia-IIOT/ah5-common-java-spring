@@ -90,7 +90,8 @@ public class MqttDispatcher {
 
 	//-------------------------------------------------------------------------------------------------
 	private String getBaseTopic(final String topic) {
-		int basepathEndIdx = topic.lastIndexOf(MqttMessageContainer.DELIMITER) + 1;
+		final int basepathEndIdx = topic.lastIndexOf(MqttMessageContainer.DELIMITER) + 1;
+		Assert.isTrue(basepathEndIdx > 0, "Invalid base topic. It can't be empty and must end with " + MqttMessageContainer.DELIMITER);
 		return topic.substring(0, basepathEndIdx);
 	}
 }

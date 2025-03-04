@@ -1,5 +1,6 @@
 package eu.arrowhead.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record OrchestrationServiceRequirementDTO(
@@ -13,4 +14,180 @@ public record OrchestrationServiceRequirementDTO(
 		List<MetadataRequirementDTO> interfacePropertyRequirements,
 		List<String> securityPolicies,
 		List<String> prefferedProviders) {
+
+	//=================================================================================================
+	// nested classes
+
+	//-------------------------------------------------------------------------------------------------
+	public static class Builder {
+
+		//=================================================================================================
+		// members
+
+		private String serviceDefinition;
+		private List<String> operations;
+		private List<String> versions;
+		private String alivesAt;
+		private List<MetadataRequirementDTO> metadataRequirements;
+		private List<String> interfaceTemplateNames;
+		private List<String> interfaceAddressTypes;
+		private List<MetadataRequirementDTO> interfacePropertyRequirements;
+		private List<String> securityPolicies;
+		private List<String> prefferedProviders;
+
+		//=================================================================================================
+		// methods
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder serviceDefinition(final String serviceDefinition) {
+			this.serviceDefinition = serviceDefinition;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder operations(final List<String> operations) {
+			this.operations = operations;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder operation(final String operation) {
+			if (this.operations == null) {
+				this.operations = new ArrayList<>();
+			}
+			this.operations.add(operation);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder versions(final List<String> versions) {
+			this.versions = versions;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder version(final String version) {
+			if (this.versions == null) {
+				this.versions = new ArrayList<>();
+			}
+			this.versions.add(version);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder alivesAt(final String alivesAt) {
+			this.alivesAt = alivesAt;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder metadataRequirements(final List<MetadataRequirementDTO> metadataRequirements) {
+			this.metadataRequirements = metadataRequirements;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder metadataRequirement(final MetadataRequirementDTO metadataRequirement) {
+			if (this.metadataRequirements == null) {
+				this.metadataRequirements = new ArrayList<>();
+			}
+
+			this.metadataRequirements.add(metadataRequirement);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder interfaceTemplateNames(final List<String> interfaceTemplateNames) {
+			this.interfaceTemplateNames = interfaceTemplateNames;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder interfaceTemplateName(final String interfaceTemplateName) {
+			if (this.interfaceTemplateNames == null) {
+				this.interfaceTemplateNames = new ArrayList<>();
+			}
+
+			this.interfaceTemplateNames.add(interfaceTemplateName);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder interfaceAddressTypes(final List<String> interfaceAddressTypes) {
+			this.interfaceAddressTypes = interfaceAddressTypes;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder interfaceAddressType(final String interfaceAddressType) {
+			if (this.interfaceAddressTypes == null) {
+				this.interfaceAddressTypes = new ArrayList<>();
+			}
+			this.interfaceAddressTypes.add(interfaceAddressType);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder interfacePropertyRequirements(final List<MetadataRequirementDTO> interfacePropertyRequirements) {
+			this.interfacePropertyRequirements = interfacePropertyRequirements;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder interfacePropertyRequirement(final MetadataRequirementDTO interfacePropertyRequirement) {
+			if (this.interfacePropertyRequirements == null) {
+				this.interfacePropertyRequirements = new ArrayList<>();
+			}
+
+			this.interfacePropertyRequirements.add(interfacePropertyRequirement);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder securityPolicies(final List<String> securityPolicies) {
+			this.securityPolicies = securityPolicies;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder securityPolicy(final String securityPolicy) {
+			if (this.securityPolicies == null) {
+				this.securityPolicies = new ArrayList<>();
+			}
+
+			this.securityPolicies.add(securityPolicy);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder prefferedProviders(final List<String> prefferedProviders) {
+			this.prefferedProviders = prefferedProviders;
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public Builder prefferedProvider(final String prefferedProvider) {
+			if (this.prefferedProviders == null) {
+				this.prefferedProviders = new ArrayList<>();
+			}
+
+			this.prefferedProviders.add(prefferedProvider);
+			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------
+		public OrchestrationServiceRequirementDTO build() {
+			return new OrchestrationServiceRequirementDTO(
+					serviceDefinition,
+					operations,
+					versions,
+					alivesAt,
+					metadataRequirements,
+					interfaceTemplateNames,
+					interfaceAddressTypes,
+					interfacePropertyRequirements,
+					securityPolicies,
+					prefferedProviders);
+		}
+	}
 }

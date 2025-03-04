@@ -108,8 +108,18 @@ public class ArrowheadHttpService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public <T, P> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final P payload) {
+		return consumeService(serviceDefinition, operation, null, responseType, payload, null, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public <T, P> T consumeService(final String serviceDefinition, final String operation, final String providerName, final Class<T> responseType, final P payload, final MultiValueMap<String, String> queryParams) {
 		return consumeService(serviceDefinition, operation, providerName, responseType, payload, queryParams, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public <T, P> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final P payload, final MultiValueMap<String, String> queryParams) {
+		return consumeService(serviceDefinition, operation, null, responseType, payload, queryParams, null, null);
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -118,14 +128,30 @@ public class ArrowheadHttpService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public <T, P> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final MultiValueMap<String, String> queryParams) {
+		return consumeService(serviceDefinition, operation, null, responseType, null, queryParams, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public <T> T consumeService(final String serviceDefinition, final String operation, final String providerName, final Class<T> responseType) {
 		return consumeService(serviceDefinition, operation, providerName, responseType, null, null, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public <T> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType) {
+		return consumeService(serviceDefinition, operation, null, responseType, null, null, null, null);
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	// path params in order
 	public <T> T consumeService(final String serviceDefinition, final String operation, final String providerName, final Class<T> responseType, final List<String> pathParams) {
 		return consumeService(serviceDefinition, operation, providerName, responseType, null, null, pathParams, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// path params in order
+	public <T> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final List<String> pathParams) {
+		return consumeService(serviceDefinition, operation, null, responseType, null, null, pathParams, null);
 	}
 
 	//=================================================================================================

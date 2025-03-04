@@ -37,6 +37,8 @@ public class MqttService {
 	//=================================================================================================
 	// members
 
+	private static final String SSL_PREFIX = Constants.SSL + "://";
+	private static final String TCP_PREFIX = Constants.TCP + "://";
 	private static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM = "ssl.KeyManagerFactory.algorithm";
 	private static final String SSL_TRUST_MANAGER_FACTORY_ALGORITHM = "ssl.TrustManagerFactory.algorithm";
 	private static final String TLS_VERSION = "TLSv1.2";
@@ -113,9 +115,9 @@ public class MqttService {
 
 		String serverURI;
 		if (isSSL == null) {
-			serverURI = sslProperties.isSslEnabled() ? "ssl://" : "tcp://";
+			serverURI = sslProperties.isSslEnabled() ? SSL_PREFIX : TCP_PREFIX;
 		} else {
-			serverURI = isSSL ? "ssl://" : "tcp://";
+			serverURI = isSSL ? SSL_PREFIX : TCP_PREFIX;
 		}
 		serverURI += address + ":" + port;
 

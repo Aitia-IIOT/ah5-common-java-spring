@@ -6,6 +6,6 @@ public record OrchestrationLockResponseDTO(
 		String serviceInstanceId,
 		String owner,
 		String expiresAt,
-		Boolean temporary) {
+		boolean temporary) {
 
 }

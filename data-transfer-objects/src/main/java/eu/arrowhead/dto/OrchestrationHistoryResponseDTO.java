@@ -4,6 +4,6 @@ import java.util.List;
 
 public record OrchestrationHistoryResponseDTO(
 		List<OrchestrationJobDTO> entries,
-		Long count) {
+		long count) {
 
 }

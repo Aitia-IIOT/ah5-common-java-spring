@@ -56,6 +56,8 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	public void init(final BlockingQueue<MqttMessageContainer> queue) {
+		logger.debug("init started...");
+
 		this.queue = queue;
 		this.threadpool = resourceManager.getThreadpool();
 		filters.sort((a, b) -> a.order() - b.order());
@@ -64,6 +66,7 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public void run() {
+		logger.debug("run started...");
 		Assert.isTrue(queue != null, getClass().getName() + "is not initialized");
 
 		doWork = true;
@@ -116,6 +119,8 @@ public abstract class MqttTopicHandler extends Thread {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public void interrupt() {
+		logger.debug("interrupt started...");
+
 		doWork = false;
 		super.interrupt();
 	}
@@ -131,6 +136,8 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	protected void successResponse(final MqttRequestModel request, final MqttStatus status, final Object response) {
+		logger.debug("successResponse started...");
+
 		if (!Utilities.isEmpty(request.getResponseTopic())) {
 			ahMqttService.response(
 					request.getRequester(),
@@ -146,6 +153,8 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	protected <T> T readPayload(final Object payload, final Class<T> dtoClass) {
+		logger.debug("readPayload started...");
+
 		if (payload == null) {
 			return null;
 		}
@@ -163,6 +172,8 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	protected <T> T readPayload(final Object payload, final TypeReference<T> dtoTypeRef) {
+		logger.debug("readPayload started...");
+
 		if (payload == null) {
 			return null;
 		}
@@ -176,6 +187,9 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessageContainer msgContainer) {
+		logger.debug("parseMqttMessage started...");
+		Assert.notNull(msgContainer, "MqttMessageContainer is null");
+
 		if (msgContainer.getMessage() == null) {
 			throw new InvalidParameterException("Invalid message template: null message");
 		}
@@ -190,6 +204,8 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	private void errorResponse(final Exception ex, final MqttRequestModel request) {
+		logger.debug("errorResponse started...");
+
 		if (request == null) {
 			logger.error("MQTT error occured, without request model being parsed");
 			logger.debug(ex);
@@ -214,6 +230,8 @@ public abstract class MqttTopicHandler extends Thread {
 
 	//-------------------------------------------------------------------------------------------------
 	private MqttStatus calculateStatusFromException(final Exception ex) {
+		logger.debug("calculateStatusFromException started...");
+
 		if (!(ex instanceof ArrowheadException)) {
 			return MqttStatus.INTERNAL_SERVER_ERROR;
 		}

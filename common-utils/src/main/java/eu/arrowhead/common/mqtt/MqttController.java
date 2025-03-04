@@ -67,7 +67,7 @@ public class MqttController {
 				initMqttClient(interfaceModel.accessAddresses().getFirst(), interfaceModel.accessPort());
 			}
 
-			for (String operation : interfaceModel.operations()) {
+			for (final String operation : interfaceModel.operations()) {
 				topic = interfaceModel.baseTopic() + operation;
 				mqttDispatcher.addTopic(topic);
 				client.subscribe(topic);

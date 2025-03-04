@@ -92,7 +92,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		ServiceModel result = acquireServiceFromSR(serviceDefinitionName, interfaceTemplateName, providerName);
 		if (result == null && HttpCollectorMode.SR_AND_ORCH == mode) {
-			result = acquireServiceFromOrchestrator(serviceDefinitionName, interfaceTemplateName, providerName);
+			result = acquireServiceFromOrchestration(serviceDefinitionName, interfaceTemplateName, providerName);
 		}
 
 		return result;
@@ -121,7 +121,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel acquireServiceFromOrchestrator(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
+	private ServiceModel acquireServiceFromOrchestration(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		// TODO Auto-generated method stub
 		// try to orchestrate the service (if no orchestration service is cached, it will lookup for it first)
 		return null;

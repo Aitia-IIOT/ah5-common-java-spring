@@ -53,7 +53,7 @@ public class ServiceInterfaceAddressPropertyProcessor {
 		final List<String> matchingAddresses = new ArrayList<>();
 		for (final String address : addressData.addresses()) {
 			final String detectedType = addressValidator.detectType(address).name();
-			if (!addressTypeFilters.stream().filter(tf -> tf.equalsIgnoreCase(detectedType)).toList().isEmpty()) {
+			if (addressTypeFilters.stream().anyMatch(tf -> tf.equalsIgnoreCase(detectedType))) {
 				matchingAddresses.add(address);
 			}
 		}
