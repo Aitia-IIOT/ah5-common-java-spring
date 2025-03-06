@@ -53,6 +53,12 @@ public abstract class SystemInfo {
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
 	private AuthenticationPolicy authenticationPolicy;
 
+	@Value(Constants.$AUTHENTICATOR_LOGIN_DELAY_WD)
+	private long authenticatorLoginDelay;
+
+	@Value(Constants.$AUTHENTICATOR_CREDENTIALS)
+	private Map<String, String> authenticatorCredentials;
+
 	@Value(Constants.$MANAGEMENT_POLICY)
 	private ManagementPolicy managementPolicy;
 
@@ -153,7 +159,11 @@ public abstract class SystemInfo {
 		}
 
 		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
-			throw new InvalidParameterException("MQTT Broker address is not defined.");
+			throw new InvalidParameterException("MQTT Broker address is not defined");
+		}
+
+		if (AuthenticationPolicy.OUTSOURCED == authenticationPolicy && Utilities.isEmpty(authenticatorCredentials)) {
+			throw new InvalidParameterException("No credentials are specified to login to the authentication system");
 		}
 
 		collectConfigDefaults();
@@ -280,6 +290,16 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public boolean isSslEnabled() {
 		return sslProperties != null && sslProperties.isSslEnabled();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public long getAuthenticatorLoginDelay() {
+		return authenticatorLoginDelay;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public Map<String, String> getAuthenticatorCredentials() {
+		return Collections.unmodifiableMap(authenticatorCredentials);
 	}
 
 	//=================================================================================================

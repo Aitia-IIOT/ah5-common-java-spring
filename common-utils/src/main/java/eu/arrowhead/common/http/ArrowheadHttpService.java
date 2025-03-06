@@ -116,7 +116,7 @@ public class ArrowheadHttpService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	// path params in order
+	// path parameters in order
 	public <T> T consumeService(final String serviceDefinition, final String operation, final Class<T> responseType, final List<String> pathParams) {
 		return consumeService(serviceDefinition, operation, responseType, null, null, pathParams, null);
 	}

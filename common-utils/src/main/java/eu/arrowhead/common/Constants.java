@@ -32,6 +32,7 @@ public final class Constants {
 	public static final String SERVER_CERTIFICATE = "server.certificate";
 
 	public static final String KEY_IDENTITY_TOKEN = "identity-token";
+	public static final String KEY_IDENTITY_RENEWAL_THRESHOLD = "identity-renewal-threshold";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic-http";
@@ -50,6 +51,8 @@ public final class Constants {
 
 	public static final String MAX_PAGE_SIZE = "max.page.size";
 	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":" + Defaults.MAX_PAGE_SIZE_DEFAULT + "}";
+
+	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestricted-discovery";
 
 	// System related
 
@@ -74,6 +77,14 @@ public final class Constants {
 	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":" + Defaults.SERVICEREGISTRY_PORT_DEFAULT + "}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":" + Defaults.AUTHENTICATION_POLICY_DEFAULT + "}";
+	public static final String AUTHENTICATOR_SECRET_KEYS = "authenticator.secret.keys";
+	public static final String $AUTHENTICATOR_SECRET_KEYS = "#{${" + AUTHENTICATOR_SECRET_KEYS + "}}";
+	public static final String AUTHENTICATOR_CREDENTIALS = "authenticator.credentials";
+	public static final String $AUTHENTICATOR_CREDENTIALS = "#{${" + AUTHENTICATOR_CREDENTIALS + ":null}}";
+	public static final String AUTHENTICATIOR_LOGIN_INTERVAL = "authenticator.login.interval";
+	public static final String $AUTHENTICATOR_LOGIN_INTERVAL_WD = "${" + AUTHENTICATIOR_LOGIN_INTERVAL + ":10000}";
+	public static final String AUTHENTICATOR_LOGIN_DELAY = "authenticator.login.delay";
+	public static final String $AUTHENTICATOR_LOGIN_DELAY_WD = "${" + AUTHENTICATOR_LOGIN_DELAY + ":3000}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
 	public static final String MANAGEMENT_POLICY = "management.policy";
 	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":" + Defaults.MANAGEMENT_POLICY_DEFAULT + "}";
@@ -139,6 +150,7 @@ public final class Constants {
 	public static final String HTTP_STATUS_NOT_FOUND = "404";
 	public static final String HTTP_STATUS_LOCKED = "423";
 	public static final String HTTP_STATUS_INTERNAL_SERVER_ERROR = "500";
+	public static final String HTTP_STATUS_SERVICE_UNAVAILABLE = "503";
 
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
 	public static final String HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST = "arrowhead.sysop.request";
@@ -147,7 +159,7 @@ public final class Constants {
 	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
-	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
+	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
 
 	public static final String HTTP_CLIENT_CONNECTION_TIMEOUT = "http.client.connection.timeout";
 	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":" + Defaults.HTTP_CLIENT_CONNECTION_TIMEOUT_DEFAULT + "}";
@@ -170,6 +182,7 @@ public final class Constants {
 	public static final String SWAGGER_HTTP_404_MESSAGE = "Not found";
 	public static final String SWAGGER_HTTP_423_MESSAGE = "Locked";
 	public static final String SWAGGER_HTTP_500_MESSAGE = "Internal server error";
+	public static final String SWAGGER_HTTP_503_MESSAGE = "Service unavailable";
 
 	// CORS defaults
 
@@ -201,16 +214,22 @@ public final class Constants {
 	// Service related
 
 	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "general-management";
+
 	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
 	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
 	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
 	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
 	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
 	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
-	public static final String SERVICE_DEF_IDENTITY = "identity";
 	public static final String SERVICE_DEF_MONITOR = "monitor";
 
+	public static final String SERVICE_DEF_IDENTITY = "identity";
+	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identity-management";
+
 	// Operation related
+
+	public static final String SERVICE_OP_GET_LOG = "get-log";
+	public static final String SERVICE_OP_GET_CONFIG = "get-config";
 
 	public static final String SERVICE_OP_ECHO = "echo";
 	public static final String SERVICE_OP_REGISTER = "register";
@@ -218,8 +237,6 @@ public final class Constants {
 	public static final String SERVICE_OP_REVOKE = "revoke";
 	public static final String SERVICE_OP_CHECK = "check";
 
-	public static final String SERVICE_OP_GET_LOG = "get-log";
-	public static final String SERVICE_OP_GET_CONFIG = "get-config";
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
 	public static final String SERVICE_OP_DEVICE_UPDATE = "device-update";
@@ -242,8 +259,26 @@ public final class Constants {
 	public static final String SERVICE_OP_BLACKLIST_CREATE = "blacklist-create";
 	public static final String SERVICE_OP_BLACKLIST_REMOVE = "blacklist-remove";
 
+	public static final String SERVICE_OP_IDENTITY_LOGIN = "identity-login";
+	public static final String SERVICE_OP_IDENTITY_LOGOUT = "identity-logout";
+	public static final String SERVICE_OP_IDENTITY_CHANGE = "identity-change-credentials";
+	public static final String SERVICE_OP_IDENTITY_VERIFY = "identity-verify";
+
+	public static final String SERVICE_OP_IDENTITY_MGMT_CREATE = "identity-mgmt-create";
+	public static final String SERVICE_OP_IDENTITY_MGMT_UPDATE = "identity-mgmt-update";
+	public static final String SERVICE_OP_IDENTITY_MGMT_REMOVE = "identity-mgmt-remove";
+	public static final String SERVICE_OP_IDENTITY_MGMT_QUERY = "identity-mgmt-query";
+	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_CLOSE = "identity-mgmt-session-close";
+	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_QUERY = "identity-mgmt-session-query";
+
+	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
+
+	// Quartz related
+
+	public static final String OUTSOURCED_LOGIN_TRIGGER = "outsourcedLoginTrigger";
+	public static final String OUTSOURCED_LOGIN_JOB_FACTORY = "outsourcedLoginJobFactory";
 
 	//=================================================================================================
 	// assistant methods

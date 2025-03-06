@@ -145,11 +145,12 @@ public class HttpService {
 		} catch (final Exception ex) {
 			if (ex.getCause() != null) {
 				final Throwable throwable = ex.getCause();
-				if (throwable.getMessage().contains(ERROR_MESSAGE_PART_PKIX_PATH)) {
+				final String message = throwable.getMessage();
+				if (message != null && message.contains(ERROR_MESSAGE_PART_PKIX_PATH)) {
 					logger.error("The system at {} is not part of the same certificate chain of trust!", uri.toUriString());
 					logger.debug("Exception:", throwable);
 					throw new ForbiddenException("The system at " + uri.toUriString() + " is not part of the same certificate chain of trust!");
-				} else if (throwable.getMessage().contains(ERROR_MESSAGE_PART_SUBJECT_ALTERNATIVE_NAMES) || throwable.getMessage().contains(ERROR_MESSAGE_PART_X509_NAME)) {
+				} else if (message != null && message.contains(ERROR_MESSAGE_PART_SUBJECT_ALTERNATIVE_NAMES) || message.contains(ERROR_MESSAGE_PART_X509_NAME)) {
 					logger.error("The certificate of the system at {} does not contain the specified IP address or DNS name as a Subject Alternative Name.", uri.toString());
 					logger.debug("Exception:", throwable);
 					throw new AuthException("The certificate of the system at " + uri.toString() + " does not contain the specified IP address or DNS name as a Subject Alternative Name.");
