@@ -49,7 +49,7 @@ public final class Constants {
 	public static final long CONVERSION_MILLISECOND_TO_MINUTE = 60000;
 
 	public static final String MAX_PAGE_SIZE = "max.page.size";
-	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":1000}";
+	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":" + Defaults.MAX_PAGE_SIZE_DEFAULT + "}";
 
 	// System related
 
@@ -63,31 +63,32 @@ public final class Constants {
 	public static final String DATABASE_PASSWORD = "spring.datasource.password";
 	public static final String DATABASE_DRIVER_CLASS = "spring.datasource.driver-class-name";
 	public static final String SERVER_ADDRESS = "server.address";
-	public static final String $SERVER_ADDRESS = "${" + SERVER_ADDRESS + ":}";
+	public static final String $SERVER_ADDRESS = "${" + SERVER_ADDRESS + ":" + Defaults.SERVER_ADDRESS_DEFAULT + "}";
 	public static final String SERVER_PORT = "server.port";
-	public static final String $SERVER_PORT = "${" + SERVER_PORT + ":0}";
+	public static final String $SERVER_PORT = "${" + SERVER_PORT + ":" + Defaults.SERVER_PORT_DEFAULT + "}";
 	public static final String DOMAIN_NAME = "domain.name";
-	public static final String $DOMAIN_NAME = "${" + DOMAIN_NAME + ":}";
+	public static final String $DOMAIN_NAME = "${" + DOMAIN_NAME + ":" + Defaults.DOMAIN_NAME_DEFAULT + "}";
 	public static final String SERVICEREGISTRY_ADDRESS = "service.registry.address";
-	public static final String $SERVICEREGISTRY_ADDRESS_WD = "${" + SERVICEREGISTRY_ADDRESS + ":" + LOCALHOST + "}";
+	public static final String $SERVICEREGISTRY_ADDRESS_WD = "${" + SERVICEREGISTRY_ADDRESS + ":" + Defaults.SERVICEREGISTRY_ADDRESS_DEFAULT + "}";
 	public static final String SERVICEREGISTRY_PORT = "service.registry.port";
-	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":8443}";
+	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":" + Defaults.SERVICEREGISTRY_PORT_DEFAULT + "}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
-	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":CERTIFICATE}";
+	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":" + Defaults.AUTHENTICATION_POLICY_DEFAULT + "}";
 	public static final String ENABLE_MANAGEMENT_FILTER = "enable.management.filter";
 	public static final String MANAGEMENT_POLICY = "management.policy";
-	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":SYSOP_ONLY}";
+	public static final String $MANAGEMENT_POLICY = "${" + MANAGEMENT_POLICY + ":" + Defaults.MANAGEMENT_POLICY_DEFAULT + "}";
 	public static final String MANAGEMENT_WHITELIST = "management.whitelist";
-	public static final String $MANAGEMENT_WHITELIST = "${" + MANAGEMENT_WHITELIST + ":\"\"}";
+	public static final String $MANAGEMENT_WHITELIST = "${" + MANAGEMENT_WHITELIST + ":" + Defaults.MANAGEMENT_WHITELIST_DEFAULT + "}";
 	public static final String ALLOW_SELF_ADDRESSING = "allow.self.addressing";
-	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":true}";
+	public static final String $ALLOW_SELF_ADDRESSING_WD = "${" + ALLOW_SELF_ADDRESSING + ":" + Defaults.ALLOW_SELF_ADDRESSING_DEFAULT + "}";
 	public static final String ALLOW_NON_ROUTABLE_ADDRESSING = "allow.non.routable.addressing";
-	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":true}";
+	public static final String $ALLOW_NON_ROUTABLE_ADDRESSING_WD = "${" + ALLOW_NON_ROUTABLE_ADDRESSING + ":" + Defaults.ALLOW_NON_ROUTABLE_ADDRESSING_DEFAULT + "}";
 	public static final String HTTP_COLLECTOR_MODE = "http.collector.mode";
-	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":SR_AND_ORCH}";
+	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":" + Defaults.HTTP_COLLECTOR_MODE_DEFAULT + "}";
 	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
-	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":true}";
+	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":" + Defaults.FORCE_BLACKLIST_FILTER_DEFAULT + "}";
+	public static final String SERVICE_ADDRESS_ALIAS = "service.address.alias";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 
@@ -95,23 +96,37 @@ public final class Constants {
 
 	public static final String X_509 = "X.509";
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
-	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":false}";
-	public static final String KEYSTORE_TYPE = "server.ssl.key-store-type";
-	public static final String $KEYSTORE_TYPE_WD = "${" + KEYSTORE_TYPE + ":" + PKCS12 + "}";
-	public static final String KEYSTORE_PATH = "server.ssl.key-store";
-	public static final String $KEYSTORE_PATH_WD = "${" + KEYSTORE_PATH + ":}";
-	public static final String KEYSTORE_PASSWORD = "server.ssl.key-store-password";
-	public static final String $KEYSTORE_PASSWORD_WD = "${" + KEYSTORE_PASSWORD + ":}";
-	public static final String KEY_PASSWORD = "server.ssl.key-password";
-	public static final String $KEY_PASSWORD_WD = "${" + KEY_PASSWORD + ":}";
-	public static final String KEY_ALIAS = "server.ssl.key-alias";
-	public static final String $KEY_ALIAS_WD = "${" + KEY_ALIAS + ":}";
-	public static final String TRUSTSTORE_PATH = "server.ssl.trust-store";
-	public static final String $TRUSTSTORE_PATH_WD = "${" + TRUSTSTORE_PATH + ":}";
-	public static final String TRUSTSTORE_PASSWORD = "server.ssl.trust-store-password";
-	public static final String $TRUSTSTORE_PASSWORD_WD = "${" + TRUSTSTORE_PASSWORD + ":}";
+	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":" + Defaults.SERVER_SSL_ENABLED_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE__TYPE = "server.ssl.key-store-type";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__STORE_TYPE_WD = "${" + SERVER_SSL_KEY__STORE__TYPE + ":" + Defaults.SERVER_SSL_KEY__STORE__TYPE_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE = "server.ssl.key-store";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__STORE_WD = "${" + SERVER_SSL_KEY__STORE + ":" + Defaults.SERVER_SSL_KEY__STORE_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__STORE__PASSWORD = "server.ssl.key-store-password";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__STORE__PASSWORD_WD = "${" + SERVER_SSL_KEY__STORE__PASSWORD + ":" + Defaults.SERVER_SSL_KEY__STORE__PASSWORD_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__PASSWORD = "server.ssl.key-password";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__PASSWORD_WD = "${" + SERVER_SSL_KEY__PASSWORD + ":" + Defaults.SERVER_SSL_KEY__PASSWORD_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_KEY__ALIAS = "server.ssl.key-alias";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_KEY__ALIAS_WD = "${" + SERVER_SSL_KEY__ALIAS + ":" + Defaults.SERVER_SSL_KEY__ALIAS_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_TRUST__STORE = "server.ssl.trust-store";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_TRUST__STORE_WD = "${" + SERVER_SSL_TRUST__STORE + ":" + Defaults.SERVER_SSL_TRUST__STORE_DEFAULT + "}";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String SERVER_SSL_TRUST__STORE__PASSWORD = "server.ssl.trust-store-password";
+	@SuppressWarnings("checkstyle:ConstantName")
+	public static final String $SERVER_SSL_TRUST__STORE__PASSWORD_WD = "${" + SERVER_SSL_TRUST__STORE__PASSWORD + ":" + Defaults.SERVER_SSL_TRUST__STORE__PASSWORD_DEFAULT + "}";
 	public static final String DISABLE_HOSTNAME_VERIFIER = "disable.hostname.verifier";
-	public static final String $DISABLE_HOSTNAME_VERIFIER_WD = "${" + DISABLE_HOSTNAME_VERIFIER + ":false}";
+	public static final String $DISABLE_HOSTNAME_VERIFIER_WD = "${" + DISABLE_HOSTNAME_VERIFIER + ":" + Defaults.DISABLE_HOSTNAME_VERIFIER_DEFAULT + "}";
 
 	// HTTP related
 
@@ -135,11 +150,11 @@ public final class Constants {
 	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTH_TOKEN = "AUTH-TOKEN";
 
 	public static final String HTTP_CLIENT_CONNECTION_TIMEOUT = "http.client.connection.timeout";
-	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":30000}";
+	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":" + Defaults.HTTP_CLIENT_CONNECTION_TIMEOUT_DEFAULT + "}";
 	public static final String HTTP_CLIENT_SOCKET_TIMEOUT = "http.client.socket.timeout";
-	public static final String $HTTP_CLIENT_SOCKET_TIMEOUT_WD = "${" + HTTP_CLIENT_SOCKET_TIMEOUT + ":30000}";
+	public static final String $HTTP_CLIENT_SOCKET_TIMEOUT_WD = "${" + HTTP_CLIENT_SOCKET_TIMEOUT + ":" + Defaults.HTTP_CLIENT_SOCKET_TIMEOUT_DEFAULT + "}";
 	public static final String LOG_ALL_REQUEST_AND_RESPONSE = "log.all.request.and.response";
-	public static final String $LOG_ALL_REQUEST_AND_RESPONSE_WD = "${" + LOG_ALL_REQUEST_AND_RESPONSE + ":false}";
+	public static final String $LOG_ALL_REQUEST_AND_RESPONSE_WD = "${" + LOG_ALL_REQUEST_AND_RESPONSE + ":" + Defaults.LOG_ALL_REQUEST_AND_RESPONSE_DEFAULT + "}";
 
 	// Swagger
 
@@ -160,9 +175,8 @@ public final class Constants {
 
 	public static final long CORS_MAX_AGE = 600;
 	public static final boolean CORS_ALLOW_CREDENTIALS = true;
-	public static final String DEFAULT_CORS_ORIGIN_PATTERN = "*";
 	public static final String CORS_ORIGIN_PATTERNS = "cors.origin.patterns";
-	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":*}";
+	public static final String $CORS_ORIGIN_PATTERNS_WD = "${" + CORS_ORIGIN_PATTERNS + ":" + Defaults.CORS_ORIGIN_PATTERN_DEFAULT + "}";
 
 	// MQTT related
 
@@ -176,13 +190,13 @@ public final class Constants {
 	public static final int MQTT_DEFAULT_QOS = 0;
 
 	public static final String MQTT_API_ENABLED = "mqtt.api.enabled";
-	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":false}";
+	public static final String $MQTT_API_ENABLED_WD = "${" + MQTT_API_ENABLED + ":" + Defaults.MQTT_API_ENABLED_DEFAULT + "}";
 	public static final String MQTT_BROKER_ADDRESS = "mqtt.broker.address";
-	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":}";
+	public static final String $MQTT_BROKER_ADDRESS_WD = "${" + MQTT_BROKER_ADDRESS + ":" + Defaults.MQTT_BROKER_ADDRESS_DEFAULT + "}";
 	public static final String MQTT_BROKER_PORT = "mqtt.broker.port";
-	public static final String $MQTT_BROKER_PORT_WD = "${" + MQTT_BROKER_PORT + ":1883}";
+	public static final String $MQTT_BROKER_PORT_WD = "${" + MQTT_BROKER_PORT + ":" + Defaults.MQTT_BROKER_PORT_DEFAULT + "}";
 	public static final String MQTT_CLIENT_PASSWORD = "mqtt.client.password";
-	public static final String $MQTT_CLIENT_PASSWORD = "${" + MQTT_CLIENT_PASSWORD + ":123456}";
+	public static final String $MQTT_CLIENT_PASSWORD = "${" + MQTT_CLIENT_PASSWORD + ":" + Defaults.MQTT_CLIENT_PASSWORD_DEFAULT + "}";
 
 	// Service related
 

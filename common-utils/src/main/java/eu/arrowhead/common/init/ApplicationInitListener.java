@@ -167,10 +167,10 @@ public abstract class ApplicationInitListener {
 		logger.debug("initializeKeyStore started...");
 		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled");
 		final String messageNotDefined = " is not defined";
-		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
-		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
-		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
+		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
+		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
+		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
 
 		final KeyStore keystore = KeyStore.getInstance(sysInfo.getSslProperties().getKeyStoreType());
 		keystore.load(sysInfo.getSslProperties().getKeyStore().getInputStream(), sysInfo.getSslProperties().getKeyStorePassword().toCharArray());
