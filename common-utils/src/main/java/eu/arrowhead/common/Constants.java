@@ -53,6 +53,8 @@ public final class Constants {
 	public static final String MAX_PAGE_SIZE = "max.page.size";
 	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":1000}";
 
+	public static final String COMMA = ",";
+
 	// System related
 
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
@@ -248,6 +250,7 @@ public final class Constants {
 	public static final String SERVICE_OP_ORCHESTRATION_REMOVE = "remove";
 	public static final String SERVICE_OP_ORCHESTRATION_CREATE = "create";
 
+	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
 

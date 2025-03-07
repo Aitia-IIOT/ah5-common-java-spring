@@ -45,7 +45,7 @@ public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 	public void doFilter(final String authKey, final MqttRequestModel request) {
 		logger.debug("ManagementServiceMqttFilter.doFilter started...");
 
-		if (request.getRequestTopic().contains(mgmtPath)) {
+		if (request.getBaseTopic().contains(mgmtPath)) {
 			final String normalizedSystemName = nameNormalizer.normalize(request.getRequester());
 			boolean allowed = false;
 

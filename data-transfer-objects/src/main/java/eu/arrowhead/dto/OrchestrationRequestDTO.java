@@ -1,13 +1,11 @@
 package eu.arrowhead.dto;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public record OrchestrationRequestDTO(
 		OrchestrationServiceRequirementDTO serviceRequirement,
-		List<String> orchestrationFlags,
+		Map<String, Boolean> orchestrationFlags,
 		Map<String, String> qosRequirements,
 		Integer exclusivityDuration) {
 
@@ -21,7 +19,7 @@ public record OrchestrationRequestDTO(
 		// members
 
 		private OrchestrationServiceRequirementDTO serviceRequirement;
-		private List<String> orchestrationFlags;
+		private Map<String, Boolean> orchestrationFlags;
 		private Map<String, String> qosRequirements;
 		private Integer exclusivityDuration;
 
@@ -35,17 +33,17 @@ public record OrchestrationRequestDTO(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder orchestrationFlags(final List<String> orchestrationFlags) {
+		public Builder orchestrationFlags(final Map<String, Boolean> orchestrationFlags) {
 			this.orchestrationFlags = orchestrationFlags;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder orchestrationFlag(final String orchestrationFlag) {
+		public Builder orchestrationFlag(final String orchestrationFlag, final boolean value) {
 			if (this.orchestrationFlags == null) {
-				this.orchestrationFlags = new ArrayList<>();
+				this.orchestrationFlags = new HashMap<>();
 			}
-			this.orchestrationFlags.add(orchestrationFlag);
+			this.orchestrationFlags.put(orchestrationFlag, value);
 			return this;
 		}
 

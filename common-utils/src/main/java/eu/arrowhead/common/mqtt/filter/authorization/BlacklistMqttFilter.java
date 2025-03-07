@@ -124,7 +124,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 				}
 			}
 		}
-		if (lookupTopic == null || !request.getRequestTopic().equals(lookupTopic)) {
+		if (lookupTopic == null || !request.getBaseTopic().equals(lookupTopic)) {
 			// SR does not provide any topic with lookup operation or the request topic does not match
 			return false;
 		}
