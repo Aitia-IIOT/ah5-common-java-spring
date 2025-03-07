@@ -204,12 +204,27 @@ public final class Utilities {
 
 	//-------------------------------------------------------------------------------------------------
 	public static int parseToInt(final Object obj) {
-	    return switch (obj) {
-	        case final Integer i -> i;
-	        case final Number n -> n.intValue();
-	        case final String s -> Integer.parseInt(s);
-	        case null, default -> throw new NumberFormatException("Invalid input: " + obj);
-	    };
+		return switch (obj) {
+		case final Integer i -> i;
+		case final Number n -> n.intValue();
+		case final String s -> Integer.parseInt(s);
+		case null, default -> throw new NumberFormatException("Invalid input: " + obj);
+		};
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	public static String bytesToHex(final byte[] bytes) {
+		final StringBuilder hexString = new StringBuilder(2 * bytes.length);
+		for (final byte b : bytes) {
+			final String hex = Integer.toHexString(0xff & b);
+			if (hex.length() == 1) {
+				hexString.append('0');
+			}
+			hexString.append(hex);
+		}
+
+		return hexString.toString();
 	}
 
 	//=================================================================================================

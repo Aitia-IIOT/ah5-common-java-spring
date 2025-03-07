@@ -26,7 +26,7 @@ public class OutboundDebugFilter extends ArrowheadFilter {
 			response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		}
 
-		final ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper((HttpServletResponse) response);
+		final ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 		try {
 			chain.doFilter(httpRequest, responseWrapper);
 		} finally {

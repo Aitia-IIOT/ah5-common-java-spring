@@ -153,14 +153,14 @@ public class MqttService {
 		logger.debug("sslSettings started");
 
 		final String messageNotDefined = " is not defined";
-		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
-		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
-		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
-		Assert.notNull(sslProperties.getKeyPassword(), Constants.KEY_PASSWORD + messageNotDefined);
-		Assert.notNull(sslProperties.getTrustStore(), Constants.TRUSTSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.TRUSTSTORE_PATH + " file is not found");
-		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.TRUSTSTORE_PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
+		Assert.notNull(sslProperties.getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
+		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
+		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
+		Assert.notNull(sslProperties.getKeyPassword(), Constants.SERVER_SSL_KEY__PASSWORD + messageNotDefined);
+		Assert.notNull(sslProperties.getTrustStore(), Constants.SERVER_SSL_TRUST__STORE + messageNotDefined);
+		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.SERVER_SSL_TRUST__STORE + " file is not found");
+		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.SERVER_SSL_TRUST__STORE__PASSWORD + messageNotDefined);
 
 		final KeyStore keyStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
 		keyStore.load(sslProperties.getKeyStore().getInputStream(), sslProperties.getKeyStorePassword().toCharArray());

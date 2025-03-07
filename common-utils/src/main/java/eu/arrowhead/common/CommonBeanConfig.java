@@ -4,14 +4,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import eu.arrowhead.common.collector.HttpCollectorDriver;
 import eu.arrowhead.common.collector.ICollectorDriver;
-import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authentication.CertificateFilter;
+import eu.arrowhead.common.http.filter.authentication.IAuthenticationPolicyFilter;
 import eu.arrowhead.common.http.filter.authentication.OutsourcedFilter;
 import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
@@ -33,7 +34,8 @@ public class CommonBeanConfig {
 
 	//-------------------------------------------------------------------------------------------------
 	@Bean
-	ArrowheadFilter authenticationPolicyFilter(@Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
+	@ConditionalOnExpression("'" + Constants.$AUTHENTICATION_POLICY_WD + "' != '" + AuthenticationPolicy.INTERNAL_VALUE + "'")
+	IAuthenticationPolicyFilter authenticationPolicyFilter(@Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
 		switch (policy) {
 		case CERTIFICATE:
 			return new CertificateFilter();
@@ -41,6 +43,8 @@ public class CommonBeanConfig {
 			return new OutsourcedFilter();
 		case DECLARED:
 			return new SelfDeclaredFilter();
+		case INTERNAL:
+			throw new IllegalArgumentException("Invalid policy: " + policy.name());
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}
@@ -48,6 +52,7 @@ public class CommonBeanConfig {
 
 	//-------------------------------------------------------------------------------------------------
 	@Bean
+	@ConditionalOnExpression("'" + Constants.$AUTHENTICATION_POLICY_WD + "' != '" + AuthenticationPolicy.INTERNAL_VALUE + "'")
 	ArrowheadMqttFilter authenticationPolicyMqttFilter(@Value(Constants.$MQTT_API_ENABLED_WD) final boolean isMqttEnabled, @Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
 		if (!isMqttEnabled) {
 			return null;
@@ -60,6 +65,8 @@ public class CommonBeanConfig {
 			return new OutsourcedMqttFilter();
 		case DECLARED:
 			return new SelfDeclaredMqttFilter();
+		case INTERNAL:
+			throw new IllegalArgumentException("Invalid policy: " + policy.name());
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}

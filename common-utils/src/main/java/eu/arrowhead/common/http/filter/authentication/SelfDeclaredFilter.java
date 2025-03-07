@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Order(Constants.REQUEST_FILTER_ORDER_AUTHENTICATION)
-public class SelfDeclaredFilter extends ArrowheadFilter {
+public class SelfDeclaredFilter extends ArrowheadFilter implements IAuthenticationPolicyFilter {
 
 	//=================================================================================================
 	// assistant methods
@@ -24,6 +24,8 @@ public class SelfDeclaredFilter extends ArrowheadFilter {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
+		log.debug("checking access in SelfDeclaredFilter...");
+
 		try {
 			initializeRequestAttributes(request);
 
@@ -39,6 +41,8 @@ public class SelfDeclaredFilter extends ArrowheadFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	private String processAuthHeader(final HttpServletRequest request) {
+		log.debug("SelfDeclaredFilter.processAuthHeader started...");
+
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		if (Utilities.isEmpty(authHeader)) {
 			throw new AuthException("No authorization header has been provided");

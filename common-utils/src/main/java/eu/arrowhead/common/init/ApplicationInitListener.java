@@ -41,6 +41,7 @@ import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
+import eu.arrowhead.dto.IdentityRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceCreateRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceInterfaceRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceResponseDTO;
@@ -126,12 +127,17 @@ public abstract class ApplicationInitListener {
 
 		revokeServices();
 
-		if (sysInfo.isMqttApiEnabled()) {
-			mqttController.disconnect();
-		}
-
 		try {
 			customDestroy();
+
+			if (sysInfo.isMqttApiEnabled()) {
+				mqttController.disconnect();
+			}
+
+			// logout attempt
+			if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
+				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_IDENTITY, Constants.SERVICE_OP_IDENTITY_LOGOUT, Void.TYPE, getLogoutPayload());
+			}
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());
 			logger.debug(t);
@@ -168,10 +174,10 @@ public abstract class ApplicationInitListener {
 		logger.debug("initializeKeyStore started...");
 		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled");
 		final String messageNotDefined = " is not defined";
-		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
-		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
-		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
+		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
+		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
+		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
 
 		final KeyStore keystore = KeyStore.getInstance(sysInfo.getSslProperties().getKeyStoreType());
 		keystore.load(sysInfo.getSslProperties().getKeyStore().getInputStream(), sysInfo.getSslProperties().getKeyStorePassword().toCharArray());
@@ -243,6 +249,11 @@ public abstract class ApplicationInitListener {
 
 		if (skipRegistration()) {
 			return;
+		}
+
+		// if authentication is handled by an other system, we have to wait a little to give time to running login job
+		if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
+			Thread.sleep(sysInfo.getAuthenticatorLoginDelay());
 		}
 
 		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
@@ -329,5 +340,14 @@ public abstract class ApplicationInitListener {
 			logger.error(t.getMessage());
 			logger.debug(t);
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private IdentityRequestDTO getLogoutPayload() {
+		logger.debug("getLogoutPayload started...");
+
+		return new IdentityRequestDTO(
+				sysInfo.getSystemName(),
+				sysInfo.getAuthenticatorCredentials());
 	}
 }
