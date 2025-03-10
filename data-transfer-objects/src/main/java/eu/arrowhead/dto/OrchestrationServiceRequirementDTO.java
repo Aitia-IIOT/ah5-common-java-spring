@@ -160,13 +160,13 @@ public record OrchestrationServiceRequirementDTO(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder prefferedProviders(final List<String> preferredProviders) {
+		public Builder preferredProviders(final List<String> preferredProviders) {
 			this.preferredProviders = preferredProviders;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder prefferedProvider(final String preferredProvider) {
+		public Builder preferredProvider(final String preferredProvider) {
 			if (this.preferredProviders == null) {
 				this.preferredProviders = new ArrayList<>();
 			}
