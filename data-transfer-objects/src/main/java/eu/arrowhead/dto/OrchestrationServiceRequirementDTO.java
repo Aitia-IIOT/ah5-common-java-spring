@@ -13,7 +13,7 @@ public record OrchestrationServiceRequirementDTO(
 		List<String> interfaceAddressTypes,
 		List<MetadataRequirementDTO> interfacePropertyRequirements,
 		List<String> securityPolicies,
-		List<String> prefferedProviders) {
+		List<String> preferredProviders) {
 
 	//=================================================================================================
 	// nested classes
@@ -33,7 +33,7 @@ public record OrchestrationServiceRequirementDTO(
 		private List<String> interfaceAddressTypes;
 		private List<MetadataRequirementDTO> interfacePropertyRequirements;
 		private List<String> securityPolicies;
-		private List<String> prefferedProviders;
+		private List<String> preferredProviders;
 
 		//=================================================================================================
 		// methods
@@ -160,18 +160,18 @@ public record OrchestrationServiceRequirementDTO(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder prefferedProviders(final List<String> prefferedProviders) {
-			this.prefferedProviders = prefferedProviders;
+		public Builder prefferedProviders(final List<String> preferredProviders) {
+			this.preferredProviders = preferredProviders;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder prefferedProvider(final String prefferedProvider) {
-			if (this.prefferedProviders == null) {
-				this.prefferedProviders = new ArrayList<>();
+		public Builder prefferedProvider(final String preferredProvider) {
+			if (this.preferredProviders == null) {
+				this.preferredProviders = new ArrayList<>();
 			}
 
-			this.prefferedProviders.add(prefferedProvider);
+			this.preferredProviders.add(preferredProvider);
 			return this;
 		}
 
@@ -187,7 +187,7 @@ public record OrchestrationServiceRequirementDTO(
 					interfaceAddressTypes,
 					interfacePropertyRequirements,
 					securityPolicies,
-					prefferedProviders);
+					preferredProviders);
 		}
 	}
 }
