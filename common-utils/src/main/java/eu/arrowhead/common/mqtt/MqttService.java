@@ -37,6 +37,8 @@ public class MqttService {
 	//=================================================================================================
 	// members
 
+	private static final String SSL_PREFIX = Constants.SSL + "://";
+	private static final String TCP_PREFIX = Constants.TCP + "://";
 	private static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM = "ssl.KeyManagerFactory.algorithm";
 	private static final String SSL_TRUST_MANAGER_FACTORY_ALGORITHM = "ssl.TrustManagerFactory.algorithm";
 	private static final String TLS_VERSION = "TLSv1.2";
@@ -67,6 +69,42 @@ public class MqttService {
 			final String clientId,
 			final String username,
 			final String password) throws MqttException {
+		logger.debug("connect started");
+
+		createConnection(connectId, address, port, null, clientId, username, password);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public void connect(final String connectId, final String address, final int port, final boolean isSSl) throws MqttException {
+		logger.debug("connect started");
+
+		createConnection(connectId, address, port, isSSl, null, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public void disconnect(final String connectId) throws MqttException {
+		logger.debug("disconnect started");
+
+		final MqttClient client = clientMap.get(connectId);
+		if (client != null) {
+			client.disconnect();
+			clientMap.remove(connectId);
+			logger.info("Disconnected from MQTT broker");
+		}
+	}
+
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	private void createConnection(
+			final String connectId,
+			final String address,
+			final int port,
+			final Boolean isSSL,
+			final String clientId,
+			final String username,
+			final String password) throws MqttException {
 		logger.debug("createConnection started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
@@ -75,7 +113,12 @@ public class MqttService {
 			disconnect(connectId);
 		}
 
-		String serverURI = sslProperties.isSslEnabled() ? "ssl://" : "tcp://";
+		String serverURI;
+		if (isSSL == null) {
+			serverURI = sslProperties.isSslEnabled() ? SSL_PREFIX : TCP_PREFIX;
+		} else {
+			serverURI = isSSL ? SSL_PREFIX : TCP_PREFIX;
+		}
 		serverURI += address + ":" + port;
 
 		final MqttConnectOptions options = new MqttConnectOptions();
@@ -104,21 +147,6 @@ public class MqttService {
 
 		logger.info("Connected to MQTT broker: " + client.getServerURI());
 	}
-
-	//-------------------------------------------------------------------------------------------------
-	public void disconnect(final String connectId) throws MqttException {
-		logger.debug("disconnect started");
-
-		final MqttClient client = clientMap.get(connectId);
-		if (client != null) {
-			client.disconnect();
-			clientMap.remove(connectId);
-			logger.info("Disconnected from MQTT broker");
-		}
-	}
-
-	//=================================================================================================
-	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
 	private SSLSocketFactory sslSettings() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {

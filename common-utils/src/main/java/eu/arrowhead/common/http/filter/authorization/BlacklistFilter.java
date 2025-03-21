@@ -76,7 +76,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 				// if requester is blacklist, no need for check
 				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)) {
 
-					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Boolean.TYPE, List.of(systemName));
+					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Constants.SYS_NAME_BLACKLIST, Boolean.TYPE, List.of(systemName));
 
 					if (isBlacklisted) {
 						throw new ForbiddenException(systemName + " system is blacklisted!");
@@ -110,15 +110,20 @@ public class BlacklistFilter extends ArrowheadFilter {
 		final String requestTarget = Utilities.stripEndSlash(request.getRequestURL().toString());
 		// finding the path and method of the lookup operation
 		HttpOperationModel lookupOp = null;
-		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME);
+		String lookupBasePath = null;
+		final String templateName = sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
+		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
 		for (final InterfaceModel intf : model.interfaces()) {
-			final Map<String, HttpOperationModel> ops = (Map<String, HttpOperationModel>) intf.properties().get(HttpInterfaceModel.PROP_NAME_OPERATIONS);
-			if (ops.containsKey(Constants.SERVICE_OP_LOOKUP)) {
-				// if there is a lookup operation, we can get its path and method
-				lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
+			if (intf.templateName().equals(templateName) && intf.properties().containsKey(HttpInterfaceModel.PROP_NAME_OPERATIONS)) {
+				final Map<String, HttpOperationModel> ops = (Map<String, HttpOperationModel>) intf.properties().get(HttpInterfaceModel.PROP_NAME_OPERATIONS);
+				if (ops.containsKey(Constants.SERVICE_OP_LOOKUP)) {
+					// if there is a lookup operation, we can get its path and method
+					lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
+					lookupBasePath = (String) intf.properties().get(HttpInterfaceModel.PROP_NAME_BASE_PATH);
+				}
 			}
 		}
-		if (lookupOp == null || !requestTarget.endsWith(lookupOp.path()) || !request.getMethod().equalsIgnoreCase(lookupOp.method())) {
+		if (lookupOp == null || !requestTarget.endsWith(lookupBasePath + lookupOp.path()) || !request.getMethod().equalsIgnoreCase(lookupOp.method())) {
 		// SR does not provide lookup operation or the request is not lookup
 			return false;
 		}

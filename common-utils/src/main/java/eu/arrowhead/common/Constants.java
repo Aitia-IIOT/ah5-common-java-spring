@@ -2,6 +2,8 @@ package eu.arrowhead.common;
 
 import java.util.UUID;
 
+import eu.arrowhead.common.jpa.ArrowheadEntity;
+
 public final class Constants {
 
 	//=================================================================================================
@@ -21,6 +23,8 @@ public final class Constants {
 	public static final String BASE_PACKAGE = "eu.arrowhead";
 	public static final String HTTPS = "https";
 	public static final String HTTP = "http";
+	public static final String SSL = "ssl";
+	public static final String TCP = "tcp";
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
 	public static final String VERBOSE = "verbose";
@@ -53,6 +57,8 @@ public final class Constants {
 	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":" + Defaults.MAX_PAGE_SIZE_DEFAULT + "}";
 
 	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestricted-discovery";
+
+	public static final String COMMA = ",";
 
 	// System related
 
@@ -100,8 +106,10 @@ public final class Constants {
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
 	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":" + Defaults.FORCE_BLACKLIST_FILTER_DEFAULT + "}";
 	public static final String SERVICE_ADDRESS_ALIAS = "service.address.alias";
+	public static final String $SERVICE_ADDRESS_ALIAS = "${" + SERVICE_ADDRESS_ALIAS + "}";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
+	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allow-exclusivity";
 
 	// SSL related
 
@@ -223,6 +231,11 @@ public final class Constants {
 	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
 	public static final String SERVICE_DEF_MONITOR = "monitor";
 
+	public static final String SERVICE_DEF_ORCHESTRATION = "orchestration";
+	public static final String SERVICE_DEF_ORCHESTRATION_PUSH_MANAGEMENT = "orchestration-push-management";
+	public static final String SERVICE_DEF_ORCHESTRATION_LOCK_MANAGEMENT = "orchestration-lock-management";
+	public static final String SERVICE_DEF_ORCHESTRATION_HISTORY_MANAGEMENT = "orchestration-history-management";
+
 	public static final String SERVICE_DEF_IDENTITY = "identity";
 	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identity-management";
 
@@ -230,6 +243,7 @@ public final class Constants {
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
 	public static final String SERVICE_OP_GET_CONFIG = "get-config";
+	public static final String SERVICE_OP_GET_CONFIG_REQ_PARAM = "keys";
 
 	public static final String SERVICE_OP_ECHO = "echo";
 	public static final String SERVICE_OP_REGISTER = "register";
@@ -255,9 +269,18 @@ public final class Constants {
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_QUERY = "interface-template-query";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_CREATE = "interface-template-create";
 	public static final String SERVICE_OP_INTERFACE_TEMPLATE_REMOVE = "interface-template-remove";
-	public static final String SERVICE_OP_BLACKLIST_QUERY = "blacklist-query";
-	public static final String SERVICE_OP_BLACKLIST_CREATE = "blacklist-create";
-	public static final String SERVICE_OP_BLACKLIST_REMOVE = "blacklist-remove";
+
+	public static final String SERVICE_OP_BLACKLIST_QUERY = "query";
+	public static final String SERVICE_OP_BLACKLIST_CREATE = "create";
+	public static final String SERVICE_OP_BLACKLIST_REMOVE = "remove";
+
+	public static final String SERVICE_OP_ORCHESTRATION_PULL = "pull";
+	public static final String SERVICE_OP_ORCHESTRATION_SUBSCRIBE = "subscribe";
+	public static final String SERVICE_OP_ORCHESTRATION_UNSUBSCRIBE = "unsubscribe";
+	public static final String SERVICE_OP_ORCHESTRATION_TRIGGER = "trigger";
+	public static final String SERVICE_OP_ORCHESTRATION_QUERY = "query";
+	public static final String SERVICE_OP_ORCHESTRATION_REMOVE = "remove";
+	public static final String SERVICE_OP_ORCHESTRATION_CREATE = "create";
 
 	public static final String SERVICE_OP_IDENTITY_LOGIN = "identity-login";
 	public static final String SERVICE_OP_IDENTITY_LOGOUT = "identity-logout";
@@ -274,6 +297,18 @@ public final class Constants {
 	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
+
+	// Common property related
+
+	public static final int DEVICE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int SYSTEM_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int SYSTEM_VERSION_MAX_LENGTH = ArrowheadEntity.VARCHAR_TINY;
+	public static final int SERVICE_DEFINITION_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int ADDRESS_MAX_LENGTH = ArrowheadEntity.VARCHAR_LARGE;
+	public static final int INTERFACE_TEMPLATE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_MEDIUM;
+	public static final int INTERFACE_TEMPLATE_PROTOCOL_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int INTERFACE_PROPERTY_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int SERVICE_INSTANCE_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_MEDIUM;
 
 	// Quartz related
 

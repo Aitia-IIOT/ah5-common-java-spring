@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
+import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ExternalServerError;
 import eu.arrowhead.common.model.InterfaceModel;
 import eu.arrowhead.common.model.ServiceModel;
@@ -60,16 +61,22 @@ public class MqttController {
 
 		final MqttInterfaceModel interfaceModel = (MqttInterfaceModel) optional.get();
 
+		String topic = "";
 		try {
 			if (client == null) {
 				initMqttClient(interfaceModel.accessAddresses().getFirst(), interfaceModel.accessPort());
 			}
 
-			mqttDispatcher.addTopic(interfaceModel.topic());
-			client.subscribe(interfaceModel.topic());
+			for (final String operation : interfaceModel.operations()) {
+				topic = interfaceModel.baseTopic() + operation;
+				mqttDispatcher.addTopic(topic);
+				client.subscribe(topic);
+			}
 		} catch (final MqttException ex) {
 			logger.debug(ex);
-			mqttDispatcher.revokeTopic(interfaceModel.topic());
+			if (!Utilities.isEmpty(topic)) {
+				mqttDispatcher.revokeTopic(topic);
+			}
 			throw new ExternalServerError("MQTT service listener creation failed: " + ex.getMessage());
 		}
 	}
@@ -121,7 +128,7 @@ public class MqttController {
 			//-------------------------------------------------------------------------------------------------
 			@Override
 			public void deliveryComplete(final IMqttDeliveryToken token) {
-				logger.debug("MQTT message delivered to broker " + brokerUri + ". Topic(s): " + token.getTopics());
+				logger.debug("MQTT message delivered to broker " + brokerUri + ". Topic(s): " + String.join(", ", token.getTopics()));
 			}
 
 			//-------------------------------------------------------------------------------------------------

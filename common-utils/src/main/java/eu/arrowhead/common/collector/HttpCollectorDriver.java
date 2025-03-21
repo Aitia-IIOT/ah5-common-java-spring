@@ -1,8 +1,12 @@
 package eu.arrowhead.common.collector;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +30,7 @@ import eu.arrowhead.common.intf.properties.PropertyValidatorType;
 import eu.arrowhead.common.intf.properties.PropertyValidators;
 import eu.arrowhead.common.model.InterfaceModel;
 import eu.arrowhead.common.model.ServiceModel;
+import eu.arrowhead.common.mqtt.model.MqttInterfaceModel;
 import eu.arrowhead.dto.ServiceInstanceInterfaceResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceListResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceLookupRequestDTO;
@@ -55,6 +60,12 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	@Autowired
 	private PropertyValidators validators;
 
+	private final List<String> supportedInterfaces = List.of(
+			Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME,
+			Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME,
+			Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME,
+			Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME);
+
 	//=================================================================================================
 	// methods
 
@@ -71,19 +82,17 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	@Nullable
-	public ServiceModel acquireService(final String serviceDefinitionName, final String interfaceTemplateName) throws ArrowheadException {
+	public ServiceModel acquireService(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) throws ArrowheadException {
 		logger.debug("acquireService started...");
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinitionName), "service definition is empty");
 
-		if (!Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME.equals(interfaceTemplateName)
-				&& !Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME.equals(interfaceTemplateName)) {
-			throw new InvalidParameterException("This collector only supports the following interfaces: "
-					+ String.join(", ", Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME, Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME));
+		if (!supportedInterfaces.contains(interfaceTemplateName)) {
+			throw new InvalidParameterException("This collector only supports the following interfaces: " + String.join(", ", supportedInterfaces));
 		}
 
-		ServiceModel result = acquireServiceFromSR(serviceDefinitionName, interfaceTemplateName);
+		ServiceModel result = acquireServiceFromSR(serviceDefinitionName, interfaceTemplateName, providerName);
 		if (result == null && HttpCollectorMode.SR_AND_ORCH == mode) {
-			result = acquireServiceFromOrchestrator(serviceDefinitionName, interfaceTemplateName);
+			result = acquireServiceFromOrchestration(serviceDefinitionName, interfaceTemplateName, providerName);
 		}
 
 		return result;
@@ -93,7 +102,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel acquireServiceFromSR(final String serviceDefinitionName, final String interfaceTemplateName) {
+	private ServiceModel acquireServiceFromSR(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		logger.debug("acquireServiceFromSR started...");
 
 		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
@@ -108,11 +117,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		final ServiceInstanceListResponseDTO response = httpService.sendRequest(uri, HttpMethod.POST, ServiceInstanceListResponseDTO.class, payload, null, headers);
-		return convertLookupResponse(response);
+		return convertLookupResponse(response, providerName);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel acquireServiceFromOrchestrator(final String serviceDefinitionName, final String interfaceTemplateName) {
+	private ServiceModel acquireServiceFromOrchestration(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		// TODO Auto-generated method stub
 		// try to orchestrate the service (if no orchestration service is cached, it will lookup for it first)
 		return null;
@@ -130,35 +139,111 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 	//-------------------------------------------------------------------------------------------------
 	@SuppressWarnings("unchecked")
-	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response) {
+	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response, final String providerName) {
 		logger.debug("convertLookupResponse started...");
 
 		if (response.entries().isEmpty()) {
 			return null;
 		}
 
-		final ServiceInstanceResponseDTO instance = response.entries().get(0);
-		final ServiceInstanceInterfaceResponseDTO intf = instance.interfaces().get(0);
-		final Map<String, Object> intfProps = intf.properties(); // this should be contains accessAddresses, accessPort, basePath, and optionally operations
-		final List<String> accessAddressess = (List<String>) intfProps.get(HttpInterfaceModel.PROP_NAME_ACCESS_ADDRESSES);
-		final int accessPort = (int) intfProps.get(HttpInterfaceModel.PROP_NAME_ACCESS_PORT);
-		final String basePath = (String) intfProps.get(HttpInterfaceModel.PROP_NAME_BASE_PATH);
-		final Map<String, HttpOperationModel> operations = intfProps.containsKey(HttpInterfaceModel.PROP_NAME_OPERATIONS)
-				? (Map<String, HttpOperationModel>) validators.getValidator(PropertyValidatorType.HTTP_OPERATIONS).validateAndNormalize(intfProps.get(HttpInterfaceModel.PROP_NAME_OPERATIONS))
-				: Map.of();
+		// only the first instance or the first matching system name entry will be returned
+		ServiceInstanceResponseDTO instance = null;
+		if (Utilities.isEmpty(providerName)) {
+			instance = response.entries().getFirst();
+		} else {
+			final List<ServiceInstanceResponseDTO> matchingProvider = response.entries().stream().filter(i -> i.provider().name().equalsIgnoreCase(providerName)).toList();
+			if (!Utilities.isEmpty(matchingProvider)) {
+				instance = matchingProvider.getFirst();
+			}
+		}
 
-		final InterfaceModel interfaceModel = new HttpInterfaceModel.Builder(intf.templateName())
-				.accessAddresses(accessAddressess)
-				.accessPort(accessPort)
-				.basePath(basePath)
-				.operations(operations)
-				.build();
+		if (instance == null) {
+			return null;
+		}
+
+		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
+
+		// create the list of interface models
+		final List<InterfaceModel> interfaceModelList = new ArrayList<>();
+		for (final ServiceInstanceInterfaceResponseDTO interf : interfaces) {
+
+			final String templateName = interf.templateName();
+			final Map<String, Object> properties = interf.properties();
+
+			// HTTP or HTTPS
+			if (templateName.contains(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME)) {
+				interfaceModelList.add(createHttpInterfaceModel(templateName, properties));
+			}
+
+			// MQTT or MQTTS
+			if (templateName.contains(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME)) {
+				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
+			}
+		}
 
 		return new ServiceModel.Builder()
 				.serviceDefinition(instance.serviceDefinition().name())
 				.version(instance.version())
 				.metadata(instance.metadata())
-				.serviceInterface(interfaceModel)
+				.serviceInterfaces(interfaceModelList)
 				.build();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	private HttpInterfaceModel createHttpInterfaceModel(final String templateName, final Map<String, Object> properties) {
+
+		// access addresses
+		final List<String> accessAddresses = (List<String>) properties.get(HttpInterfaceModel.PROP_NAME_ACCESS_ADDRESSES);
+
+		// access port
+		final int accessPort = (int) properties.get(HttpInterfaceModel.PROP_NAME_ACCESS_PORT);
+
+		// base path
+		final String basePath = (String) properties.get(HttpInterfaceModel.PROP_NAME_BASE_PATH);
+
+		// operations
+		final Map<String, HttpOperationModel> operations = properties.containsKey(HttpInterfaceModel.PROP_NAME_OPERATIONS)
+				? (Map<String, HttpOperationModel>) validators.getValidator(PropertyValidatorType.HTTP_OPERATIONS).validateAndNormalize(properties.get(HttpInterfaceModel.PROP_NAME_OPERATIONS))
+				: Map.of();
+
+		// create the interface model
+		final HttpInterfaceModel model = new HttpInterfaceModel.Builder(templateName)
+				.accessAddresses(accessAddresses)
+				.accessPort(accessPort)
+				.basePath(basePath)
+				.operations(operations)
+				.build();
+
+		return model;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	private MqttInterfaceModel createMqttInterfaceModel(final String templateName, final Map<String, Object> properties) {
+
+		// access addresses
+		final List<String> accessAddresses = (List<String>) properties.get(MqttInterfaceModel.PROP_NAME_ACCESS_ADDRESSES);
+
+		// access port
+		final int accessPort = (int) properties.get(MqttInterfaceModel.PROP_NAME_ACCESS_PORT);
+
+		// topic
+		final String topic = (String) properties.get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
+
+		// operations
+		final Set<String> operations = properties.containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)
+				? new HashSet<String>((Collection<? extends String>) properties.get(MqttInterfaceModel.PROP_NAME_OPERATIONS))
+				: Set.of();
+
+		// create the interface model
+		final MqttInterfaceModel model = new MqttInterfaceModel.Builder(templateName)
+				.accessAddresses(accessAddresses)
+				.accessPort(accessPort)
+				.baseTopic(topic)
+				.operations(operations)
+				.build();
+
+		return model;
 	}
 }

@@ -9,6 +9,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -185,6 +186,30 @@ public final class Utilities {
 		} catch (final IllegalArgumentException __) {
 			return false;
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static boolean isUUID(final String value) {
+		if (isEmpty(value)) {
+			return false;
+		}
+
+		try {
+			UUID.fromString(value);
+			return true;
+		} catch (final IllegalArgumentException __) {
+			return false;
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static int parseToInt(final Object obj) {
+		return switch (obj) {
+		case final Integer i -> i;
+		case final Number n -> n.intValue();
+		case final String s -> Integer.parseInt(s);
+		case null, default -> throw new NumberFormatException("Invalid input: " + obj);
+		};
 	}
 
 	//-------------------------------------------------------------------------------------------------

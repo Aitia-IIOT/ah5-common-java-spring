@@ -52,12 +52,12 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 		final X509Certificate x509Certificate = decodeAuthorizationKey(authKey);
 		final CommonNameAndType requesterData = SecurityUtilities.getIdentificationDataFromCertificate(x509Certificate);
 		if (requesterData == null) {
-			logger.error("Unauthenticated access attempt: {}", request.getRequestTopic());
-			throw new AuthException("Unauthenticated access attempt: " + request.getRequestTopic());
+			logger.error("Unauthenticated access attempt: {}", request.getBaseTopic());
+			throw new AuthException("Unauthenticated access attempt: " + request.getBaseTopic());
 		}
 
 		fillRequestAttributes(request, requesterData);
-		checkClientAuthorized(requesterData, request.getRequestTopic());
+		checkClientAuthorized(requesterData, request.getBaseTopic());
 	}
 
 	//=================================================================================================

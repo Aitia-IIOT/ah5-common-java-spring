@@ -13,7 +13,7 @@ public class MqttRequestModel {
 
 	private final String traceId;
 	private final String operation;
-	private final String requestTopic;
+	private final String baseTopic;
 	private final String responseTopic;
 	private final MqttQoS qosRequirement;
 	private final Map<String, String> params;
@@ -27,10 +27,10 @@ public class MqttRequestModel {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public MqttRequestModel(final String requestTopic, final MqttRequestTemplate template) {
+	public MqttRequestModel(final String baseTopic, final String operation, final MqttRequestTemplate template) {
 		this.traceId = template.traceId();
-		this.operation = template.operation();
-		this.requestTopic = requestTopic;
+		this.baseTopic = baseTopic;
+		this.operation = operation;
 		this.responseTopic = template.responseTopic();
 		this.qosRequirement = MqttQoS.valueOf(template.qosRequirement());
 		this.params = template.params() == null ? new HashMap<>() : template.params();
@@ -51,8 +51,8 @@ public class MqttRequestModel {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public String getRequestTopic() {
-		return requestTopic;
+	public String getBaseTopic() {
+		return baseTopic;
 	}
 
 	//-------------------------------------------------------------------------------------------------

@@ -101,7 +101,8 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 		HttpOperationModel lookupOp = null;
 		final ServiceModel model = collector.getServiceModel(
 				Constants.SERVICE_DEF_SERVICE_DISCOVERY,
-				sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME);
+				sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME,
+				Constants.SYS_NAME_SERVICE_REGISTRY);
 
 		for (final InterfaceModel intf : model.interfaces()) {
 			final Map<String, HttpOperationModel> ops = (Map<String, HttpOperationModel>) intf.properties().get(HttpInterfaceModel.PROP_NAME_OPERATIONS);
