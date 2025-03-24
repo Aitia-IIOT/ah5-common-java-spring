@@ -120,6 +120,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 					// if there is a lookup operation, we can get its path and method
 					lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
 					lookupBasePath = (String) intf.properties().get(HttpInterfaceModel.PROP_NAME_BASE_PATH);
+					break;
 				}
 			}
 		}

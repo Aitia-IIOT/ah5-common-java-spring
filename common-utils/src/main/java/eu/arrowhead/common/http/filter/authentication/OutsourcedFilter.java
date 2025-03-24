@@ -109,6 +109,7 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 			if (ops.containsKey(Constants.SERVICE_OP_LOOKUP)) {
 				// if there is a lookup operation, we can get its path and method
 				lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
+				break;
 			}
 		}
 

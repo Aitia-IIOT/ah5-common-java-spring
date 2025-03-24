@@ -121,6 +121,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 				if (ops.contains(Constants.SERVICE_OP_LOOKUP)) {
 					// if there is a lookup operation, we found the corresponding topic
 					lookupTopic = (String) intf.properties().get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
+					break;
 				}
 			}
 		}
