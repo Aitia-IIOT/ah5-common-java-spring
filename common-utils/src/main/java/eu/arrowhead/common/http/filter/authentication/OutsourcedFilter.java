@@ -129,7 +129,7 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 			return false;
 		}
 
-		if (dto == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
+		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;
 		}

@@ -33,6 +33,10 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	//=================================================================================================
 	// members
 
+	private static final String AUTH_KEY_DELIMITER = Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER;
+	private static final String AUTH_KEY_PREFIX_AUTHENTICATOR_KEY = Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY;
+	private static final String AUTH_KEY_PREFIX_IDENTITY_TOKEN = Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN;
+
 	private final Logger log = LogManager.getLogger(getClass());
 
 	@Value(Constants.$AUTHENTICATOR_SECRET_KEYS)
@@ -96,8 +100,9 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			return false;
 		}
 
-		// is the requester wants to do a lookup?
-		if (!Constants.SERVICE_OP_LOOKUP.equalsIgnoreCase(request.getOperation())) {
+		// is the requester wants to do service lookup?
+		if (!Constants.SERVICE_OP_LOOKUP.equalsIgnoreCase(request.getOperation())
+				|| !request.getBaseTopic().contains(Constants.SERVICE_DEF_SERVICE_DISCOVERY)) {
 			return false;
 		}
 
@@ -110,7 +115,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			return false;
 		}
 
-		if (dto == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
+		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;
 		}
@@ -145,12 +150,12 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			throw new AuthException("No authentication info has been provided");
 		}
 
-		final String[] split = authKey.split(Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER);
-		if (split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY)) {
+		final String[] split = authKey.split(AUTH_KEY_DELIMITER);
+		if (split[0].equals(AUTH_KEY_PREFIX_AUTHENTICATOR_KEY)) {
 			return checkAuthenticaticatorKey(split);
 		}
 
-		if (split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN)) {
+		if (split[0].equals(AUTH_KEY_PREFIX_IDENTITY_TOKEN)) {
 			return checkIdentityToken(split);
 		}
 
