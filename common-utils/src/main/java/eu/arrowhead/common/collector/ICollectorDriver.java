@@ -12,5 +12,5 @@ public interface ICollectorDriver {
 	public void init() throws ArrowheadException;
 
 	//-------------------------------------------------------------------------------------------------
-	public ServiceModel acquireService(final String serviceDefinitionName, final String interfaceTemplateName) throws ArrowheadException;
+	public ServiceModel acquireService(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) throws ArrowheadException;
 }

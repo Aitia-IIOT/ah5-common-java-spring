@@ -1,6 +1,7 @@
 package eu.arrowhead.common.security;
 
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
@@ -35,6 +38,8 @@ public final class SecurityUtilities {
 	private static final String DN_QUALIFIER_FIELD_NAME = "2.5.4.46";
 	private static final String X509_CN_DELIMITER = "\\.";
 	private static final int SYSTEM_CN_NAME_LENGTH = 5;
+
+	private static final String HMAC_ALGORITHM = "HmacSHA256";
 
 	private static final Logger logger = LogManager.getLogger(SecurityUtilities.class);
 
@@ -178,6 +183,18 @@ public final class SecurityUtilities {
 		}
 
 		return clientCN.split(X509_CN_DELIMITER, 2)[0];
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static String hashWithSecretKey(final String data, final String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
+		Assert.isTrue(!Utilities.isEmpty(data), "data is missing");
+		Assert.isTrue(!Utilities.isEmpty(secretKey), "secretKey is missing");
+
+		final SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), HMAC_ALGORITHM);
+		final Mac mac = Mac.getInstance(HMAC_ALGORITHM);
+		mac.init(keySpec);
+
+		return Utilities.bytesToHex(mac.doFinal(data.getBytes()));
 	}
 
 	//=================================================================================================

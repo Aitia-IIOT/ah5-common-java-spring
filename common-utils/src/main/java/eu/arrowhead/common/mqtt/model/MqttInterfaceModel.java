@@ -16,7 +16,7 @@ public record MqttInterfaceModel(
 		String templateName,
 		List<String> accessAddresses,
 		int accessPort,
-		String topic,
+		String baseTopic,
 		Set<String> operations) implements InterfaceModel {
 
 	//-------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ public record MqttInterfaceModel(
 		Assert.isTrue(!Utilities.isEmpty(templateName), "'templateName' is missing or empty");
 		Assert.isTrue(!Utilities.isEmpty(accessAddresses), "'accessAddresses' is missing or empty");
 		Assert.isTrue(accessPort >= Constants.MIN_PORT && accessPort <= Constants.MAX_PORT, "'accessPort' is invalid");
-		Assert.isTrue(!Utilities.isEmpty(topic), "'topic' is missing or empty");
+		Assert.isTrue(!Utilities.isEmpty(baseTopic), "'baseTopic' is missing or empty");
 		Assert.isTrue(!Utilities.isEmpty(operations), "'operations' is missing or empty");
 	}
 
@@ -34,7 +34,7 @@ public record MqttInterfaceModel(
 	private static final String mqttTemplateName = "generic-mqtt";
 	public static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
 	public static final String PROP_NAME_ACCESS_PORT = "accessPort";
-	public static final String PROP_NAME_TOPIC = "topic";
+	public static final String PROP_NAME_BASE_TOPIC = "baseTopic";
 	public static final String PROP_NAME_OPERATIONS = "operations";
 
 	//=================================================================================================
@@ -50,7 +50,7 @@ public record MqttInterfaceModel(
 	public Map<String, Object> properties() {
 		return Map.of(PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
 				PROP_NAME_ACCESS_PORT, accessPort,
-				PROP_NAME_TOPIC, topic,
+				PROP_NAME_BASE_TOPIC, baseTopic,
 				PROP_NAME_OPERATIONS, operations);
 	}
 
@@ -66,7 +66,7 @@ public record MqttInterfaceModel(
 		private final String templateName;
 		private List<String> accessAddresses = new ArrayList<>();
 		private int accessPort;
-		private String topic;
+		private String baseTopic;
 		private Set<String> operations = new HashSet<>();
 
 		//=================================================================================================
@@ -107,8 +107,8 @@ public record MqttInterfaceModel(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder topic(final String topic) {
-			this.topic = topic;
+		public Builder baseTopic(final String baseTopic) {
+			this.baseTopic = baseTopic;
 			return this;
 		}
 
@@ -130,7 +130,7 @@ public record MqttInterfaceModel(
 
 		//-------------------------------------------------------------------------------------------------
 		public MqttInterfaceModel build() {
-			return new MqttInterfaceModel(templateName, accessAddresses, accessPort, topic, operations);
+			return new MqttInterfaceModel(templateName, accessAddresses, accessPort, baseTopic, operations);
 		}
 	}
 }

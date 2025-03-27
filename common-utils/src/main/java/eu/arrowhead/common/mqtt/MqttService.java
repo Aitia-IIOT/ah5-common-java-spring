@@ -37,6 +37,8 @@ public class MqttService {
 	//=================================================================================================
 	// members
 
+	private static final String SSL_PREFIX = Constants.SSL + "://";
+	private static final String TCP_PREFIX = Constants.TCP + "://";
 	private static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM = "ssl.KeyManagerFactory.algorithm";
 	private static final String SSL_TRUST_MANAGER_FACTORY_ALGORITHM = "ssl.TrustManagerFactory.algorithm";
 	private static final String TLS_VERSION = "TLSv1.2";
@@ -67,6 +69,42 @@ public class MqttService {
 			final String clientId,
 			final String username,
 			final String password) throws MqttException {
+		logger.debug("connect started");
+
+		createConnection(connectId, address, port, null, clientId, username, password);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public void connect(final String connectId, final String address, final int port, final boolean isSSl) throws MqttException {
+		logger.debug("connect started");
+
+		createConnection(connectId, address, port, isSSl, null, null, null);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public void disconnect(final String connectId) throws MqttException {
+		logger.debug("disconnect started");
+
+		final MqttClient client = clientMap.get(connectId);
+		if (client != null) {
+			client.disconnect();
+			clientMap.remove(connectId);
+			logger.info("Disconnected from MQTT broker");
+		}
+	}
+
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	private void createConnection(
+			final String connectId,
+			final String address,
+			final int port,
+			final Boolean isSSL,
+			final String clientId,
+			final String username,
+			final String password) throws MqttException {
 		logger.debug("createConnection started");
 		Assert.isTrue(!Utilities.isEmpty(connectId), "connectId is empty");
 		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
@@ -75,7 +113,12 @@ public class MqttService {
 			disconnect(connectId);
 		}
 
-		String serverURI = sslProperties.isSslEnabled() ? "ssl://" : "tcp://";
+		String serverURI;
+		if (isSSL == null) {
+			serverURI = sslProperties.isSslEnabled() ? SSL_PREFIX : TCP_PREFIX;
+		} else {
+			serverURI = isSSL ? SSL_PREFIX : TCP_PREFIX;
+		}
 		serverURI += address + ":" + port;
 
 		final MqttConnectOptions options = new MqttConnectOptions();
@@ -106,33 +149,18 @@ public class MqttService {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public void disconnect(final String connectId) throws MqttException {
-		logger.debug("disconnect started");
-
-		final MqttClient client = clientMap.get(connectId);
-		if (client != null) {
-			client.disconnect();
-			clientMap.remove(connectId);
-			logger.info("Disconnected from MQTT broker");
-		}
-	}
-
-	//=================================================================================================
-	// assistant methods
-
-	//-------------------------------------------------------------------------------------------------
 	private SSLSocketFactory sslSettings() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
 		logger.debug("sslSettings started");
 
 		final String messageNotDefined = " is not defined";
-		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
-		Assert.notNull(sslProperties.getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
-		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
-		Assert.notNull(sslProperties.getKeyPassword(), Constants.KEY_PASSWORD + messageNotDefined);
-		Assert.notNull(sslProperties.getTrustStore(), Constants.TRUSTSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.TRUSTSTORE_PATH + " file is not found");
-		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.TRUSTSTORE_PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
+		Assert.notNull(sslProperties.getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
+		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
+		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
+		Assert.notNull(sslProperties.getKeyPassword(), Constants.SERVER_SSL_KEY__PASSWORD + messageNotDefined);
+		Assert.notNull(sslProperties.getTrustStore(), Constants.SERVER_SSL_TRUST__STORE + messageNotDefined);
+		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.SERVER_SSL_TRUST__STORE + " file is not found");
+		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.SERVER_SSL_TRUST__STORE__PASSWORD + messageNotDefined);
 
 		final KeyStore keyStore = KeyStore.getInstance(sslProperties.getKeyStoreType());
 		keyStore.load(sslProperties.getKeyStore().getInputStream(), sslProperties.getKeyStorePassword().toCharArray());

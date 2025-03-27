@@ -10,6 +10,7 @@ public record ServiceInstanceQueryRequestDTO(
 		List<String> versions,
 		String alivesAt,
 		List<MetadataRequirementDTO> metadataRequirementsList,
+		List<String> addressTypes,
 		List<String> interfaceTemplateNames,
 		List<MetadataRequirementDTO> interfacePropertyRequirementsList,
 		List<String> policies) {

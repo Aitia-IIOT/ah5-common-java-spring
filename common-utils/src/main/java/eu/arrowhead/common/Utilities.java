@@ -9,6 +9,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -185,6 +186,45 @@ public final class Utilities {
 		} catch (final IllegalArgumentException __) {
 			return false;
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static boolean isUUID(final String value) {
+		if (isEmpty(value)) {
+			return false;
+		}
+
+		try {
+			UUID.fromString(value);
+			return true;
+		} catch (final IllegalArgumentException __) {
+			return false;
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static int parseToInt(final Object obj) {
+		return switch (obj) {
+		case final Integer i -> i;
+		case final Number n -> n.intValue();
+		case final String s -> Integer.parseInt(s);
+		case null, default -> throw new NumberFormatException("Invalid input: " + obj);
+		};
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	public static String bytesToHex(final byte[] bytes) {
+		final StringBuilder hexString = new StringBuilder(2 * bytes.length);
+		for (final byte b : bytes) {
+			final String hex = Integer.toHexString(0xff & b);
+			if (hex.length() == 1) {
+				hexString.append('0');
+			}
+			hexString.append(hex);
+		}
+
+		return hexString.toString();
 	}
 
 	//=================================================================================================

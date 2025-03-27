@@ -19,7 +19,7 @@ public class InboundDebugFilter extends ArrowheadFilter {
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		log.trace("Entering InboundDebugFilter...");
 
-		final MultiReadRequestWrapper requestWrapper = new MultiReadRequestWrapper((HttpServletRequest) request);
+		final MultiReadRequestWrapper requestWrapper = new MultiReadRequestWrapper(request);
 
 		log.debug("New {} request at: {}", requestWrapper.getMethod(), requestWrapper.getRequestURL().toString());
 		if (!Utilities.isEmpty(requestWrapper.getQueryString())) {

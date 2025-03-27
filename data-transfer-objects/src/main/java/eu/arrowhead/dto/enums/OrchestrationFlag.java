@@ -1,0 +1,6 @@
+package eu.arrowhead.dto.enums;
+
+public enum OrchestrationFlag {
+
+	MATCHMAKING, ONLY_PREFERRED, ONLY_EXCLUSIVE, ALLOW_TRANSLATION, ALLOW_INTERCLOUD, ONLY_INTERCLOUD
+}

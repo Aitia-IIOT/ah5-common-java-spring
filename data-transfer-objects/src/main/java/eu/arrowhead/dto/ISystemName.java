@@ -1,12 +1,10 @@
-package eu.arrowhead.common.mqtt;
+package eu.arrowhead.dto;
 
-import eu.arrowhead.dto.MqttRequestTemplate;
-
-public interface MqttHandler {
+public interface ISystemName {
 
 	//=================================================================================================
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	void handle(final MqttRequestTemplate msgTemplate);
+	public String systemName();
 }

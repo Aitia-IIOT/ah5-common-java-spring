@@ -41,6 +41,7 @@ import eu.arrowhead.common.mqtt.MqttController;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
+import eu.arrowhead.dto.IdentityRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceCreateRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceInterfaceRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceResponseDTO;
@@ -89,6 +90,7 @@ public abstract class ApplicationInitListener {
 		logger.debug("Initialization in onApplicationEvent()...");
 
 		logger.info("System name: {}", sysInfo.getSystemName());
+		logger.info("System port: {}", sysInfo.getServerPort());
 		logger.info("SSL mode: {}", getSSLString());
 		logger.info("Authentication policy: {}", sysInfo.getAuthenticationPolicy().name());
 
@@ -125,12 +127,17 @@ public abstract class ApplicationInitListener {
 
 		revokeServices();
 
-		if (sysInfo.isMqttApiEnabled()) {
-			mqttController.disconnect();
-		}
-
 		try {
 			customDestroy();
+
+			if (sysInfo.isMqttApiEnabled()) {
+				mqttController.disconnect();
+			}
+
+			// logout attempt
+			if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
+				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_IDENTITY, Constants.SERVICE_OP_IDENTITY_LOGOUT, Void.TYPE, getLogoutPayload());
+			}
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());
 			logger.debug(t);
@@ -167,10 +174,10 @@ public abstract class ApplicationInitListener {
 		logger.debug("initializeKeyStore started...");
 		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled");
 		final String messageNotDefined = " is not defined";
-		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.KEYSTORE_TYPE + messageNotDefined);
-		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.KEYSTORE_PATH + messageNotDefined);
-		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.KEYSTORE_PATH + " file is not found");
-		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.KEYSTORE_PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
+		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
+		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
+		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
 
 		final KeyStore keystore = KeyStore.getInstance(sysInfo.getSslProperties().getKeyStoreType());
 		keystore.load(sysInfo.getSslProperties().getKeyStore().getInputStream(), sysInfo.getSslProperties().getKeyStorePassword().toCharArray());
@@ -244,15 +251,20 @@ public abstract class ApplicationInitListener {
 			return;
 		}
 
+		// if authentication is handled by an other system, we have to wait a little to give time to running login job
+		if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
+			Thread.sleep(sysInfo.getAuthenticatorLoginDelay());
+		}
+
 		checkServiceRegistryConnection(sysInfo.isSslEnabled(), MAX_NUMBER_OF_SERVICEREGISTRY_CONNECTION_RETRIES, WAITING_PERIOD_BETWEEN_RETRIES_IN_SECONDS);
 
 		// revoke system (if any)
-		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class);
+		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REVOKE, Constants.SYS_NAME_SERVICE_REGISTRY, Void.class);
 
 		// register system
 		final SystemModel model = sysInfo.getSystemModel();
 		final SystemRegisterRequestDTO payload = new SystemRegisterRequestDTO(model.metadata(), model.version(), model.addresses(), model.deviceName());
-		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, SystemResponseDTO.class, payload);
+		arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, Constants.SERVICE_OP_REGISTER, Constants.SYS_NAME_SERVICE_REGISTRY, SystemResponseDTO.class, payload);
 
 		// register services
 		if (sysInfo.getServices() != null) {
@@ -278,7 +290,7 @@ public abstract class ApplicationInitListener {
 		final String templateName = secure ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
 		for (int i = 0; i <= retries; ++i) {
 			try {
-				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName);
+				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
 				logger.info("Service Registry is accessable...");
 				break;
 			} catch (final ForbiddenException | AuthException ex) {
@@ -303,7 +315,7 @@ public abstract class ApplicationInitListener {
 				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), ServiceInterfacePolicy.NONE.name(), i.properties()))
 				.collect(Collectors.toList());
 		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
-		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, ServiceInstanceResponseDTO.class, payload);
+		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, Constants.SYS_NAME_SERVICE_REGISTRY, ServiceInstanceResponseDTO.class, payload);
 		registeredServices.add(response.instanceId());
 	}
 
@@ -319,14 +331,23 @@ public abstract class ApplicationInitListener {
 			checkServiceRegistryConnection(sysInfo.isSslEnabled(), 0, 1);
 
 			for (final String serviceInstanceId : registeredServices) {
-				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Void.class, List.of(serviceInstanceId));
+				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Constants.SYS_NAME_SERVICE_REGISTRY, Void.class, List.of(serviceInstanceId));
 			}
 
-			registeredServices.clear();
 			logger.info("Core system {} revoked {} service(s)", sysInfo, registeredServices.size());
+			registeredServices.clear();
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());
 			logger.debug(t);
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private IdentityRequestDTO getLogoutPayload() {
+		logger.debug("getLogoutPayload started...");
+
+		return new IdentityRequestDTO(
+				sysInfo.getSystemName(),
+				sysInfo.getAuthenticatorCredentials());
 	}
 }
