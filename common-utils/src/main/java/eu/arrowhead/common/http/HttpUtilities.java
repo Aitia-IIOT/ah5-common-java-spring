@@ -224,13 +224,13 @@ public final class HttpUtilities {
 		final String identityToken = sysInfo.getIdentityToken();
 		switch (sysInfo.getAuthenticationPolicy()) {
 		case DECLARED:
-			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + sysInfo.getSystemName();
+			return Constants.AUTHENTICATION_SCHEMA + " " + Constants.AUTHENTICATION_PREFIX_SYSTEM + Constants.AUTHENTICATION_KEY_DELIMITER + sysInfo.getSystemName();
 		case OUTSOURCED:
 			return identityToken == null ? null
-					: Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
+					: Constants.AUTHENTICATION_SCHEMA + " " + Constants.AUTHENTICATION_PREFIX_IDENTITY_TOKEN + Constants.AUTHENTICATION_KEY_DELIMITER + identityToken;
 		case INTERNAL:
-			return Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA + " " + Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER
-					+ sysInfo.getSystemName() + Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER + identityToken;
+			return Constants.AUTHENTICATION_SCHEMA + " " + Constants.AUTHENTICATION_PREFIX_AUTHENTICATOR_KEY + Constants.AUTHENTICATION_KEY_DELIMITER
+					+ sysInfo.getSystemName() + Constants.AUTHENTICATION_KEY_DELIMITER + identityToken;
 		default:
 			return null;
 		}

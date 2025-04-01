@@ -33,10 +33,6 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	//=================================================================================================
 	// members
 
-	private static final String AUTH_KEY_DELIMITER = Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER;
-	private static final String AUTH_KEY_PREFIX_AUTHENTICATOR_KEY = Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY;
-	private static final String AUTH_KEY_PREFIX_IDENTITY_TOKEN = Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN;
-
 	private final Logger log = LogManager.getLogger(getClass());
 
 	@Value(Constants.$AUTHENTICATOR_SECRET_KEYS)
@@ -150,12 +146,12 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			throw new AuthException("No authentication info has been provided");
 		}
 
-		final String[] split = authKey.split(AUTH_KEY_DELIMITER);
-		if (split[0].equals(AUTH_KEY_PREFIX_AUTHENTICATOR_KEY)) {
+		final String[] split = authKey.split(Constants.AUTHENTICATION_KEY_DELIMITER);
+		if (split[0].equals(Constants.AUTHENTICATION_PREFIX_AUTHENTICATOR_KEY)) {
 			return checkAuthenticaticatorKey(split);
 		}
 
-		if (split[0].equals(AUTH_KEY_PREFIX_IDENTITY_TOKEN)) {
+		if (split[0].equals(Constants.AUTHENTICATION_PREFIX_IDENTITY_TOKEN)) {
 			return checkIdentityToken(split);
 		}
 

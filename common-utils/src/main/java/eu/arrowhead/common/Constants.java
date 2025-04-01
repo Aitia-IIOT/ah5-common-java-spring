@@ -108,6 +108,12 @@ public final class Constants {
 	public static final String SERVICE_ADDRESS_ALIAS = "service.address.alias";
 	public static final String $SERVICE_ADDRESS_ALIAS = "${" + SERVICE_ADDRESS_ALIAS + "}";
 
+	public static final String AUTHENTICATION_SCHEMA = "Bearer";
+	public static final String AUTHENTICATION_KEY_DELIMITER = "//";
+	public static final String AUTHENTICATION_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
+	public static final String AUTHENTICATION_PREFIX_SYSTEM = "SYSTEM";
+	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
+
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
 	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allow-exclusivity";
 
@@ -163,11 +169,6 @@ public final class Constants {
 	public static final String HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM = "arrowhead.authenticated.system";
 	public static final String HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST = "arrowhead.sysop.request";
 	public static final String HTTP_ATTR_JAKARTA_SERVLET_REQUEST_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
-	public static final String HTTP_HEADER_AUTHORIZATION_DELIMITER = "//";
-	public static final String HTTP_HEADER_AUTHORIZATION_SCHEMA = "Bearer";
-	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM = "SYSTEM";
-	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
-	public static final String HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
 
 	public static final String HTTP_CLIENT_CONNECTION_TIMEOUT = "http.client.connection.timeout";
 	public static final String $HTTP_CLIENT_CONNECTION_TIMEOUT_WD = "${" + HTTP_CLIENT_CONNECTION_TIMEOUT + ":" + Defaults.HTTP_CLIENT_CONNECTION_TIMEOUT_DEFAULT + "}";
