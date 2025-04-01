@@ -136,7 +136,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 		try {
 			// check if the content type can be mapped to the expected dto
 			dto = Utilities.fromJson(Utilities.toJson(request.getPayload()), ServiceInstanceLookupRequestDTO.class);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			return false;
 		}
 		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {

@@ -135,7 +135,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 		try {
 			// check if the content type can be mapped to the expected dto
 			dto = Utilities.fromJson(request.getCachedBody(), ServiceInstanceLookupRequestDTO.class);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			return false;
 		}
 		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {

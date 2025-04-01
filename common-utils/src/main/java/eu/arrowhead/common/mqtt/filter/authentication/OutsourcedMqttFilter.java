@@ -96,13 +96,13 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			return false;
 		}
 
-		// is the requester wants to do service lookup?
+		// does the requester wants to do service lookup?
 		if (!Constants.SERVICE_OP_LOOKUP.equalsIgnoreCase(request.getOperation())
 				|| !request.getBaseTopic().contains(Constants.SERVICE_DEF_SERVICE_DISCOVERY)) {
 			return false;
 		}
 
-		// is the requester looking for the identity service definition?
+		// does the requester looking for the identity service definition?
 		ServiceInstanceLookupRequestDTO dto = null; // expected type for service definition lookup
 		try {
 			// check if the content type can be mapped to the expected DTO
@@ -148,7 +148,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 
 		final String[] split = authKey.split(Constants.AUTHENTICATION_KEY_DELIMITER);
 		if (split[0].equals(Constants.AUTHENTICATION_PREFIX_AUTHENTICATOR_KEY)) {
-			return checkAuthenticaticatorKey(split);
+			return checkAuthenticatorKey(split);
 		}
 
 		if (split[0].equals(Constants.AUTHENTICATION_PREFIX_IDENTITY_TOKEN)) {
@@ -181,8 +181,8 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	//-------------------------------------------------------------------------------------------------
 	// handling header using AUTHENTICATOR-KEY//<system-name>//<hash>
 	@SuppressWarnings("checkstyle:MagicNumber")
-	private AuthenticationData checkAuthenticaticatorKey(final String[] infoParts) {
-		log.debug("OutsourcedMqttFilter.checkAuthenticaticatorKey started...");
+	private AuthenticationData checkAuthenticatorKey(final String[] infoParts) {
+		log.debug("OutsourcedMqttFilter.checkAuthenticatorKey started...");
 
 		if (Utilities.isEmpty(secretKeys)) {
 			// this system does not support authenticator keys
