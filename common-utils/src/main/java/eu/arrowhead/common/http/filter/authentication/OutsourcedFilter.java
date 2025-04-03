@@ -109,6 +109,7 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 			if (ops.containsKey(Constants.SERVICE_OP_LOOKUP)) {
 				// if there is a lookup operation, we can get its path and method
 				lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
+				break;
 			}
 		}
 
@@ -128,7 +129,7 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 			return false;
 		}
 
-		if (dto == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
+		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;
 		}
@@ -146,16 +147,16 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 		}
 
 		String[] split = authHeader.trim().split(" ");
-		if (split.length != 2 || !split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA)) {
+		if (split.length != 2 || !split[0].equals(Constants.AUTHENTICATION_SCHEMA)) {
 			throw new AuthException("Invalid authorization header");
 		}
 
-		split = split[1].split(Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER);
-		if (split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_AUTHENTICATOR_KEY)) {
+		split = split[1].split(Constants.AUTHENTICATION_KEY_DELIMITER);
+		if (split[0].equals(Constants.AUTHENTICATION_PREFIX_AUTHENTICATOR_KEY)) {
 			return checkAuthenticaticatorKey(split);
 		}
 
-		if (split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_IDENTITY_TOKEN)) {
+		if (split[0].equals(Constants.AUTHENTICATION_PREFIX_IDENTITY_TOKEN)) {
 			return checkIdentityToken(split);
 		}
 

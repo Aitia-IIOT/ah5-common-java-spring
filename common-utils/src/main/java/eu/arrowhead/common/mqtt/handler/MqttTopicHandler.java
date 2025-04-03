@@ -2,12 +2,13 @@ package eu.arrowhead.common.mqtt.handler;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,7 +187,7 @@ public abstract class MqttTopicHandler extends Thread {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private Entry<String, MqttRequestModel> parseMqttMessage(final MqttMessageContainer msgContainer) {
+	private Pair<String, MqttRequestModel> parseMqttMessage(final MqttMessageContainer msgContainer) {
 		logger.debug("parseMqttMessage started...");
 		Assert.notNull(msgContainer, "MqttMessageContainer is null");
 
@@ -196,7 +197,7 @@ public abstract class MqttTopicHandler extends Thread {
 
 		try {
 			final MqttRequestTemplate template = mapper.readValue(msgContainer.getMessage().getPayload(), MqttRequestTemplate.class);
-			return Map.entry(template.authentication(), new MqttRequestModel(msgContainer.getBaseTopic(), msgContainer.getOperation(), template));
+			return new ImmutablePair<String, MqttRequestModel>(template.authentication(), new MqttRequestModel(msgContainer.getBaseTopic(), msgContainer.getOperation(), template));
 		} catch (final IOException ex) {
 			throw new InvalidParameterException("Invalid message template. Reason: " + ex.getMessage());
 		}
