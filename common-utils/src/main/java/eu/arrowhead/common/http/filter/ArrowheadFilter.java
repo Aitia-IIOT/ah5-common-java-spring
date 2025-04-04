@@ -36,7 +36,14 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 
 	//-------------------------------------------------------------------------------------------------
 	protected ArrowheadFilter() {
-		log.info("{} is active", this.getClass().getSimpleName());
+		if (isActive()) {
+			log.info("{} is active", this.getClass().getSimpleName());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	protected boolean isActive() {
+		return true;
 	}
 
 	//-------------------------------------------------------------------------------------------------

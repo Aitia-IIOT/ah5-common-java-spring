@@ -12,6 +12,7 @@ public class Defaults {
 	// Global
 
 	public static final String MAX_PAGE_SIZE_DEFAULT = "1000";
+	public static final String DEFAULT_CLOUD = "LOCAL";
 
 	// System related
 

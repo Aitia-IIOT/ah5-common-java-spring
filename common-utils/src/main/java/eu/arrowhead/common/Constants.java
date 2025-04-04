@@ -65,7 +65,7 @@ public final class Constants {
 	public static final String BEAN_NAME_SYSTEM_INFO = "systemInfo";
 
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
-	public static final String SYS_NAME_CONSUMER_AUTHORIZATION = "consumerauthorization";
+	public static final String SYS_NAME_CONSUMER_AUTHORIZATION = "consumer-authorization";
 	public static final String SYS_NAME_BLACKLIST = "blacklist";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";

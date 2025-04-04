@@ -3,8 +3,6 @@ package eu.arrowhead.common.mqtt.filter.authorization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
@@ -14,8 +12,6 @@ import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.common.service.validation.name.NameNormalizer;
 
-@Service
-@ConditionalOnProperty(name = { "mqtt.api.enabled", "enable.management.filter" }, havingValue = "true", matchIfMissing = false)
 public class ManagementServiceMqttFilter implements ArrowheadMqttFilter {
 
 	//=================================================================================================
