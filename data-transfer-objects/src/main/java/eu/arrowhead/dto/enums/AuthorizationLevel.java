@@ -1,6 +1,6 @@
 package eu.arrowhead.dto.enums;
 
-public enum AuthorizationHeaderType {
+public enum AuthorizationLevel {
 	MGMT("MGMT"), PROVIDER("PR");
 
 	//=================================================================================================
@@ -20,7 +20,7 @@ public enum AuthorizationHeaderType {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	private AuthorizationHeaderType(final String prefix) {
+	private AuthorizationLevel(final String prefix) {
 		this.prefix = prefix;
 	}
 }

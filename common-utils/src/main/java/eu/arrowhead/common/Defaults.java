@@ -3,6 +3,7 @@ package eu.arrowhead.common;
 import eu.arrowhead.common.collector.HttpCollectorMode;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authorization.ManagementPolicy;
+import eu.arrowhead.dto.DTODefaults;
 
 public class Defaults {
 
@@ -12,7 +13,8 @@ public class Defaults {
 	// Global
 
 	public static final String MAX_PAGE_SIZE_DEFAULT = "1000";
-	public static final String DEFAULT_CLOUD = "LOCAL";
+	public static final String DEFAULT_CLOUD = DTODefaults.DEFAULT_CLOUD;
+	public static final String DEFAULT_AUTHORIZATION_SCOPE = DTODefaults.DEFAULT_AUTHORIZATION_SCOPE;
 
 	// System related
 
