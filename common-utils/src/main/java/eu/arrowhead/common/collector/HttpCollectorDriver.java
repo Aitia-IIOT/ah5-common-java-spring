@@ -117,7 +117,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		final ServiceInstanceListResponseDTO response = httpService.sendRequest(uri, HttpMethod.POST, ServiceInstanceListResponseDTO.class, payload, null, headers);
-		return convertLookupResponse(response, providerName);
+		return convertLookupResponse(response, providerName, interfaceTemplateName);
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -138,8 +138,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	@SuppressWarnings("unchecked")
-	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response, final String providerName) {
+	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response, final String providerName, final String interfaceTemplateName) {
 		logger.debug("convertLookupResponse started...");
 
 		if (response.entries().isEmpty()) {
@@ -169,6 +168,10 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 			final String templateName = interf.templateName();
 			final Map<String, Object> properties = interf.properties();
+
+			if (!interfaceTemplateName.equals(templateName)) {
+				continue;
+			}
 
 			// HTTP or HTTPS
 			if (templateName.equals(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME) || templateName.equals(Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME)) {

@@ -49,12 +49,12 @@ public class SelfDeclaredFilter extends ArrowheadFilter implements IAuthenticati
 		}
 
 		String[] split = authHeader.trim().split(" ");
-		if (split.length != 2 || !split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_SCHEMA)) {
+		if (split.length != 2 || !split[0].equals(Constants.AUTHENTICATION_SCHEMA)) {
 			throw new AuthException("Invalid authorization header");
 		}
 
-		split = split[1].split(Constants.HTTP_HEADER_AUTHORIZATION_DELIMITER);
-		if (split.length != 2 || !split[0].equals(Constants.HTTP_HEADER_AUTHORIZATION_PREFIX_SYSTEM)) {
+		split = split[1].split(Constants.AUTHENTICATION_KEY_DELIMITER);
+		if (split.length != 2 || !split[0].equals(Constants.AUTHENTICATION_PREFIX_SYSTEM)) {
 			throw new AuthException("Invalid authorization header");
 		}
 

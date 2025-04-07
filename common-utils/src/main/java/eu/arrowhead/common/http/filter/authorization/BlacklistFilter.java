@@ -120,6 +120,7 @@ public class BlacklistFilter extends ArrowheadFilter {
 					// if there is a lookup operation, we can get its path and method
 					lookupOp = ops.get(Constants.SERVICE_OP_LOOKUP);
 					lookupBasePath = (String) intf.properties().get(HttpInterfaceModel.PROP_NAME_BASE_PATH);
+					break;
 				}
 			}
 		}
@@ -134,10 +135,10 @@ public class BlacklistFilter extends ArrowheadFilter {
 		try {
 			// check if the content type can be mapped to the expected dto
 			dto = Utilities.fromJson(request.getCachedBody(), ServiceInstanceLookupRequestDTO.class);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			return false;
 		}
-		if (dto == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
+		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;
 		}

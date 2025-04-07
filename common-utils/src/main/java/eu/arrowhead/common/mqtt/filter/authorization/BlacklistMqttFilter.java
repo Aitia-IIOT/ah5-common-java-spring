@@ -121,6 +121,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 				if (ops.contains(Constants.SERVICE_OP_LOOKUP)) {
 					// if there is a lookup operation, we found the corresponding topic
 					lookupTopic = (String) intf.properties().get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
+					break;
 				}
 			}
 		}
@@ -135,10 +136,10 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 		try {
 			// check if the content type can be mapped to the expected dto
 			dto = Utilities.fromJson(Utilities.toJson(request.getPayload()), ServiceInstanceLookupRequestDTO.class);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			return false;
 		}
-		if (dto == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
+		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;
 		}
