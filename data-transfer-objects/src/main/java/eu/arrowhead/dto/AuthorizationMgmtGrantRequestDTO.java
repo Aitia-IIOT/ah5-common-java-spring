@@ -11,8 +11,8 @@ public record AuthorizationMgmtGrantRequestDTO(
 		String targetType,
 		String target,
 		String description,
-		AuthorizationPolicyDTO defaultPolicy,
-		Map<String, AuthorizationPolicyDTO> scopedPolicies) {
+		AuthorizationPolicyRequestDTO defaultPolicy,
+		Map<String, AuthorizationPolicyRequestDTO> scopedPolicies) {
 
 	//=================================================================================================
 	// nested classes
@@ -28,8 +28,8 @@ public record AuthorizationMgmtGrantRequestDTO(
 		private final AuthorizationTargetType targetType;
 		private String target;
 		private String description;
-		private AuthorizationPolicyDTO defaultPolicy;
-		private Map<String, AuthorizationPolicyDTO> scopedPolicies;
+		private AuthorizationPolicyRequestDTO defaultPolicy;
+		private Map<String, AuthorizationPolicyRequestDTO> scopedPolicies;
 
 		//=================================================================================================
 		// methods
@@ -64,13 +64,13 @@ public record AuthorizationMgmtGrantRequestDTO(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder defaultPolicy(final AuthorizationPolicyDTO defaultPolicy) {
+		public Builder defaultPolicy(final AuthorizationPolicyRequestDTO defaultPolicy) {
 			this.defaultPolicy = defaultPolicy;
 			return this;
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder scopedPolicy(final String scope, final AuthorizationPolicyDTO policy) {
+		public Builder scopedPolicy(final String scope, final AuthorizationPolicyRequestDTO policy) {
 			if (this.scopedPolicies == null) {
 				this.scopedPolicies = new HashMap<>();
 			}
@@ -88,7 +88,7 @@ public record AuthorizationMgmtGrantRequestDTO(
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		public Builder scopedPolicies(final Map<String, AuthorizationPolicyDTO> scopedPolicies) {
+		public Builder scopedPolicies(final Map<String, AuthorizationPolicyRequestDTO> scopedPolicies) {
 			this.scopedPolicies = scopedPolicies;
 			return this;
 		}
