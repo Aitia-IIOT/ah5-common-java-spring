@@ -31,10 +31,15 @@ import eu.arrowhead.common.intf.properties.PropertyValidators;
 import eu.arrowhead.common.model.InterfaceModel;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.mqtt.model.MqttInterfaceModel;
+import eu.arrowhead.dto.OrchestrationRequestDTO;
+import eu.arrowhead.dto.OrchestrationResponseDTO;
+import eu.arrowhead.dto.OrchestrationResultDTO;
+import eu.arrowhead.dto.OrchestrationServiceRequirementDTO;
 import eu.arrowhead.dto.ServiceInstanceInterfaceResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceListResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceLookupRequestDTO;
 import eu.arrowhead.dto.ServiceInstanceResponseDTO;
+import eu.arrowhead.dto.enums.OrchestrationFlag;
 import jakarta.annotation.Nullable;
 
 public class HttpCollectorDriver implements ICollectorDriver {
@@ -66,6 +71,8 @@ public class HttpCollectorDriver implements ICollectorDriver {
 			Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME,
 			Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME);
 
+	private ServiceModel orchestrationCache = null;
+
 	//=================================================================================================
 	// methods
 
@@ -75,7 +82,8 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		logger.debug("HttpCollectorDriver.init started...");
 
 		if (HttpCollectorMode.SR_AND_ORCH == mode) {
-			// TODO: try to lookup orchestration service and cache it
+			// try to lookup orchestration service and cache it
+			orchestrationCache = lookupForOrchestration();
 		}
 	}
 
@@ -108,7 +116,8 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
 		final UriComponents uri = HttpUtilities.createURI(scheme, sysInfo.getServiceRegistryAddress(), sysInfo.getServiceRegistryPort(), SR_LOOKUP_PATH, VERBOSE_KEY, VERBOSE_VALUE);
 
-		final ServiceInstanceLookupRequestDTO payload = createRequestPayload(serviceDefinitionName, interfaceTemplateName);
+		final ServiceInstanceLookupRequestDTO payload = providerName == null ? createSRRequestPayload(serviceDefinitionName, interfaceTemplateName)
+				: createSRRequestPayload(serviceDefinitionName, interfaceTemplateName, providerName);
 
 		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
 		final Map<String, String> headers = new HashMap<>();
@@ -117,19 +126,79 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		final ServiceInstanceListResponseDTO response = httpService.sendRequest(uri, HttpMethod.POST, ServiceInstanceListResponseDTO.class, payload, null, headers);
-		return convertLookupResponse(response, providerName, interfaceTemplateName);
+		return convertLookupResponse(response, interfaceTemplateName);
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private ServiceModel acquireServiceFromOrchestration(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
-		// TODO Auto-generated method stub
-		// try to orchestrate the service (if no orchestration service is cached, it will lookup for it first)
-		return null;
+		logger.debug("acquireServiceFromOrchestration started...");
+
+		// if no orchestration service is cached, it will lookup for it first
+		if (orchestrationCache == null) {
+			orchestrationCache = lookupForOrchestration();
+			if (orchestrationCache == null) {
+				logger.debug("Lookup for orchestration service was unsuccessful.");
+				return null;
+			}
+		}
+
+		// orchestrate the service
+
+		// 1. finding the corresponding interface
+		final String intfTemplateNameToSendRequest = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME
+				: Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
+		final HttpInterfaceModel orchestrationIntf = (HttpInterfaceModel) orchestrationCache.interfaces().stream().filter(i -> i.templateName().equals(intfTemplateNameToSendRequest)).findFirst().get();
+
+		// 2. uri
+		final String orchestrationPullPath = orchestrationIntf.operations().get(Constants.SERVICE_OP_ORCHESTRATION_PULL).path();
+		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
+		final UriComponents uri = HttpUtilities.createURI(
+				scheme,
+				orchestrationIntf.accessAddresses().getFirst(),
+				orchestrationIntf.accessPort(),
+				orchestrationIntf.basePath() + orchestrationPullPath);
+
+		// 3. method
+		final HttpMethod orchestrationPullMethod = HttpMethod.valueOf(orchestrationIntf.operations().get(Constants.SERVICE_OP_ORCHESTRATION_PULL).method());
+
+		// 4. payload
+		final OrchestrationRequestDTO payload = providerName == null ? createOrchRequestPayload(serviceDefinitionName, interfaceTemplateName)
+				: createOrchRequestPayload(serviceDefinitionName, interfaceTemplateName, providerName);
+		
+		// 5. headers
+		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
+		final Map<String, String> headers = new HashMap<>();
+		if (authorizationHeader != null) {
+			headers.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
+		}
+		
+		final OrchestrationResponseDTO response = httpService.sendRequest(uri, orchestrationPullMethod, OrchestrationResponseDTO.class, payload, null, headers);
+		return convertPullResponse(response, interfaceTemplateName);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceInstanceLookupRequestDTO createRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName) {
-		logger.debug("createRequestPayload started...");
+	private ServiceModel lookupForOrchestration() {
+		logger.debug("lookupForOrchestration started...");
+
+		final String intfTemplateName = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
+		return acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SERVICEORCHESTRATION_DYNAMIC);
+
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private ServiceInstanceLookupRequestDTO createSRRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
+		logger.debug("createSRRequestPayload started...");
+
+		return new ServiceInstanceLookupRequestDTO.Builder()
+				.providerName(providerName)
+				.serviceDefinitionName(serviceDefinitionName)
+				.interfaceTemplateName(interfaceTemplateName)
+				.build();
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	private ServiceInstanceLookupRequestDTO createSRRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName) {
+		logger.debug("createSRRequestPayload started...");
 
 		return new ServiceInstanceLookupRequestDTO.Builder()
 				.serviceDefinitionName(serviceDefinitionName)
@@ -138,31 +207,63 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response, final String providerName, final String interfaceTemplateName) {
+	private OrchestrationRequestDTO createOrchRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
+		logger.debug("createOrchRequestPayload started...");
+		
+		final OrchestrationServiceRequirementDTO serviceRequirement = new OrchestrationServiceRequirementDTO.Builder()
+				.serviceDefinition(serviceDefinitionName)
+				.interfaceTemplateName(interfaceTemplateName)
+				.preferredProvider(providerName)
+				.build();
+		
+		
+		final Map<String, Boolean> flags = Map.of(
+				OrchestrationFlag.MATCHMAKING.toString(), true,
+				OrchestrationFlag.ALLOW_INTERCLOUD.toString(), false,
+				OrchestrationFlag.ALLOW_TRANSLATION.toString(), false,
+				OrchestrationFlag.ONLY_PREFERRED.toString(), true);
+		
+		return new OrchestrationRequestDTO.Builder()
+				.serviceRequirement(serviceRequirement)
+				.orchestrationFlags(flags)
+				.build();
+						
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	private OrchestrationRequestDTO createOrchRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName) {
+		logger.debug("createOrchRequestPayload started...");
+		
+		final OrchestrationServiceRequirementDTO serviceRequirement = new OrchestrationServiceRequirementDTO.Builder()
+				.serviceDefinition(serviceDefinitionName)
+				.interfaceTemplateName(interfaceTemplateName).build();
+		
+		final Map<String, Boolean> flags = Map.of(
+				OrchestrationFlag.MATCHMAKING.toString(), true,
+				OrchestrationFlag.ALLOW_INTERCLOUD.toString(), false,
+				OrchestrationFlag.ALLOW_TRANSLATION.toString(), false);
+		
+		return new OrchestrationRequestDTO.Builder()
+				.serviceRequirement(serviceRequirement)
+				.orchestrationFlags(flags)
+				.build();
+						
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private ServiceModel convertLookupResponse(final ServiceInstanceListResponseDTO response, final String interfaceTemplateName) {
 		logger.debug("convertLookupResponse started...");
 
 		if (response.entries().isEmpty()) {
 			return null;
 		}
 
-		// only the first instance or the first matching system name entry will be returned
-		ServiceInstanceResponseDTO instance = null;
-		if (Utilities.isEmpty(providerName)) {
-			instance = response.entries().getFirst();
-		} else {
-			final List<ServiceInstanceResponseDTO> matchingProvider = response.entries().stream().filter(i -> i.provider().name().equalsIgnoreCase(providerName)).toList();
-			if (!Utilities.isEmpty(matchingProvider)) {
-				instance = matchingProvider.getFirst();
-			}
-		}
+		// convert the first instance
+		ServiceInstanceResponseDTO instance = response.entries().getFirst();
 
-		if (instance == null) {
-			return null;
-		}
-
+		// create the list of interface models for the service model
 		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
 
-		// create the list of interface models
 		final List<InterfaceModel> interfaceModelList = new ArrayList<>();
 		for (final ServiceInstanceInterfaceResponseDTO interf : interfaces) {
 
@@ -184,8 +285,53 @@ public class HttpCollectorDriver implements ICollectorDriver {
 			}
 		}
 
+		// build the service model
 		return new ServiceModel.Builder()
 				.serviceDefinition(instance.serviceDefinition().name())
+				.version(instance.version())
+				.metadata(instance.metadata())
+				.serviceInterfaces(interfaceModelList)
+				.build();
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
+		logger.debug("convertPullResponse started...");
+		
+		if (response.results().isEmpty()) {
+			return null;
+		}
+		
+		// convert the first instance
+		OrchestrationResultDTO instance = response.results().getFirst();
+		
+		// create the list of interface models for the service model
+		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
+
+		final List<InterfaceModel> interfaceModelList = new ArrayList<>();
+		for (final ServiceInstanceInterfaceResponseDTO interf : interfaces) {
+
+			final String templateName = interf.templateName();
+			final Map<String, Object> properties = interf.properties();
+
+			if (!interfaceTemplateName.equals(templateName)) {
+				continue;
+			}
+
+			// HTTP or HTTPS
+			if (templateName.contains(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME)) {
+				interfaceModelList.add(createHttpInterfaceModel(templateName, properties));
+			}
+
+			// MQTT or MQTTS
+			if (templateName.contains(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME)) {
+				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
+			}
+		}
+		
+		// build the service model
+		return new ServiceModel.Builder()
+				.serviceDefinition(instance.serviceDefinitition())
 				.version(instance.version())
 				.metadata(instance.metadata())
 				.serviceInterfaces(interfaceModelList)
