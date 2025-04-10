@@ -263,28 +263,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final ServiceInstanceResponseDTO instance = response.entries().getFirst();
 
 		// create the list of interface models for the service model
-		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
-
-		final List<InterfaceModel> interfaceModelList = new ArrayList<>();
-		for (final ServiceInstanceInterfaceResponseDTO interf : interfaces) {
-
-			final String templateName = interf.templateName();
-			final Map<String, Object> properties = interf.properties();
-
-			if (!interfaceTemplateName.equals(templateName)) {
-				continue;
-			}
-
-			// HTTP or HTTPS
-			if (templateName.equals(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME) || templateName.equals(Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME)) {
-				interfaceModelList.add(createHttpInterfaceModel(templateName, properties));
-			}
-
-			// MQTT or MQTTS
-			if (templateName.equals(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME) || templateName.equals(Constants.GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME)) {
-				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
-			}
-		}
+		final List<InterfaceModel> interfaceModelList = convertInterfaceResponsesToInterfaceModels(instance.interfaces(), interfaceTemplateName);
 
 		// build the service model
 		return new ServiceModel.Builder()
@@ -294,21 +273,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				.serviceInterfaces(interfaceModelList)
 				.build();
 	}
-
+	
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
-		logger.debug("convertPullResponse started...");
-
-		if (response.results().isEmpty()) {
-			return null;
-		}
-
-		// convert the first instance
-		final OrchestrationResultDTO instance = response.results().getFirst();
-
-		// create the list of interface models for the service model
-		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
-
+	private List<InterfaceModel> convertInterfaceResponsesToInterfaceModels(final List<ServiceInstanceInterfaceResponseDTO> interfaces, final String interfaceTemplateName) {
+		logger.debug("convertInterfaceResponsesToInterfaceModels started...");
+		
 		final List<InterfaceModel> interfaceModelList = new ArrayList<>();
 		for (final ServiceInstanceInterfaceResponseDTO interf : interfaces) {
 
@@ -329,6 +298,23 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
 			}
 		}
+		
+		return interfaceModelList;
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
+		logger.debug("convertPullResponse started...");
+
+		if (response.results().isEmpty()) {
+			return null;
+		}
+
+		// convert the first instance
+		final OrchestrationResultDTO instance = response.results().getFirst();
+
+		// create the list of interface models for the service model
+		final List<InterfaceModel> interfaceModelList = convertInterfaceResponsesToInterfaceModels(instance.interfaces(), interfaceTemplateName);
 
 		// build the service model
 		return new ServiceModel.Builder()
