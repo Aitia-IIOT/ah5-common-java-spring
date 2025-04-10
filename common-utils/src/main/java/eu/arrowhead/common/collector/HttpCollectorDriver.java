@@ -46,7 +46,6 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 	//=================================================================================================
 	// members
-
 	private static final String SR_LOOKUP_PATH = "/serviceregistry/service-discovery/lookup";
 	private static final String VERBOSE_KEY = "verbose";
 	private static final String VERBOSE_VALUE = "false";
@@ -113,12 +112,15 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	private ServiceModel acquireServiceFromSR(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		logger.debug("acquireServiceFromSR started...");
 
+		// 1. uri
 		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
 		final UriComponents uri = HttpUtilities.createURI(scheme, sysInfo.getServiceRegistryAddress(), sysInfo.getServiceRegistryPort(), SR_LOOKUP_PATH, VERBOSE_KEY, VERBOSE_VALUE);
 
+		// 2. payload
 		final ServiceInstanceLookupRequestDTO payload = providerName == null ? createSRRequestPayload(serviceDefinitionName, interfaceTemplateName)
 				: createSRRequestPayload(serviceDefinitionName, interfaceTemplateName, providerName);
 
+		// 3. headers
 		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
 		final Map<String, String> headers = new HashMap<>();
 		if (authorizationHeader != null) {
@@ -164,14 +166,14 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		// 4. payload
 		final OrchestrationRequestDTO payload = providerName == null ? createOrchRequestPayload(serviceDefinitionName, interfaceTemplateName)
 				: createOrchRequestPayload(serviceDefinitionName, interfaceTemplateName, providerName);
-		
+
 		// 5. headers
 		final String authorizationHeader = HttpUtilities.calculateAuthorizationHeader(sysInfo);
 		final Map<String, String> headers = new HashMap<>();
 		if (authorizationHeader != null) {
 			headers.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
 		}
-		
+
 		final OrchestrationResponseDTO response = httpService.sendRequest(uri, orchestrationPullMethod, OrchestrationResponseDTO.class, payload, null, headers);
 		return convertPullResponse(response, interfaceTemplateName);
 	}
@@ -195,7 +197,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				.interfaceTemplateName(interfaceTemplateName)
 				.build();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private ServiceInstanceLookupRequestDTO createSRRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName) {
 		logger.debug("createSRRequestPayload started...");
@@ -209,45 +211,44 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	//-------------------------------------------------------------------------------------------------
 	private OrchestrationRequestDTO createOrchRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName, final String providerName) {
 		logger.debug("createOrchRequestPayload started...");
-		
+
 		final OrchestrationServiceRequirementDTO serviceRequirement = new OrchestrationServiceRequirementDTO.Builder()
 				.serviceDefinition(serviceDefinitionName)
 				.interfaceTemplateName(interfaceTemplateName)
 				.preferredProvider(providerName)
 				.build();
-		
-		
+
 		final Map<String, Boolean> flags = Map.of(
 				OrchestrationFlag.MATCHMAKING.toString(), true,
 				OrchestrationFlag.ALLOW_INTERCLOUD.toString(), false,
 				OrchestrationFlag.ALLOW_TRANSLATION.toString(), false,
 				OrchestrationFlag.ONLY_PREFERRED.toString(), true);
-		
+
 		return new OrchestrationRequestDTO.Builder()
 				.serviceRequirement(serviceRequirement)
 				.orchestrationFlags(flags)
 				.build();
-						
+
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private OrchestrationRequestDTO createOrchRequestPayload(final String serviceDefinitionName, final String interfaceTemplateName) {
 		logger.debug("createOrchRequestPayload started...");
-		
+
 		final OrchestrationServiceRequirementDTO serviceRequirement = new OrchestrationServiceRequirementDTO.Builder()
 				.serviceDefinition(serviceDefinitionName)
 				.interfaceTemplateName(interfaceTemplateName).build();
-		
+
 		final Map<String, Boolean> flags = Map.of(
 				OrchestrationFlag.MATCHMAKING.toString(), true,
 				OrchestrationFlag.ALLOW_INTERCLOUD.toString(), false,
 				OrchestrationFlag.ALLOW_TRANSLATION.toString(), false);
-		
+
 		return new OrchestrationRequestDTO.Builder()
 				.serviceRequirement(serviceRequirement)
 				.orchestrationFlags(flags)
 				.build();
-						
+
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -259,7 +260,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		// convert the first instance
-		ServiceInstanceResponseDTO instance = response.entries().getFirst();
+		final ServiceInstanceResponseDTO instance = response.entries().getFirst();
 
 		// create the list of interface models for the service model
 		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
@@ -293,18 +294,18 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				.serviceInterfaces(interfaceModelList)
 				.build();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
 		logger.debug("convertPullResponse started...");
-		
+
 		if (response.results().isEmpty()) {
 			return null;
 		}
-		
+
 		// convert the first instance
-		OrchestrationResultDTO instance = response.results().getFirst();
-		
+		final OrchestrationResultDTO instance = response.results().getFirst();
+
 		// create the list of interface models for the service model
 		final List<ServiceInstanceInterfaceResponseDTO> interfaces = instance.interfaces();
 
@@ -328,7 +329,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
 			}
 		}
-		
+
 		// build the service model
 		return new ServiceModel.Builder()
 				.serviceDefinition(instance.serviceDefinitition())
