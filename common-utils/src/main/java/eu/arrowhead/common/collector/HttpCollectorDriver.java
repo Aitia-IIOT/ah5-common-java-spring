@@ -275,6 +275,29 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	}
 	
 	//-------------------------------------------------------------------------------------------------
+	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
+		logger.debug("convertPullResponse started...");
+
+		if (response.results().isEmpty()) {
+			return null;
+		}
+
+		// convert the first instance
+		final OrchestrationResultDTO instance = response.results().getFirst();
+
+		// create the list of interface models for the service model
+		final List<InterfaceModel> interfaceModelList = convertInterfaceResponsesToInterfaceModels(instance.interfaces(), interfaceTemplateName);
+
+		// build the service model
+		return new ServiceModel.Builder()
+				.serviceDefinition(instance.serviceDefinitition())
+				.version(instance.version())
+				.metadata(instance.metadata())
+				.serviceInterfaces(interfaceModelList)
+				.build();
+	}
+	
+	//-------------------------------------------------------------------------------------------------
 	private List<InterfaceModel> convertInterfaceResponsesToInterfaceModels(final List<ServiceInstanceInterfaceResponseDTO> interfaces, final String interfaceTemplateName) {
 		logger.debug("convertInterfaceResponsesToInterfaceModels started...");
 		
@@ -300,29 +323,6 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 		
 		return interfaceModelList;
-	}
-	
-	//-------------------------------------------------------------------------------------------------
-	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
-		logger.debug("convertPullResponse started...");
-
-		if (response.results().isEmpty()) {
-			return null;
-		}
-
-		// convert the first instance
-		final OrchestrationResultDTO instance = response.results().getFirst();
-
-		// create the list of interface models for the service model
-		final List<InterfaceModel> interfaceModelList = convertInterfaceResponsesToInterfaceModels(instance.interfaces(), interfaceTemplateName);
-
-		// build the service model
-		return new ServiceModel.Builder()
-				.serviceDefinition(instance.serviceDefinitition())
-				.version(instance.version())
-				.metadata(instance.metadata())
-				.serviceInterfaces(interfaceModelList)
-				.build();
 	}
 
 	//-------------------------------------------------------------------------------------------------
