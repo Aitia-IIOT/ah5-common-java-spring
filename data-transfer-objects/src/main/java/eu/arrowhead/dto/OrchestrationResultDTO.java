@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 public record OrchestrationResultDTO(
-		String serviceId,
+		String serviceInstanceId,
+		String cloudIdentitifer,
 		String providerName,
 		String serviceDefinitition,
 		String version,
