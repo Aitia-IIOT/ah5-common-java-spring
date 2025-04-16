@@ -16,8 +16,8 @@ public enum AuthorizationTokenType {
 		case NONE:
 		case CERT_AUTH:
 			return null;
-		case RSASHA256_AES256GCM_JSON_WEB_TOKEN_AUTH:
-		case RSASHA256_AES128GCM_JSON_WEB_TOKEN_AUTH:
+		case RSA_SHA256_JSON_WEB_TOKEN_AUTH:
+		case RSA_SHA512_JSON_WEB_TOKEN_AUTH:
 			return JSON_WEB_TOKEN;
 		case TIME_LIMITED_TOKEN_AUTH:
 			return TIME_LIMITED_TOKEN;
