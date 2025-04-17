@@ -6,7 +6,7 @@ public record AuthorizationQueryRequestDTO(
 		PageDTO pagination,
 		String level,
 		List<String> instanceIds,
-		List<String> targets,
-		List<String> clouds,
+		List<String> cloudIdentifiers,
+		List<String> targetNames,
 		String targetType) {
 }
