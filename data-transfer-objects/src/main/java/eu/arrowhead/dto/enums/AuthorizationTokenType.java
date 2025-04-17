@@ -1,7 +1,7 @@
 package eu.arrowhead.dto.enums;
 
 public enum AuthorizationTokenType {
-	TIME_LIMITED_TOKEN, USAGE_LIMITED_TOKEN, JSON_WEB_TOKEN;
+	TIME_LIMITED_TOKEN, USAGE_LIMITED_TOKEN, SELF_CONTAINED_TOKEN;
 
 	//=================================================================================================
 	// methods
@@ -16,9 +16,10 @@ public enum AuthorizationTokenType {
 		case NONE:
 		case CERT_AUTH:
 			return null;
+		case BASE64_SELF_CONTAINED_AUTH_TOKEN:
 		case RSA_SHA256_JSON_WEB_TOKEN_AUTH:
 		case RSA_SHA512_JSON_WEB_TOKEN_AUTH:
-			return JSON_WEB_TOKEN;
+			return SELF_CONTAINED_TOKEN;
 		case TIME_LIMITED_TOKEN_AUTH:
 			return TIME_LIMITED_TOKEN;
 		case USAGE_LIMITED_TOKEN_AUTH:
