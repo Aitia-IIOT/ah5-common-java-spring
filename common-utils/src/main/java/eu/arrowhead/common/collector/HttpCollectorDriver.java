@@ -82,7 +82,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		if (HttpCollectorMode.SR_AND_ORCH == mode) {
 			// try to lookup orchestration service and cache it
-			orchestrationCache = lookupForOrchestration();
+			 lookupAndCacheOrchestration();
 		}
 	}
 
@@ -137,9 +137,9 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		// if no orchestration service is cached, it will lookup for it first
 		if (orchestrationCache == null) {
-			orchestrationCache = lookupForOrchestration();
+			lookupAndCacheOrchestration();
 			if (orchestrationCache == null) {
-				logger.debug("Lookup for orchestration service was unsuccessful.");
+				logger.debug("Lookup and cache orchestration service was unsuccessful.");
 				return null;
 			}
 		}
@@ -179,12 +179,18 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private ServiceModel lookupForOrchestration() {
-		logger.debug("lookupForOrchestration started...");
+	private void lookupAndCacheOrchestration() {
+		logger.debug("lookupAndCacheOrchestration started...");
 
 		final String intfTemplateName = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
-		return acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SERVICEORCHESTRATION_DYNAMIC);
 
+		// try to lookup for dynamic orchestration service
+		orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SERVICEORCHESTRATION_DYNAMIC);
+
+		// if unsuccessful, try to lookup for flexible store orchestration service
+		if (orchestrationCache == null) {
+			orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SERVICEORCHESTRATION_FLEXIBLE);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
