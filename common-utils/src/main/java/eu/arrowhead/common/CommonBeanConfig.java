@@ -3,28 +3,38 @@ package eu.arrowhead.common;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import eu.arrowhead.common.collector.HttpCollectorDriver;
 import eu.arrowhead.common.collector.ICollectorDriver;
+import eu.arrowhead.common.http.filter.ArrowheadFilter;
+import eu.arrowhead.common.http.filter.NoOpArrowheadFilter;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authentication.CertificateFilter;
 import eu.arrowhead.common.http.filter.authentication.IAuthenticationPolicyFilter;
 import eu.arrowhead.common.http.filter.authentication.OutsourcedFilter;
 import eu.arrowhead.common.http.filter.authentication.SelfDeclaredFilter;
+import eu.arrowhead.common.http.filter.authorization.ManagementServiceFilter;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.filter.authentication.CertificateMqttFilter;
 import eu.arrowhead.common.mqtt.filter.authentication.OutsourcedMqttFilter;
 import eu.arrowhead.common.mqtt.filter.authentication.SelfDeclaredMqttFilter;
+import eu.arrowhead.common.mqtt.filter.authorization.ManagementServiceMqttFilter;
 
 @Configuration
 public class CommonBeanConfig {
 
 	//=================================================================================================
 	// methods
+
+	@Autowired
+	private ApplicationContext appContext;
 
 	// -------------------------------------------------------------------------------------------------
 	@Bean(Constants.ARROWHEAD_CONTEXT)
@@ -52,6 +62,19 @@ public class CommonBeanConfig {
 
 	//-------------------------------------------------------------------------------------------------
 	@Bean
+	@ConditionalOnProperty(name = Constants.ENABLE_MANAGEMENT_FILTER, matchIfMissing = false)
+	ArrowheadFilter managementServiceFilter() {
+		final SystemInfo systemInfo = (SystemInfo) appContext.getBean(Constants.BEAN_NAME_SYSTEM_INFO);
+		if (systemInfo.getSystemName().equals(Constants.SYS_NAME_CONSUMER_AUTHORIZATION)) {
+			// this system use a special implementation of the management service filter => return a dummy filter that does not do anything (null is not possible here)
+			return new NoOpArrowheadFilter();
+		}
+
+		return new ManagementServiceFilter();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Bean
 	@ConditionalOnExpression("'" + Constants.$AUTHENTICATION_POLICY_WD + "' != '" + AuthenticationPolicy.INTERNAL_VALUE + "'")
 	ArrowheadMqttFilter authenticationPolicyMqttFilter(@Value(Constants.$MQTT_API_ENABLED_WD) final boolean isMqttEnabled, @Value(Constants.$AUTHENTICATION_POLICY_WD) final AuthenticationPolicy policy) {
 		if (!isMqttEnabled) {
@@ -70,6 +93,19 @@ public class CommonBeanConfig {
 		default:
 			throw new IllegalArgumentException("Unknown policy: " + policy.name());
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Bean
+	@ConditionalOnProperty(name = { Constants.MQTT_API_ENABLED, Constants.ENABLE_MANAGEMENT_FILTER }, havingValue = "true", matchIfMissing = false)
+	ArrowheadMqttFilter managementServiceMqttFilter() {
+		final SystemInfo systemInfo = (SystemInfo) appContext.getBean(Constants.BEAN_NAME_SYSTEM_INFO);
+		if (systemInfo.getSystemName().equals(Constants.SYS_NAME_CONSUMER_AUTHORIZATION)) {
+			// this system use a special implementation of the management service filter
+			return null;
+		}
+
+		return new ManagementServiceMqttFilter();
 	}
 
 	//-------------------------------------------------------------------------------------------------

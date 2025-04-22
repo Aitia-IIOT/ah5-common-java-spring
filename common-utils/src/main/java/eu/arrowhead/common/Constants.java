@@ -62,7 +62,10 @@ public final class Constants {
 
 	// System related
 
+	public static final String BEAN_NAME_SYSTEM_INFO = "systemInfo";
+
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
+	public static final String SYS_NAME_CONSUMER_AUTHORIZATION = "consumer-authorization";
 	public static final String SYS_NAME_BLACKLIST = "blacklist";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
@@ -240,6 +243,9 @@ public final class Constants {
 	public static final String SERVICE_DEF_IDENTITY = "identity";
 	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identity-management";
 
+	public static final String SERVICE_DEF_AUTHORIZATION = "authorization";
+	public static final String SERVICE_DEF_AUTHORIZATION_MANAGEMENT = "authorization-management";
+
 	// Operation related
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
@@ -249,8 +255,10 @@ public final class Constants {
 	public static final String SERVICE_OP_ECHO = "echo";
 	public static final String SERVICE_OP_REGISTER = "register";
 	public static final String SERVICE_OP_LOOKUP = "lookup";
+	public static final String SERVICE_OP_GRANT = "grant";
 	public static final String SERVICE_OP_REVOKE = "revoke";
 	public static final String SERVICE_OP_CHECK = "check";
+	public static final String SERVICE_OP_VERIFY = "verify";
 
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
@@ -294,6 +302,11 @@ public final class Constants {
 	public static final String SERVICE_OP_IDENTITY_MGMT_QUERY = "identity-mgmt-query";
 	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_CLOSE = "identity-mgmt-session-close";
 	public static final String SERVICE_OP_IDENTITY_MGMT_SESSION_QUERY = "identity-mgmt-session-query";
+
+	public static final String SERVICE_OP_AUTHORIZATION_GRANT_POLICIES = "grant-policies";
+	public static final String SERVICE_OP_AUTHORIZATION_REVOKE_POLICIES = "revoke-policies";
+	public static final String SERVICE_OP_AUTHORIZATION_QUERY_POLICIES = "query-policies";
+	public static final String SERVICE_OP_AUTHORIZATION_CHECK_POLICIES = "check-policies";
 
 	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
