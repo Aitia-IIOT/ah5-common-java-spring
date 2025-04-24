@@ -9,7 +9,6 @@ import eu.arrowhead.dto.enums.AuthorizationPolicyType;
 
 @JsonInclude(Include.NON_NULL)
 public record AuthorizationPolicyDTO(
-		String scope,
 		AuthorizationPolicyType policyType,
 		List<String> policyList,
 		MetadataRequirementDTO policyMetadataRequirement) {
