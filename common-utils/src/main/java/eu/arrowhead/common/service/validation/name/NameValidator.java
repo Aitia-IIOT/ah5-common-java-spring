@@ -21,7 +21,7 @@ public class NameValidator {
 
 	private static final String NAME_REGEX_STRING = "([A-Za-z]{1})|(^[A-Za-z][0-9A-Za-z\\-]*[0-9A-Za-z]$)";
 	private static final Pattern NAME_REGEX_PATTERN = Pattern.compile(NAME_REGEX_STRING);
-	
+
 	// convention for service instance id: <provider-name>::<service-definition>::<version>
 	private static final String DOUBLE_COLON = "::";
 	private static int serviceInstanceIdParts = 3;
@@ -50,7 +50,7 @@ public class NameValidator {
 		// naming convention for service instance id: <provider-name>::<service-definition>::<version>
 		logger.debug("Validate service instance id started: {}", serviceInstanceId);
 		Assert.notNull(serviceInstanceId, "serviceInstanceId is null!");
-		
+
 		String[] parts = serviceInstanceId.split(DOUBLE_COLON);
 
 		if (parts.length != serviceInstanceIdParts) {

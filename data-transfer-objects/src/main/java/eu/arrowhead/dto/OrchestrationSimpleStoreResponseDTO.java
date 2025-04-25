@@ -1,7 +1,7 @@
 package eu.arrowhead.dto;
 
 public record OrchestrationSimpleStoreResponseDTO(
-		long id,
+		String id,
 		String consumer,
 		String serviceDefinition,
 		String serviceInstanceId,
