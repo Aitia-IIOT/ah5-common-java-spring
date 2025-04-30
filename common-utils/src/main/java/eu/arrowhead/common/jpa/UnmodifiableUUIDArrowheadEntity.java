@@ -2,6 +2,7 @@ package eu.arrowhead.common.jpa;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 import eu.arrowhead.common.Utilities;
 import jakarta.persistence.Column;
@@ -12,19 +13,13 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 
 @MappedSuperclass
-public class UnmodifiableArrowheadEntity {
-
+public class UnmodifiableUUIDArrowheadEntity {
 	//=================================================================================================
 	// members
 
-	public static final int VARCHAR_TINY = 14;
-	public static final int VARCHAR_SMALL = 63;
-	public static final int VARCHAR_MEDIUM = 255;
-	public static final int VARCHAR_LARGE = 1024;
-
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	protected UUID id;
 
 	@Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	protected ZonedDateTime createdAt;
@@ -42,12 +37,12 @@ public class UnmodifiableArrowheadEntity {
 	// boilerplate
 
 	//-------------------------------------------------------------------------------------------------
-	public long getId() {
+	public UUID getId() {
 		return id;
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public void setId(final long id) {
+	public void setId(final UUID id) {
 		this.id = id;
 	}
 
@@ -82,7 +77,7 @@ public class UnmodifiableArrowheadEntity {
 			return false;
 		}
 
-		final UnmodifiableArrowheadEntity other = (UnmodifiableArrowheadEntity) obj;
+		final UnmodifiableUUIDArrowheadEntity other = (UnmodifiableUUIDArrowheadEntity) obj;
 		return id == other.id;
 	}
 }
