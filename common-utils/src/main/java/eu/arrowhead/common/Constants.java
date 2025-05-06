@@ -67,6 +67,8 @@ public final class Constants {
 	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
 	public static final String SYS_NAME_CONSUMER_AUTHORIZATION = "consumer-authorization";
 	public static final String SYS_NAME_BLACKLIST = "blacklist";
+	public static final String SERVICEORCHESTRATION_DYNAMIC = "serviceorchestration-dynamic";
+	public static final String SERVICEORCHESTRATION_FLEXIBLE = "serviceorchestration-flexible";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -323,6 +325,9 @@ public final class Constants {
 	public static final int INTERFACE_TEMPLATE_PROTOCOL_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int INTERFACE_PROPERTY_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SERVICE_INSTANCE_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_MEDIUM;
+	public static final int CLOUD_IDENTIFIER_MAX_LENGTH = 2 * SYSTEM_NAME_MAX_LENGTH + 1;
+	public static final int EVENT_TYPE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int SCOPE_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 
 	// Quartz related
 
