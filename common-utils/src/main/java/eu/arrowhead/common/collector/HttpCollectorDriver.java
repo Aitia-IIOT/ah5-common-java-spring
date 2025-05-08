@@ -82,7 +82,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		if (HttpCollectorMode.SR_AND_ORCH == mode) {
 			// try to lookup orchestration service and cache it
-			 lookupAndCacheOrchestration();
+			lookupAndCacheOrchestration();
 		}
 	}
 
@@ -128,6 +128,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		final ServiceInstanceListResponseDTO response = httpService.sendRequest(uri, HttpMethod.POST, ServiceInstanceListResponseDTO.class, payload, null, headers);
+
 		return convertLookupResponse(response, interfaceTemplateName);
 	}
 
@@ -139,7 +140,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		if (orchestrationCache == null) {
 			lookupAndCacheOrchestration();
 			if (orchestrationCache == null) {
-				logger.debug("Lookup and cache orchestration service was unsuccessful.");
+				logger.debug("Lookup and cache orchestration service was unsuccessful");
 				return null;
 			}
 		}
@@ -149,7 +150,12 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		// 1. finding the corresponding interface
 		final String intfTemplateNameToSendRequest = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME
 				: Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
-		final HttpInterfaceModel orchestrationIntf = (HttpInterfaceModel) orchestrationCache.interfaces().stream().filter(i -> i.templateName().equals(intfTemplateNameToSendRequest)).findFirst().get();
+		final HttpInterfaceModel orchestrationIntf = (HttpInterfaceModel) orchestrationCache
+				.interfaces()
+				.stream()
+				.filter(i -> i.templateName().equals(intfTemplateNameToSendRequest))
+				.findFirst()
+				.get();
 
 		// 2. uri
 		final String orchestrationPullPath = orchestrationIntf.operations().get(Constants.SERVICE_OP_ORCHESTRATION_PULL).path();
@@ -175,6 +181,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		}
 
 		final OrchestrationResponseDTO response = httpService.sendRequest(uri, orchestrationPullMethod, OrchestrationResponseDTO.class, payload, null, headers);
+
 		return convertPullResponse(response, interfaceTemplateName);
 	}
 
@@ -185,11 +192,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final String intfTemplateName = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
 
 		// try to lookup for dynamic orchestration service
-		orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SERVICEORCHESTRATION_DYNAMIC);
+		orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION);
 
 		// if unsuccessful, try to lookup for flexible store orchestration service
 		if (orchestrationCache == null) {
-			orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SERVICEORCHESTRATION_FLEXIBLE);
+			orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION);
 		}
 	}
 
@@ -279,7 +286,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				.serviceInterfaces(interfaceModelList)
 				.build();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private ServiceModel convertPullResponse(final OrchestrationResponseDTO response, final String interfaceTemplateName) {
 		logger.debug("convertPullResponse started...");
@@ -302,11 +309,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				.serviceInterfaces(interfaceModelList)
 				.build();
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private List<InterfaceModel> convertInterfaceResponsesToInterfaceModels(final List<ServiceInstanceInterfaceResponseDTO> interfaces, final String interfaceTemplateName) {
 		logger.debug("convertInterfaceResponsesToInterfaceModels started...");
-		
+
 		final List<InterfaceModel> interfaceModelList = new ArrayList<>();
 		for (final ServiceInstanceInterfaceResponseDTO interf : interfaces) {
 
@@ -327,7 +334,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
 			}
 		}
-		
+
 		return interfaceModelList;
 	}
 

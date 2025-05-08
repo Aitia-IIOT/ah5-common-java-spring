@@ -15,7 +15,7 @@ public final class Constants {
 
 	// Global
 
-	public static final String SYSOP = "sysop";
+	public static final String SYSOP = "Sysop";
 	public static final String UTC = "UTC";
 	public static final String LOCALHOST = "localhost";
 	public static final String PKCS12 = "PKCS12";
@@ -39,10 +39,10 @@ public final class Constants {
 	public static final String KEY_IDENTITY_RENEWAL_THRESHOLD = "identity-renewal-threshold";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
-	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic-http";
-	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic-https";
-	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic-mqtt";
-	public static final String GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME = "generic-mqtts";
+	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic_http";
+	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic_https";
+	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic_mqtt";
+	public static final String GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME = "generic_mqtts";
 
 	public static final int REQUEST_FILTER_ORDER_AUTHENTICATION = 15;
 	public static final int REQUEST_FILTER_ORDER_AUTHORIZATION_BLACKLIST = 20;
@@ -55,20 +55,23 @@ public final class Constants {
 
 	public static final String MAX_PAGE_SIZE = "max.page.size";
 	public static final String $MAX_PAGE_SIZE_WD = "${" + MAX_PAGE_SIZE + ":" + Defaults.MAX_PAGE_SIZE_DEFAULT + "}";
+	public static final String NORMALIZATION_MODE = "normalization.mode";
+	public static final String $NORMALIZATION_MODE_WD = "${" + NORMALIZATION_MODE + ":" + Defaults.NORMALIZATION_MODE_DEFAULT + "}";
 
-	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestricted-discovery";
+	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestrictedDiscovery";
 
 	public static final String COMMA = ",";
+	public static final String COMPOSITE_ID_DELIMITER = "|";
 
 	// System related
 
 	public static final String BEAN_NAME_SYSTEM_INFO = "systemInfo";
 
-	public static final String SYS_NAME_SERVICE_REGISTRY = "serviceregistry";
-	public static final String SYS_NAME_CONSUMER_AUTHORIZATION = "consumer-authorization";
-	public static final String SYS_NAME_BLACKLIST = "blacklist";
-	public static final String SERVICEORCHESTRATION_DYNAMIC = "serviceorchestration-dynamic";
-	public static final String SERVICEORCHESTRATION_FLEXIBLE = "serviceorchestration-flexible";
+	public static final String SYS_NAME_SERVICE_REGISTRY = "ServiceRegistry";
+	public static final String SYS_NAME_CONSUMER_AUTHORIZATION = "ConsumerAuthorization";
+	public static final String SYS_NAME_BLACKLIST = "Blacklist";
+	public static final String SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION = "DynamicServiceOrchestration";
+	public static final String SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION = "FlexibleServiceOrchestration";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -82,10 +85,10 @@ public final class Constants {
 	public static final String $SERVER_PORT = "${" + SERVER_PORT + ":" + Defaults.SERVER_PORT_DEFAULT + "}";
 	public static final String DOMAIN_NAME = "domain.name";
 	public static final String $DOMAIN_NAME = "${" + DOMAIN_NAME + ":" + Defaults.DOMAIN_NAME_DEFAULT + "}";
-	public static final String SERVICEREGISTRY_ADDRESS = "service.registry.address";
-	public static final String $SERVICEREGISTRY_ADDRESS_WD = "${" + SERVICEREGISTRY_ADDRESS + ":" + Defaults.SERVICEREGISTRY_ADDRESS_DEFAULT + "}";
-	public static final String SERVICEREGISTRY_PORT = "service.registry.port";
-	public static final String $SERVICEREGISTRY_PORT_WD = "${" + SERVICEREGISTRY_PORT + ":" + Defaults.SERVICEREGISTRY_PORT_DEFAULT + "}";
+	public static final String SERVICE_REGISTRY_ADDRESS = "service.registry.address";
+	public static final String $SERVICE_REGISTRY_ADDRESS_WD = "${" + SERVICE_REGISTRY_ADDRESS + ":" + Defaults.SERVICE_REGISTRY_ADDRESS_DEFAULT + "}";
+	public static final String SERVICE_REGISTRY_PORT = "service.registry.port";
+	public static final String $SERVICE_REGISTRY_PORT_WD = "${" + SERVICE_REGISTRY_PORT + ":" + Defaults.SERVICE_REGISTRY_PORT_DEFAULT + "}";
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":" + Defaults.AUTHENTICATION_POLICY_DEFAULT + "}";
 	public static final String AUTHENTICATOR_SECRET_KEYS = "authenticator.secret.keys";
@@ -119,8 +122,8 @@ public final class Constants {
 	public static final String AUTHENTICATION_PREFIX_SYSTEM = "SYSTEM";
 	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 
-	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509-public-key";
-	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allow-exclusivity";
+	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
+	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
 
 	// SSL related
 
@@ -227,26 +230,26 @@ public final class Constants {
 
 	// Service related
 
-	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "general-management";
+	public static final String SERVICE_DEF_GENERAL_MANAGEMENT = "generalManagement";
 
-	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "device-discovery";
-	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "system-discovery";
-	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "service-discovery";
-	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "service-registry-management";
-	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklist-discovery";
-	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklist-management";
+	public static final String SERVICE_DEF_DEVICE_DISCOVERY = "deviceDiscovery";
+	public static final String SERVICE_DEF_SYSTEM_DISCOVERY = "systemDiscovery";
+	public static final String SERVICE_DEF_SERVICE_DISCOVERY = "serviceDiscovery";
+	public static final String SERVICE_DEF_SERVICE_REGISTRY_MANAGEMENT = "serviceRegistryManagement";
+	public static final String SERVICE_DEF_BLACKLIST_DISCOVERY = "blacklistDiscovery";
+	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklistManagement";
 	public static final String SERVICE_DEF_MONITOR = "monitor";
 
 	public static final String SERVICE_DEF_ORCHESTRATION = "orchestration";
-	public static final String SERVICE_DEF_ORCHESTRATION_PUSH_MANAGEMENT = "orchestration-push-management";
-	public static final String SERVICE_DEF_ORCHESTRATION_LOCK_MANAGEMENT = "orchestration-lock-management";
-	public static final String SERVICE_DEF_ORCHESTRATION_HISTORY_MANAGEMENT = "orchestration-history-management";
+	public static final String SERVICE_DEF_ORCHESTRATION_PUSH_MANAGEMENT = "orchestrationPushManagement";
+	public static final String SERVICE_DEF_ORCHESTRATION_LOCK_MANAGEMENT = "orchestrationLockManagement";
+	public static final String SERVICE_DEF_ORCHESTRATION_HISTORY_MANAGEMENT = "orchestrationHistoryManagement";
 
 	public static final String SERVICE_DEF_IDENTITY = "identity";
-	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identity-management";
+	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identityManagement";
 
 	public static final String SERVICE_DEF_AUTHORIZATION = "authorization";
-	public static final String SERVICE_DEF_AUTHORIZATION_MANAGEMENT = "authorization-management";
+	public static final String SERVICE_DEF_AUTHORIZATION_MANAGEMENT = "authorizationManagement";
 
 	// Operation related
 
@@ -325,7 +328,7 @@ public final class Constants {
 	public static final int INTERFACE_TEMPLATE_PROTOCOL_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int INTERFACE_PROPERTY_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SERVICE_INSTANCE_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_MEDIUM;
-	public static final int CLOUD_IDENTIFIER_MAX_LENGTH = 2 * SYSTEM_NAME_MAX_LENGTH + 1;
+	public static final int CLOUD_IDENTIFIER_MAX_LENGTH = 2 * SYSTEM_NAME_MAX_LENGTH + COMPOSITE_ID_DELIMITER.length();
 	public static final int EVENT_TYPE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SCOPE_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 
