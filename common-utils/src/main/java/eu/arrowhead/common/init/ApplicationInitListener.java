@@ -200,8 +200,9 @@ public abstract class ApplicationInitListener {
 		}
 
 		if (!SecurityUtilities.isValidSystemCommonName(serverData.commonName())) {
-			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have 5 parts", serverData.commonName());
-			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have 5 parts");
+			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have {} parts", serverData.commonName(), Constants.SYSTEM_CERT_CN_LENGTH);
+			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have "
+					+ Constants.SYSTEM_CERT_CN_LENGTH + " parts");
 		}
 		logger.info("Server CN: {}", serverData.commonName());
 
@@ -251,7 +252,7 @@ public abstract class ApplicationInitListener {
 			return;
 		}
 
-		// if authentication is handled by an other system, we have to wait a little to give time to running login job
+		// if authentication is handled by an other system, we have to wait a little to give time to the running login job
 		if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
 			Thread.sleep(sysInfo.getAuthenticatorLoginDelay());
 		}
@@ -310,12 +311,18 @@ public abstract class ApplicationInitListener {
 	private void registerService(final ServiceModel model) {
 		logger.debug("registerService started...");
 
-		final List<ServiceInstanceInterfaceRequestDTO> interfaces = model.interfaces()
+		final List<ServiceInstanceInterfaceRequestDTO> interfaces = model
+				.interfaces()
 				.stream()
 				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), ServiceInterfacePolicy.NONE.name(), i.properties()))
 				.collect(Collectors.toList());
 		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
-		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, Constants.SYS_NAME_SERVICE_REGISTRY, ServiceInstanceResponseDTO.class, payload);
+		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(
+				Constants.SERVICE_DEF_SERVICE_DISCOVERY,
+				Constants.SERVICE_OP_REGISTER,
+				Constants.SYS_NAME_SERVICE_REGISTRY,
+				ServiceInstanceResponseDTO.class,
+				payload);
 		registeredServices.add(response.instanceId());
 	}
 

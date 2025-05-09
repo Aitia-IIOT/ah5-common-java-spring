@@ -1,0 +1,33 @@
+package eu.arrowhead.common.service.validation.name;
+
+import eu.arrowhead.common.exception.InvalidParameterException;
+import java.util.regex.Pattern;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ServiceOperationNameValidator {
+
+	//=================================================================================================
+	// members
+
+	private static final Logger logger = LogManager.getLogger(ServiceOperationNameValidator.class);
+
+	private static final String NAME_REGEX_STRING = "([A-Za-z]{1})|(^[A-Za-z][0-9A-Za-z\\-]*[0-9A-Za-z]$)";
+	private static final Pattern NAME_REGEX_PATTERN = Pattern.compile(NAME_REGEX_STRING);
+
+	//=================================================================================================
+	// methods
+
+	//-------------------------------------------------------------------------------------------------
+	public void validateName(final String name) {
+		// TODO: implement
+//		logger.debug("Validate name started: {}", name);
+//
+//		if (!NAME_REGEX_PATTERN.matcher(name.trim()).matches()) {
+//			throw new InvalidParameterException("The specified name does not match the naming convention: " + name);
+//		}
+	}
+}

@@ -127,6 +127,9 @@ public final class Constants {
 
 	// SSL related
 
+	public static final int SYSTEM_CERT_CN_LENGTH = 5;
+	public static final int CLOUD_CERT_CN_LENGTH = 4;
+
 	public static final String X_509 = "X.509";
 	public static final String SERVER_SSL_ENABLED = "server.ssl.enabled";
 	public static final String $SERVER_SSL_ENABLED_WD = "${" + SERVER_SSL_ENABLED + ":" + Defaults.SERVER_SSL_ENABLED_DEFAULT + "}";

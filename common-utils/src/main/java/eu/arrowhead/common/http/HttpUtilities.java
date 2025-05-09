@@ -211,7 +211,9 @@ public final class HttpUtilities {
 		if (!Utilities.isEmpty(str)) {
 			final HttpMethod method = HttpMethod.valueOf(str.toUpperCase().trim());
 
-			return Arrays.stream(HttpMethod.values()).anyMatch(method::equals);
+			return Arrays
+					.stream(HttpMethod.values())
+					.anyMatch(method::equals);
 		}
 
 		return false;

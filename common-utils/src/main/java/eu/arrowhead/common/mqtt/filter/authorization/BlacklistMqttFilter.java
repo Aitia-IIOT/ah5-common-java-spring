@@ -72,24 +72,27 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 
 				// if requester is blacklist, no need for check
 				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)) {
-
-					final boolean isBlacklisted = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_BLACKLIST_DISCOVERY, Constants.SERVICE_OP_CHECK, Constants.SYS_NAME_BLACKLIST, Boolean.TYPE, List.of(systemName));
+					final boolean isBlacklisted = arrowheadHttpService.consumeService(
+							Constants.SERVICE_DEF_BLACKLIST_DISCOVERY,
+							Constants.SERVICE_OP_CHECK,
+							Constants.SYS_NAME_BLACKLIST,
+							Boolean.TYPE,
+							List.of(systemName));
 
 					if (isBlacklisted) {
-						throw new ForbiddenException(systemName + " system is blacklisted!");
+						throw new ForbiddenException(systemName + " system is blacklisted");
 					}
 				}
 			} catch (final ForbiddenException | AuthException ex) {
 				throw ex;
 			} catch (final ArrowheadException ex) {
-				logger.error("Blacklist server is not available.");
-				logger.debug("Blacklist server is not available, force blacklist filter: " + force);
+				logger.error("Blacklist server is not available");
+				logger.debug("Strict blacklist filter: " + force);
 				if (force) {
-					throw new ForbiddenException("Blacklist system is not available, the system might be blacklisted.");
+					throw new ForbiddenException("Blacklist system is not available, the system might be blacklisted");
 				}
 			}
 		}
-
 	}
 
 	//=================================================================================================
@@ -100,7 +103,6 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 	private boolean isAuthenticationLookup(final MqttRequestModel request) {
 
 		// is the filter running inside SR?
-
 		if (!sysInfo.getSystemName().equals(Constants.SYS_NAME_SERVICE_REGISTRY)) {
 			return false;
 		}
@@ -111,34 +113,40 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 		if (!request.getOperation().equals(Constants.SERVICE_OP_LOOKUP)) {
 			return false;
 		}
-		// finding the topic of the lookup operation
+		// finding the base topic of the lookup operation
 		final String templateName = sysInfo.isSslEnabled() ? Constants.GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME;
-		String lookupTopic = null;
+		String lookupBaseTopic = null;
 		final ServiceModel model = collector.getServiceModel(Constants.SERVICE_DEF_SERVICE_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
+
+		if (model == null || Utilities.isEmpty(model.interfaces())) {
+			return false;
+		}
+
 		for (final InterfaceModel intf : model.interfaces()) {
 			if (intf.templateName().equals(templateName) && intf.properties().containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)) {
 				final Set<String> ops = (Set<String>) intf.properties().get(MqttInterfaceModel.PROP_NAME_OPERATIONS);
 				if (ops.contains(Constants.SERVICE_OP_LOOKUP)) {
-					// if there is a lookup operation, we found the corresponding topic
-					lookupTopic = (String) intf.properties().get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
+					// if there is a lookup operation, we found the corresponding base topic
+					lookupBaseTopic = (String) intf.properties().get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
 					break;
 				}
 			}
 		}
-		if (lookupTopic == null || !request.getBaseTopic().equals(lookupTopic)) {
+
+		if (lookupBaseTopic == null || !request.getBaseTopic().equals(lookupBaseTopic)) {
 			// SR does not provide any topic with lookup operation or the request topic does not match
 			return false;
 		}
 
 		// is the requester looking for the identity service definition?
-
-		ServiceInstanceLookupRequestDTO dto = null; //expected type for service definition lookup
+		ServiceInstanceLookupRequestDTO dto = null; // expected type for service definition lookup
 		try {
 			// check if the content type can be mapped to the expected dto
 			dto = Utilities.fromJson(Utilities.toJson(request.getPayload()), ServiceInstanceLookupRequestDTO.class);
 		} catch (final Exception ex) {
 			return false;
 		}
+
 		if (dto == null || dto.serviceDefinitionNames() == null || dto.serviceDefinitionNames().size() != 1 || !dto.serviceDefinitionNames().getFirst().equals(Constants.SERVICE_DEF_IDENTITY)) {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;

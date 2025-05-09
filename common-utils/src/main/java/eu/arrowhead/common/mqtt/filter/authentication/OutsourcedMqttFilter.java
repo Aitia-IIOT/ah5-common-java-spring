@@ -17,13 +17,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.collector.ServiceCollector;
 import eu.arrowhead.common.exception.AuthException;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.ArrowheadHttpService;
+import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
+import eu.arrowhead.common.mqtt.model.MqttInterfaceModel;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.common.security.SecurityUtilities;
-import eu.arrowhead.common.service.validation.name.NameNormalizer;
+import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 import eu.arrowhead.dto.IdentityVerifyResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceLookupRequestDTO;
 import jakarta.annotation.PostConstruct;
@@ -44,13 +47,16 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	private SystemInfo sysInfo;
 
 	@Autowired
-	private NameNormalizer nameNormalizer;
+	private SystemNameNormalizer systemNameNormalizer;
 
 	@Autowired
 	private ObjectMapper mapper;
 
 	@Autowired
 	private ArrowheadHttpService httpService;
+
+	@Autowired
+	private ServiceCollector collector;
 
 	//=================================================================================================
 	// methods
@@ -73,7 +79,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 
 		if (!isAuthenticationLookup) {
 			final AuthenticationData data = processAuthKey(authKey);
-			request.setRequester(data.systemName);
+			request.setRequester(data.systemName());
 			request.setSysOp(data.sysop());
 		}
 	}
@@ -96,9 +102,23 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			return false;
 		}
 
-		// does the requester wants to do service lookup?
-		if (!Constants.SERVICE_OP_LOOKUP.equalsIgnoreCase(request.getOperation())
-				|| !request.getBaseTopic().contains(Constants.SERVICE_DEF_SERVICE_DISCOVERY)) {
+		// does the requester want to do service lookup?
+		if (!Constants.SERVICE_OP_LOOKUP.equalsIgnoreCase(request.getOperation())) {
+			return false;
+		}
+
+		// finding the base topic of the lookup operation
+		final ServiceModel model = collector.getServiceModel(
+				Constants.SERVICE_DEF_SERVICE_DISCOVERY,
+				sysInfo.isSslEnabled() ? Constants.GENERIC_MQTTS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME,
+				Constants.SYS_NAME_SERVICE_REGISTRY);
+
+		if (model == null || Utilities.isEmpty(model.interfaces())) {
+			return false;
+		}
+
+		final String baseTopic = (String) model.interfaces().getFirst().properties().get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
+		if (baseTopic == null || !baseTopic.equals(request.getBaseTopic())) {
 			return false;
 		}
 
@@ -159,7 +179,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	// handling header using IDENTITY-TOKEN//<token> format
+	// handling auth key using IDENTITY-TOKEN//<token> format
 	private AuthenticationData checkIdentityToken(final String[] infoParts) {
 		log.debug("OutsourcedMqttFilter.checkIdentityToken started...");
 
@@ -179,7 +199,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	// handling header using AUTHENTICATOR-KEY//<system-name>//<hash>
+	// handling auth key using AUTHENTICATOR-KEY//<system-name>//<hash>
 	@SuppressWarnings("checkstyle:MagicNumber")
 	private AuthenticationData checkAuthenticatorKey(final String[] infoParts) {
 		log.debug("OutsourcedMqttFilter.checkAuthenticatorKey started...");
@@ -193,7 +213,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			throw new AuthException("Invalid authentication info");
 		}
 
-		final String systemName = nameNormalizer.normalize(infoParts[1]);
+		final String systemName = systemNameNormalizer.normalize(infoParts[1]);
 		final String hash = infoParts[2].trim();
 
 		if (!secretKeys.containsKey(systemName)) {
@@ -227,7 +247,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			log.info("Authentication keys are supported.");
 
 			secretKeys = new ConcurrentHashMap<>(rawSecretKeys.size());
-			rawSecretKeys.forEach((name, secretKey) -> secretKeys.put(nameNormalizer.normalize(name), secretKey.trim()));
+			rawSecretKeys.forEach((name, secretKey) -> secretKeys.put(systemNameNormalizer.normalize(name), secretKey.trim()));
 		}
 	}
 

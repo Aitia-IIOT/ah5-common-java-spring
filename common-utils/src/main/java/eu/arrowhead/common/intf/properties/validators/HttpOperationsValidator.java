@@ -15,8 +15,8 @@ import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.common.http.model.HttpOperationModel;
 import eu.arrowhead.common.intf.properties.IPropertyValidator;
-import eu.arrowhead.common.service.validation.name.NameNormalizer;
-import eu.arrowhead.common.service.validation.name.NameValidator;
+import eu.arrowhead.common.service.validation.name.ServiceOperationNameNormalizer;
+import eu.arrowhead.common.service.validation.name.ServiceOperationNameValidator;
 
 @Service
 public class HttpOperationsValidator implements IPropertyValidator {
@@ -27,10 +27,10 @@ public class HttpOperationsValidator implements IPropertyValidator {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	@Autowired
-	private NameValidator nameValidator;
+	private ServiceOperationNameNormalizer operationNameNormalizer;
 
 	@Autowired
-	private NameNormalizer nameNormalizer;
+	private ServiceOperationNameValidator operationNameValidator;
 
 	//=================================================================================================
 	// methods
@@ -39,7 +39,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 	// propertyValue should be a map with string keys (operation name that should follow the naming conventions) and HttpOperationModel value
 	// at least one pair should be in the map
 	// an HttpOperationModel object should contain a not null method and a non-blank path
-	// normalization: operation names will be trimmed and changed to lower-case
+	// normalization: operation names using the specific operation name normalizer
 	// normalization: path will be trimmed
 	@Override
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
@@ -52,8 +52,8 @@ public class HttpOperationsValidator implements IPropertyValidator {
 
 			final Map<String, HttpOperationModel> normalized = new HashMap<>(map.size());
 			for (final Entry<?, ?> entry : map.entrySet()) {
-				final String normalizedKey = validateKey(entry.getKey());
-				final HttpOperationModel normalizedModel = validateValue(entry.getValue());
+				final String normalizedKey = validateAndNormalizeKey(entry.getKey());
+				final HttpOperationModel normalizedModel = validateAndNormalizeValue(entry.getValue());
 
 				normalized.put(normalizedKey, normalizedModel);
 			}
@@ -68,18 +68,19 @@ public class HttpOperationsValidator implements IPropertyValidator {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	private String validateKey(final Object key) {
+	private String validateAndNormalizeKey(final Object key) {
 		if (key instanceof String stringKey) {
-			nameValidator.validateName(stringKey.trim());
+			final String normalized = operationNameNormalizer.normalize(stringKey);
+			operationNameValidator.validateName(normalized);
 
-			return nameNormalizer.normalize(stringKey);
+			return normalized;
 		} else {
 			throw new InvalidParameterException("Key should be a string");
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private HttpOperationModel validateValue(final Object value) {
+	private HttpOperationModel validateAndNormalizeValue(final Object value) {
 		try {
 			// value should be a map which has the exact same structure that a HttpOperationModel => try to convert it
 			final HttpOperationModel model = Utilities.fromJson(Utilities.toJson(value), HttpOperationModel.class);

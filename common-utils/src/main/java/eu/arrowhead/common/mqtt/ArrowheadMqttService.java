@@ -58,7 +58,6 @@ public class ArrowheadMqttService {
 		final String connectionId = calculateConnectionId(address, port, isSSl);
 
 		try {
-
 			// Find or create subscription handler
 			if (!subscriptionMap.containsKey(connectionId)) {
 				MqttClient client = mqttService.client(connectionId);
@@ -73,7 +72,6 @@ public class ArrowheadMqttService {
 
 			// Subscribe
 			return subscriptionHandler.addSubscription(topic);
-
 		} catch (final MqttException ex) {
 			logger.debug(ex);
 			throw new ExternalServerError("MQTT service publish failed: " + ex.getMessage());
@@ -92,7 +90,7 @@ public class ArrowheadMqttService {
 		final String connectionId = calculateConnectionId(address, port, isSSl);
 
 		try {
-			if (subscriptionMap.containsKey(topic)) {
+			if (subscriptionMap.containsKey(connectionId)) {
 				final MqttSubscriptionHandler subscriptionHandler = subscriptionMap.get(connectionId);
 				subscriptionHandler.removeSubscription(topic);
 				if (Utilities.isEmpty(subscriptionHandler.getSubscribedTopics())) {
@@ -100,7 +98,6 @@ public class ArrowheadMqttService {
 					subscriptionMap.remove(connectionId);
 				}
 			}
-
 		} catch (final MqttException ex) {
 			logger.debug(ex);
 			throw new ExternalServerError("MQTT unsubscribe failed: " + ex.getMessage());

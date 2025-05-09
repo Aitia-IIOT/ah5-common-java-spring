@@ -26,6 +26,7 @@ import eu.arrowhead.common.mqtt.MqttStatus;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttMessageContainer;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
+import eu.arrowhead.common.service.validation.name.ServiceOperationNameNormalizer;
 import eu.arrowhead.dto.MqttRequestTemplate;
 
 public abstract class MqttTopicHandler extends Thread {
@@ -49,6 +50,9 @@ public abstract class MqttTopicHandler extends Thread {
 	private final MqttResourceManager resourceManager = new MqttResourceManager();
 
 	private ThreadPoolExecutor threadpool = null;
+
+	@Autowired
+	private ServiceOperationNameNormalizer operationNameNormalizer;
 
 	private final Logger logger = LogManager.getLogger(getClass());
 
@@ -197,7 +201,9 @@ public abstract class MqttTopicHandler extends Thread {
 
 		try {
 			final MqttRequestTemplate template = mapper.readValue(msgContainer.getMessage().getPayload(), MqttRequestTemplate.class);
-			return new ImmutablePair<String, MqttRequestModel>(template.authentication(), new MqttRequestModel(msgContainer.getBaseTopic(), msgContainer.getOperation(), template));
+			return new ImmutablePair<>(
+					template.authentication(),
+					new MqttRequestModel(msgContainer.getBaseTopic(), operationNameNormalizer.normalize(msgContainer.getOperation()), template));
 		} catch (final IOException ex) {
 			throw new InvalidParameterException("Invalid message template. Reason: " + ex.getMessage());
 		}
