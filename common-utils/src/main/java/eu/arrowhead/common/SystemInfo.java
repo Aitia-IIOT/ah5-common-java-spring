@@ -73,7 +73,7 @@ public abstract class SystemInfo {
 	private String mqttBrokerAddress;
 
 	@Value(Constants.$MQTT_BROKER_PORT_WD)
-	private int mqttBrokerPort;
+	private Integer mqttBrokerPort;
 
 	@Value(Constants.$MQTT_CLIENT_PASSWORD)
 	private String mqttClientPassword;
@@ -160,6 +160,10 @@ public abstract class SystemInfo {
 
 		if (mqttEnabled && Utilities.isEmpty(mqttBrokerAddress)) {
 			throw new InvalidParameterException("MQTT Broker address is not defined");
+		}
+
+		if (mqttEnabled && mqttBrokerPort == null) {
+			throw new InvalidParameterException("MQTT Broker port is not defined");
 		}
 
 		if (AuthenticationPolicy.OUTSOURCED == authenticationPolicy && Utilities.isEmpty(authenticatorCredentials)) {
@@ -273,7 +277,7 @@ public abstract class SystemInfo {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public int getMqttBrokerPort() {
+	public Integer getMqttBrokerPort() {
 		return this.mqttBrokerPort;
 	}
 
