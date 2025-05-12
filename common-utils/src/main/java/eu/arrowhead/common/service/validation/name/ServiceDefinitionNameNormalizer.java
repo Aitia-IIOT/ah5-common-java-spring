@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
@@ -15,7 +14,7 @@ public class ServiceDefinitionNameNormalizer {
 
 	//=================================================================================================
 	// members
-	
+
 	@Value(Constants.$NORMALIZATION_MODE_WD)
 	private NormalizationMode normalizationMode;
 
@@ -24,10 +23,38 @@ public class ServiceDefinitionNameNormalizer {
 	//=================================================================================================
 	// methods
 
+	//=================================================================================================
+	// methods
+
 	//-------------------------------------------------------------------------------------------------
 	public String normalize(final String name) {
-		// TODO: implement
-		
-		return name;
+		logger.debug("ServiceDefinitionNameNormalizer.normalize started...");
+
+		if (Utilities.isEmpty(name)) {
+			return null;
+		}
+
+		String result = name.trim();
+
+		if (NormalizationMode.EXTENDED == normalizationMode) {
+			result = transformName(result);
+		}
+
+		return result;
+	}
+
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	private String transformName(final String name) {
+		logger.debug("ServiceDefinitionNameNormalizer.transformName started...");
+
+		// replace all delimiter chunks (hyphens and underscores) with a single underscore
+		String result = name.replaceAll(NormalizationUtils.DELIMITER_REGEXP, NormalizationUtils.UNDERSCORE);
+		// replaces chunks of one or more consecutive whitespaces with a single underscore
+		result = result.replaceAll(NormalizationUtils.WHITESPACE_REGEXP, NormalizationUtils.UNDERSCORE);
+
+		return NormalizationUtils.convertSnakeCaseToCamelCase(result);
 	}
 }

@@ -62,6 +62,7 @@ public final class Constants {
 
 	public static final String COMMA = ",";
 	public static final String COMPOSITE_ID_DELIMITER = "|";
+	public static final String COMPOSITE_ID_DELIMITER_REGEXP = "\\|";
 
 	// System related
 
@@ -326,6 +327,7 @@ public final class Constants {
 	public static final int SYSTEM_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SYSTEM_VERSION_MAX_LENGTH = ArrowheadEntity.VARCHAR_TINY;
 	public static final int SERVICE_DEFINITION_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int SERVICE_OPERATION_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int ADDRESS_MAX_LENGTH = ArrowheadEntity.VARCHAR_LARGE;
 	public static final int INTERFACE_TEMPLATE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_MEDIUM;
 	public static final int INTERFACE_TEMPLATE_PROTOCOL_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;

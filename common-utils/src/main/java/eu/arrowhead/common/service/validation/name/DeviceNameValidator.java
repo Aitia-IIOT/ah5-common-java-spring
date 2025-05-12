@@ -10,14 +10,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ServiceOperationNameValidator {
+public class DeviceNameValidator {
 
 	//=================================================================================================
 	// members
 
-	// kebab-case naming convention, only allowed characters are lower-case ASCII letters and numbers and hyphen
-	private static final String SERVICE_OPERATION_NAME_REGEX_STRING = "([a-z]{1})|(^[a-z][0-9a-z\\-]*[0-9a-z]$)";
-	private static final Pattern SERVICE_OPERATION_NAME_REGEX_PATTERN = Pattern.compile(SERVICE_OPERATION_NAME_REGEX_STRING);
+	// snake-case naming convention, only allowed characters are upper-case ASCII letters and numbers and underscore
+	private static final String DEVICE_NAME_REGEX_STRING = "([A-Z]{1})|(^[A-Z][0-9A-Z_]*[0-9A-Z]$)";
+	private static final Pattern DEVICE_NAME_REGEX_PATTERN = Pattern.compile(DEVICE_NAME_REGEX_STRING);
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -25,13 +25,13 @@ public class ServiceOperationNameValidator {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public void validateServiceOperationName(final String name) {
-		logger.debug("validateServiceOperationName started: {}", name);
+	public void validateDeviceName(final String name) {
+		logger.debug("validateDeviceName started: {}", name);
 
 		if (Utilities.isEmpty(name)
-				|| !SERVICE_OPERATION_NAME_REGEX_PATTERN.matcher(name).matches()
-				|| name.length() > Constants.SERVICE_OPERATION_NAME_MAX_LENGTH) {
-			throw new InvalidParameterException("The specified service operation name does not match the naming convention: " + name);
+				|| !DEVICE_NAME_REGEX_PATTERN.matcher(name).matches()
+				|| name.length() > Constants.DEVICE_NAME_MAX_LENGTH) {
+			throw new InvalidParameterException("The specified device name does not match the naming convention: " + name);
 		}
 	}
 }

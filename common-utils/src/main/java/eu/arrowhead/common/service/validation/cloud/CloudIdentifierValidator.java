@@ -5,10 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Defaults;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.InvalidParameterException;
-import eu.arrowhead.common.service.validation.name.NameValidator;
+import eu.arrowhead.common.service.validation.name.SystemNameValidator;
 
 @Component
 public class CloudIdentifierValidator {
@@ -16,10 +17,8 @@ public class CloudIdentifierValidator {
 	//=================================================================================================
 	// members
 
-	public static final String CLOUD_IDENTIFIER_DELIMITER_REGEX = "\\.";
-
 	@Autowired
-	private NameValidator nameValidator;
+	private SystemNameValidator systemNameValidator; // the two parts of the cloud identifier should follow the naming convention of systems
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -35,15 +34,15 @@ public class CloudIdentifierValidator {
 
 		}
 
-		if (!Defaults.DEFAULT_CLOUD.equals(identifier.trim())) {
-			// accepted format <cloud-name>.<organization-name>
-			final String[] parts = identifier.trim().split(CLOUD_IDENTIFIER_DELIMITER_REGEX);
+		if (!Defaults.DEFAULT_CLOUD.equals(identifier)) {
+			// accepted format <CloudName><delimiter><OrganizationName>
+			final String[] parts = identifier.split(Constants.COMPOSITE_ID_DELIMITER_REGEXP);
 			if (parts.length != 2) {
 				throw new InvalidParameterException("The specified cloud identifier does not match the naming convention: " + identifier);
 			}
 
 			for (final String part : parts) {
-				nameValidator.validateName(part);
+				systemNameValidator.validateSystemName(part);
 			}
 		}
 	}

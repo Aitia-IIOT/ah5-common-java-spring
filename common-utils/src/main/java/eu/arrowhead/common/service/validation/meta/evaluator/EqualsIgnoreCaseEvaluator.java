@@ -11,7 +11,7 @@ public class EqualsIgnoreCaseEvaluator implements IMetaEvaluator {
 	@Override
 	public boolean eval(final Object left, final Object right) {
 		if (left instanceof String && right instanceof String) {
-			return left.toString().toLowerCase().equals(right.toString().toLowerCase());
+			return left.toString().equalsIgnoreCase(right.toString());
 		}
 
 		return false;

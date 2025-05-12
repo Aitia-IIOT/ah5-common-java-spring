@@ -10,7 +10,7 @@ import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.service.normalization.NormalizationMode;
 
 @Component
-public class InterfaceTemplateNameNormalizer {
+public class DeviceNameNormalizer {
 
 	//=================================================================================================
 	// members
@@ -25,7 +25,7 @@ public class InterfaceTemplateNameNormalizer {
 
 	//-------------------------------------------------------------------------------------------------
 	public String normalize(final String name) {
-		logger.debug("InterfaceTemplateNameNormalizer.normalize started...");
+		logger.debug("DeviceNameNormalizer.normalize started...");
 
 		if (Utilities.isEmpty(name)) {
 			return null;
@@ -45,13 +45,13 @@ public class InterfaceTemplateNameNormalizer {
 
 	//-------------------------------------------------------------------------------------------------
 	private String transformName(final String name) {
-		logger.debug("InterfaceTemplateNameNormalizer.transformName started...");
+		logger.debug("DeviceNameNormalizer.transformName started...");
 
 		// replace all delimiter chunks (hyphens and underscores) with a single underscore
 		String result = name.replaceAll(NormalizationUtils.DELIMITER_REGEXP, NormalizationUtils.UNDERSCORE);
 		// replaces chunks of one or more consecutive whitespaces with a single underscore
 		result = result.replaceAll(NormalizationUtils.WHITESPACE_REGEXP, NormalizationUtils.UNDERSCORE);
 
-		return result.toLowerCase();
+		return result.toUpperCase();
 	}
 }

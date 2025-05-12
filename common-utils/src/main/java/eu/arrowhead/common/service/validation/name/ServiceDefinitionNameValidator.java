@@ -10,14 +10,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ServiceOperationNameValidator {
+public class ServiceDefinitionNameValidator {
 
 	//=================================================================================================
 	// members
 
-	// kebab-case naming convention, only allowed characters are lower-case ASCII letters and numbers and hyphen
-	private static final String SERVICE_OPERATION_NAME_REGEX_STRING = "([a-z]{1})|(^[a-z][0-9a-z\\-]*[0-9a-z]$)";
-	private static final Pattern SERVICE_OPERATION_NAME_REGEX_PATTERN = Pattern.compile(SERVICE_OPERATION_NAME_REGEX_STRING);
+	// camelCase naming convention, only allowed characters are lower- and upper-case ASCII letters and numbers
+	private static final String SERVICE_DEF_NAME_REGEX_STRING = "([a-z]{1})|(^[a-z][0-9A-Za-z]+$)";
+	private static final Pattern SERVICE_DEF_NAME_REGEX_PATTERN = Pattern.compile(SERVICE_DEF_NAME_REGEX_STRING);
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -25,13 +25,13 @@ public class ServiceOperationNameValidator {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public void validateServiceOperationName(final String name) {
-		logger.debug("validateServiceOperationName started: {}", name);
+	public void validateServiceDefinitionName(final String name) {
+		logger.debug("validateServiceDefinitionName started: {}", name);
 
 		if (Utilities.isEmpty(name)
-				|| !SERVICE_OPERATION_NAME_REGEX_PATTERN.matcher(name).matches()
-				|| name.length() > Constants.SERVICE_OPERATION_NAME_MAX_LENGTH) {
-			throw new InvalidParameterException("The specified service operation name does not match the naming convention: " + name);
+				|| !SERVICE_DEF_NAME_REGEX_PATTERN.matcher(name).matches()
+				|| name.length() > Constants.SERVICE_DEFINITION_NAME_MAX_LENGTH) {
+			throw new InvalidParameterException("The specified service definition name does not match the naming convention: " + name);
 		}
 	}
 }
