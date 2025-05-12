@@ -60,6 +60,9 @@ public final class Constants {
 
 	public static final String COMMA = ",";
 
+	// Naming convention related
+	public static final String NAME_SEPARATOR = "\\|";
+
 	// System related
 
 	public static final String BEAN_NAME_SYSTEM_INFO = "systemInfo";

@@ -5,6 +5,7 @@ public record OrchestrationSimpleStoreResponseDTO(
 		String consumer,
 		String serviceDefinition,
 		String serviceInstanceId,
+		Integer Priority,
 		String createdBy,
 		String updatedBy,
 		String createdAt,

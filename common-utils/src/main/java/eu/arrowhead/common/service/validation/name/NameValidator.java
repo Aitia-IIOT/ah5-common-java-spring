@@ -1,5 +1,6 @@
 package eu.arrowhead.common.service.validation.name;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.exception.InvalidParameterException;
 import eu.arrowhead.common.service.validation.version.VersionValidator;
 
@@ -23,7 +24,6 @@ public class NameValidator {
 	private static final Pattern NAME_REGEX_PATTERN = Pattern.compile(NAME_REGEX_STRING);
 
 	// convention for service instance id: <provider-name>::<service-definition>::<version>
-	private static final String DOUBLE_COLON = "::";
 	private static int serviceInstanceIdParts = 3;
 	private static int providerNameIdx = 0;
 	private static int serviceDefinitionNameIdx = 1;
@@ -51,10 +51,10 @@ public class NameValidator {
 		logger.debug("Validate service instance id started: {}", serviceInstanceId);
 		Assert.notNull(serviceInstanceId, "serviceInstanceId is null!");
 
-		String[] parts = serviceInstanceId.split(DOUBLE_COLON);
+		String[] parts = serviceInstanceId.split(Constants.NAME_SEPARATOR);
 
 		if (parts.length != serviceInstanceIdParts) {
-			throw new InvalidParameterException("Service instance id should consist of three parts separated by '" + DOUBLE_COLON + "'");
+			throw new InvalidParameterException("Service instance id should consist of three parts separated by '" + Constants.NAME_SEPARATOR.replace("\\", "") + "'");
 		}
 
 		validateName(parts[providerNameIdx]);
