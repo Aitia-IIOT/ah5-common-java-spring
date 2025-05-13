@@ -50,7 +50,7 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 				if (object instanceof final String str) {
 					if (isOperation) {
 						final String normalizedStr = operationNameNormalizer.normalize(str);
-						operationNameValidator.validateName(normalizedStr);
+						operationNameValidator.validateServiceOperationName(normalizedStr);
 						normalized.add(normalizedStr);
 					} else {
 						if (Utilities.isEmpty(str)) {

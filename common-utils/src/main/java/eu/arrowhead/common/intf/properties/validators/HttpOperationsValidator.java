@@ -71,7 +71,7 @@ public class HttpOperationsValidator implements IPropertyValidator {
 	private String validateAndNormalizeKey(final Object key) {
 		if (key instanceof String stringKey) {
 			final String normalized = operationNameNormalizer.normalize(stringKey);
-			operationNameValidator.validateName(normalized);
+			operationNameValidator.validateServiceOperationName(normalized);
 
 			return normalized;
 		} else {

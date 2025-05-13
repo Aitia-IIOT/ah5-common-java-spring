@@ -7,12 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.exception.AuthException;
+import eu.arrowhead.common.service.normalization.NormalizationMode;
+import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 
 public class SelfDeclaredFilterTest {
 
@@ -20,6 +24,8 @@ public class SelfDeclaredFilterTest {
 	// members
 
 	private final SelfDeclaredFilter filter = new SelfDeclaredFilterTestHelper(); // this is the trick
+
+	private SystemNameNormalizer systemNameNormalizer;
 
 	//=================================================================================================
 	// methods
@@ -64,7 +70,7 @@ public class SelfDeclaredFilterTest {
 
 	//-------------------------------------------------------------------------------------------------
 	@Test
-	public void doFilterInternalAuthHeaderInvalidShema() {
+	public void doFilterInternalAuthHeaderInvalidSchema() {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addHeader(HttpHeaders.AUTHORIZATION, "first second");
 		final Throwable ex = assertThrows(AuthException.class,
@@ -107,13 +113,16 @@ public class SelfDeclaredFilterTest {
 	public void doFilterInternalOkSystem() {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer SYSTEM//systemName");
+
+		ReflectionTestUtils.setField(filter, "systemNameNormalizer", systemNameNormalizer);
+
 		final Throwable ex = assertThrows(RuntimeException.class,
 				() -> filter.doFilterInternal(request, null, new FilterChainMock()));
 
 		assertAll("doFilterInternal - ok (system)",
 				() -> assertEquals("OK", ex.getMessage()),
 				() -> assertNotNull(request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM)),
-				() -> assertEquals("systemName", request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString()),
+				() -> assertEquals("SystemName", request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString()),
 				() -> assertNotNull(request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST)),
 				() -> assertFalse((boolean) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST)));
 	}
@@ -123,14 +132,29 @@ public class SelfDeclaredFilterTest {
 	public void doFilterInternalOkSysop() {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer SYSTEM//sysop");
+
+		ReflectionTestUtils.setField(filter, "systemNameNormalizer", systemNameNormalizer);
+
 		final Throwable ex = assertThrows(RuntimeException.class,
 				() -> filter.doFilterInternal(request, null, new FilterChainMock()));
 
 		assertAll("doFilterInternal - ok (system)",
 				() -> assertEquals("OK", ex.getMessage()),
 				() -> assertNotNull(request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM)),
-				() -> assertEquals("sysop", request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString()),
+				() -> assertEquals("Sysop", request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString()),
 				() -> assertNotNull(request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST)),
 				() -> assertTrue((boolean) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST)));
+	}
+
+	//=================================================================================================
+	// assistant methods
+
+	//-------------------------------------------------------------------------------------------------
+	@BeforeEach
+	private void init() {
+		if (systemNameNormalizer == null) {
+			systemNameNormalizer = new SystemNameNormalizer();
+			ReflectionTestUtils.setField(systemNameNormalizer, "normalizationMode", NormalizationMode.EXTENDED);
+		}
 	}
 }

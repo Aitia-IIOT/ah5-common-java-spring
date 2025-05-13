@@ -118,6 +118,7 @@ public abstract class SystemInfo {
 				}
 			}
 		}
+
 		return normalizedManagementWhitelist;
 	}
 
