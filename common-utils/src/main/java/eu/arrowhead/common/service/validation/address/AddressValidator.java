@@ -74,6 +74,10 @@ public class AddressValidator {
 		Assert.notNull(type, "address type is null");
 		Assert.isTrue(!Utilities.isEmpty(address), "address is empty");
 
+		if (address.trim().length() > Constants.ADDRESS_MAX_LENGTH) {
+			throw new InvalidParameterException("Address is too long");
+		}
+
 		switch (type) {
 		case MAC:
 			validateMAC(address);

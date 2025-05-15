@@ -25,7 +25,7 @@ public class InterfaceTemplateNameValidator {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public void validateIntefaceTemplateName(final String name) {
+	public void validateInterfaceTemplateName(final String name) {
 		logger.debug("validateIntefaceTemplateName started: {}", name);
 
 		if (Utilities.isEmpty(name)
