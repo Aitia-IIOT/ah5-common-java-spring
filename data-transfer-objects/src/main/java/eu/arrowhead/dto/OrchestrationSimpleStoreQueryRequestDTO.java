@@ -6,7 +6,7 @@ public record OrchestrationSimpleStoreQueryRequestDTO(
 		PageDTO pagination,
 		List<String> ids,
 		List<String> consumerNames,
-		List<String> serviceDefinitionNames,
+		List<String> serviceDefinitions,
 		List<String> serviceInstanceIds,
 		Integer minPriority,
 		Integer maxPriority,
