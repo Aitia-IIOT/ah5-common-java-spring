@@ -1,10 +1,11 @@
 package eu.arrowhead.dto;
 
 import java.util.List;
+import java.util.UUID;
 
 public record OrchestrationSimpleStoreQueryRequestDTO(
 		PageDTO pagination,
-		List<String> ids,
+		List<UUID> ids,
 		List<String> consumerNames,
 		List<String> serviceDefinitions,
 		List<String> serviceInstanceIds,
