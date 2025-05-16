@@ -62,13 +62,13 @@ public final class Utilities {
 
 		return false;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
-	public static boolean allEmpty(Collection<?>... collections) {
+	public static boolean allEmpty(final Collection<?>... collections) {
 		Assert.notNull(collections, "collections is null");
-		
-		for (Collection<?> c : collections) {
-			
+
+		for (final Collection<?> c : collections) {
+
 			if (!Utilities.isEmpty(c)) {
 				return false;
 			}
