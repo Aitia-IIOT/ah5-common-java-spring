@@ -20,13 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
+import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.common.mqtt.ArrowheadMqttService;
 import eu.arrowhead.common.mqtt.MqttResourceManager;
 import eu.arrowhead.common.mqtt.MqttStatus;
 import eu.arrowhead.common.mqtt.filter.ArrowheadMqttFilter;
 import eu.arrowhead.common.mqtt.model.MqttMessageContainer;
 import eu.arrowhead.common.mqtt.model.MqttRequestModel;
+import eu.arrowhead.dto.ErrorMessageDTO;
 import eu.arrowhead.dto.MqttRequestTemplate;
+import jakarta.servlet.http.HttpUpgradeHandler;
 
 public abstract class MqttTopicHandler extends Thread {
 
@@ -220,13 +223,16 @@ public abstract class MqttTopicHandler extends Thread {
 		}
 
 		final MqttStatus status = calculateStatusFromException(ex);
+		
+		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(new ArrowheadException(ex.getMessage(), request.getBaseTopic() + request.getOperation()));
+		
 		ahMqttService.response(
 				request.getRequester(),
 				request.getResponseTopic(),
 				request.getTraceId(),
 				request.getQosRequirement(),
 				status,
-				ex.getMessage());
+				dto);
 	}
 
 	//-------------------------------------------------------------------------------------------------
