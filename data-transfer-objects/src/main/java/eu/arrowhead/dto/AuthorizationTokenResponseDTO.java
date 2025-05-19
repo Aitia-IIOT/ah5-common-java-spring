@@ -8,6 +8,7 @@ import eu.arrowhead.dto.enums.AuthorizationTokenType;
 @JsonInclude(Include.NON_NULL)
 public record AuthorizationTokenResponseDTO(
 		AuthorizationTokenType tokenType,
+		String variant,
 		String token,
 		String requester,
 		String consumerCloud,
