@@ -1,7 +1,6 @@
 package eu.arrowhead.dto.enums;
 
 public enum ExceptionType {
-
 	ARROWHEAD(500),
 	INVALID_PARAMETER(400),
 	AUTH(401),
