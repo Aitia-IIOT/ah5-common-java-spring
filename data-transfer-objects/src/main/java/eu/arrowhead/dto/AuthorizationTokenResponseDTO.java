@@ -10,6 +10,7 @@ public record AuthorizationTokenResponseDTO(
 		AuthorizationTokenType tokenType,
 		String variant,
 		String token,
+		String tokenReference,
 		String requester,
 		String consumerCloud,
 		String consumer,
