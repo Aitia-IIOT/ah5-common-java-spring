@@ -3,6 +3,7 @@ package eu.arrowhead.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import eu.arrowhead.dto.enums.AuthorizationTargetType;
 import eu.arrowhead.dto.enums.AuthorizationTokenType;
 
 @JsonInclude(Include.NON_NULL)
@@ -15,8 +16,9 @@ public record AuthorizationTokenResponseDTO(
 		String consumerCloud,
 		String consumer,
 		String provider,
-		String serviceDefinition,
-		String serviceOperation,
+		AuthorizationTargetType targetType,
+		String target,
+		String scope,
 		String createdAt,
 		Integer usageLimit,
 		Integer usageLeft,
