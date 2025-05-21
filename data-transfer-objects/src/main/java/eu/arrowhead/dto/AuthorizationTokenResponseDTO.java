@@ -9,8 +9,8 @@ import eu.arrowhead.dto.enums.AuthorizationTokenType;
 public record AuthorizationTokenResponseDTO(
 		AuthorizationTokenType tokenType,
 		String variant,
-		String token,
-		String tokenReference,
+		String token, // Raw or encrypted token
+		String tokenReference, // Hashed token (as stored in DB)
 		String requester,
 		String consumerCloud,
 		String consumer,
