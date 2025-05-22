@@ -337,6 +337,7 @@ public final class Constants {
 	public static final int CLOUD_IDENTIFIER_MAX_LENGTH = 2 * SYSTEM_NAME_MAX_LENGTH + COMPOSITE_ID_DELIMITER.length();
 	public static final int EVENT_TYPE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SCOPE_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
+	public static final int AUTHORIZATION_POLICY_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_LARGE;
 
 	// Quartz related
 

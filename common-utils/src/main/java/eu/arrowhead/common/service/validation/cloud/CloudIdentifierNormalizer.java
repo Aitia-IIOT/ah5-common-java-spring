@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Defaults;
+import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 
 @Component
@@ -27,7 +28,7 @@ public class CloudIdentifierNormalizer {
 	public String normalize(final String cloudIdentifier) {
 		logger.debug("normalize cloud identitifer started...");
 
-		if (cloudIdentifier == null) {
+		if (Utilities.isEmpty(cloudIdentifier)) {
 			return null;
 		}
 
