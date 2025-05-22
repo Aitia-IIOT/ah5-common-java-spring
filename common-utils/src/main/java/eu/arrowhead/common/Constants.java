@@ -246,6 +246,7 @@ public final class Constants {
 	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identity-management";
 
 	public static final String SERVICE_DEF_AUTHORIZATION = "authorization";
+	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN = "authorization-token";
 	public static final String SERVICE_DEF_AUTHORIZATION_MANAGEMENT = "authorization-management";
 
 	// Operation related
@@ -261,6 +262,8 @@ public final class Constants {
 	public static final String SERVICE_OP_REVOKE = "revoke";
 	public static final String SERVICE_OP_CHECK = "check";
 	public static final String SERVICE_OP_VERIFY = "verify";
+	public static final String SERVICE_OP_GENERATE = "generate";
+	public static final String SERVICE_OP_GET_PUBLIC_KEY = "get-public-key";
 
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
@@ -309,6 +312,13 @@ public final class Constants {
 	public static final String SERVICE_OP_AUTHORIZATION_REVOKE_POLICIES = "revoke-policies";
 	public static final String SERVICE_OP_AUTHORIZATION_QUERY_POLICIES = "query-policies";
 	public static final String SERVICE_OP_AUTHORIZATION_CHECK_POLICIES = "check-policies";
+	public static final String SERVICE_OP_AUTHORIZATION_GENERATE_TOKENS = "generate-tokens";
+	public static final String SERVICE_OP_AUTHORIZATION_QUERY_TOKENS = "query-tokens";
+	public static final String SERVICE_OP_AUTHORIZATION_REVOKE_TOKENS = "revoke-tokens";
+	public static final String SERVICE_OP_AUTHORIZATION_ADD_ENCRYPTION_KEYS = "add-encryption-keys";
+	public static final String SERVICE_OP_AUTHORIZATION_REMOVE_ENCRYPTION_KEYS = "remove-encryption-keys";
+	public static final String SERVICE_OP_AUTHORIZATION_TOKEN_REGISTER_ENCRYPTION_KEY = "register-encryption-key";
+	public static final String SERVICE_OP_AUTHORIZATION_TOKEN_UNREGISTER_ENCRYPTION_KEY = "unregister-encryption-key";
 
 	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
