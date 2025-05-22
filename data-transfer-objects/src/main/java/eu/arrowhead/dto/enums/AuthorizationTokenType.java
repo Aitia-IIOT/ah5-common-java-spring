@@ -16,7 +16,7 @@ public enum AuthorizationTokenType {
 		case NONE:
 		case CERT_AUTH:
 			return null;
-		case BASE64_SELF_CONTAINED_AUTH_TOKEN:
+		case BASE64_SELF_CONTAINED_TOKEN_AUTH:
 		case RSA_SHA256_JSON_WEB_TOKEN_AUTH:
 		case RSA_SHA512_JSON_WEB_TOKEN_AUTH:
 			return SELF_CONTAINED_TOKEN;
