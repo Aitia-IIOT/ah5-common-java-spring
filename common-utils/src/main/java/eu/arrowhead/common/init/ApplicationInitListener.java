@@ -148,7 +148,7 @@ public abstract class ApplicationInitListener {
 	// assistant methods
 
 	//-------------------------------------------------------------------------------------------------
-	protected void customInit(final ContextRefreshedEvent event) throws InterruptedException {
+	protected void customInit(final ContextRefreshedEvent event) throws InterruptedException, ConfigurationException {
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -310,10 +310,10 @@ public abstract class ApplicationInitListener {
 	private void registerService(final ServiceModel model) {
 		logger.debug("registerService started...");
 
-		final ServiceInterfacePolicy interfcePolicy = sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE ? ServiceInterfacePolicy.CERT_AUTH : ServiceInterfacePolicy.NONE;
+		final ServiceInterfacePolicy interfacePolicy = sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE ? ServiceInterfacePolicy.CERT_AUTH : ServiceInterfacePolicy.NONE;
 		final List<ServiceInstanceInterfaceRequestDTO> interfaces = model.interfaces()
 				.stream()
-				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), interfcePolicy.name(), i.properties()))
+				.map(i -> new ServiceInstanceInterfaceRequestDTO(i.templateName(), i.protocol(), interfacePolicy.name(), i.properties()))
 				.collect(Collectors.toList());
 		final ServiceInstanceCreateRequestDTO payload = new ServiceInstanceCreateRequestDTO(model.serviceDefinition(), model.version(), null, model.metadata(), interfaces);
 		final ServiceInstanceResponseDTO response = arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REGISTER, Constants.SYS_NAME_SERVICE_REGISTRY, ServiceInstanceResponseDTO.class, payload);

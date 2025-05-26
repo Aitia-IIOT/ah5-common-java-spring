@@ -8,6 +8,6 @@ public record AuthorizationTokenGenerationMgmtRequestDTO(
 		String provider,
 		String target,
 		String scope,
-		String expireAt,
+		String expiresAt,
 		Integer usageLimit) {
 }
