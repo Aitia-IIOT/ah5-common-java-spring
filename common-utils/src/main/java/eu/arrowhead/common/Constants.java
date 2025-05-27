@@ -248,6 +248,7 @@ public final class Constants {
 	public static final String SERVICE_DEF_AUTHORIZATION = "authorization";
 	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN = "authorization-token";
 	public static final String SERVICE_DEF_AUTHORIZATION_MANAGEMENT = "authorization-management";
+	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN_MANAGEMENT = "authorization-token-management";
 
 	// Operation related
 

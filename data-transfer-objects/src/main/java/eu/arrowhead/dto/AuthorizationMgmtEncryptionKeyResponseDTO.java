@@ -4,7 +4,7 @@ public record AuthorizationMgmtEncryptionKeyResponseDTO(
 		String systemName,
 		String rawKey,
 		String algorithm,
-		String auxiliary,
+		String keyAdditive,
 		String createdAt) {
 
 }
