@@ -19,10 +19,10 @@ public class AddressValidator {
 	//=================================================================================================
 	// members
 
-	public static final String ERROR_MSG_PREFIX = "Address verification failure: ";
-	public static final String IPV4_REGEX_STRING = "\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
-	public static final String IPV6_REGEX_STRING = "^([0-9a-fA-F]{4}:){7}[0-9a-fA-F]{4}$";
-	public static final String HOSTNAME_REGEX_STRING = "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)*((?!-)[A-Za-z0-9-]{1,63}(?<!-))$";
+	private static final String ERROR_MSG_PREFIX = "Address verification failure: ";
+	private static final String IPV4_REGEX_STRING = "\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+	private static final String IPV6_REGEX_STRING = "^([0-9a-fA-F]{4}:){7}[0-9a-fA-F]{4}$";
+	private static final String HOSTNAME_REGEX_STRING = "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)*((?!-)[A-Za-z0-9-]{1,63}(?<!-))$";
 	private static final String MAC_REGEX_STRING = "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$";
 
 	private static final Pattern macPattern;
@@ -37,19 +37,19 @@ public class AddressValidator {
 		hostnamePattern = Pattern.compile(HOSTNAME_REGEX_STRING);
 	}
 
-	public static final String MAC_BROADCAST = "ff:ff:ff:ff:ff:ff";
-	public static final String MAC_IPV4_MAPPED_MULTICAST_PREFIX = "01:00:5e:";
-	public static final String MAC_IPV6_MAPPED_MULTICAST_PREFIX = "33:33:";
+	private static final String MAC_BROADCAST = "ff:ff:ff:ff:ff:ff";
+	private static final String MAC_IPV4_MAPPED_MULTICAST_PREFIX = "01:00:5e:";
+	private static final String MAC_IPV6_MAPPED_MULTICAST_PREFIX = "33:33:";
 
-	public static final String IPV4_PLACEHOLDER = "0.0.0.0";
-	public static final String IPV4_LOOPBACK_1ST_OCTET = "127";
+	private static final String IPV4_PLACEHOLDER = "0.0.0.0";
+	private static final String IPV4_LOOPBACK_1ST_OCTET = "127";
 	private static final String IPV4_APIPA_1ST_AND_2ND_OCTET = "169.254";
 	private static final String IPV4_LOCAL_BROADCAST = "255.255.255.255";
 	private static final int IPV4_MULTICAST_1ST_OCTET_START = 224;
 	private static final int IPV4_MULTICAST_1ST_OCTET_END = 239;
 
-	public static final String IPV6_UNSPECIFIED = "0000:0000:0000:0000:0000:0000:0000:0000";
-	public static final String IPV6_LOOPBACK = "0000:0000:0000:0000:0000:0000:0000:0001";
+	private static final String IPV6_UNSPECIFIED = "0000:0000:0000:0000:0000:0000:0000:0000";
+	private static final String IPV6_LOOPBACK = "0000:0000:0000:0000:0000:0000:0000:0001";
 	private static final String IPV6_LINK_LOCAL_PREFIX = "fe80";
 	private static final String IPV6_MULTICAST_PREFIX = "ff";
 

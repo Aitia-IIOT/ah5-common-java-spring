@@ -91,7 +91,7 @@ public class OutsourcedFilter extends ArrowheadFilter implements IAuthentication
 	private boolean isAuthenticationLookup(final MultiReadRequestWrapper request) {
 		log.debug("OutsourcedFilter.isAuthenticationLookup started...");
 
-		// is the filter running inside Service Registry?
+		// is the filter running inside ServiceRegistry?
 		if (!sysInfo.getSystemName().equals(Constants.SYS_NAME_SERVICE_REGISTRY)) {
 			return false;
 		}

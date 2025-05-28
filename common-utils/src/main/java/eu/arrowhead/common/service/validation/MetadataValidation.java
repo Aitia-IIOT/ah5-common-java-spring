@@ -33,7 +33,7 @@ public final class MetadataValidation {
 
 				// check the key
 				if (key.contains(METADATA_COMPOSITE_KEY_DELIMITER)) {
-					throw new InvalidParameterException("Invalid metadata key: " + key + ", it should not contain " + METADATA_COMPOSITE_KEY_DELIMITER + " character!");
+					throw new InvalidParameterException("Invalid metadata key: " + key + ", it should not contain " + METADATA_COMPOSITE_KEY_DELIMITER + " character");
 				}
 
 				// check the value

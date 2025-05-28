@@ -97,7 +97,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 	private boolean isAuthenticationLookup(final MqttRequestModel request) {
 		log.debug("OutsourcedMqttFilter.isAuthenticationLookup started...");
 
-		// is the filter running inside Service Registry?
+		// is the filter running inside ServiceRegistry?
 		if (!sysInfo.getSystemName().equals(Constants.SYS_NAME_SERVICE_REGISTRY)) {
 			return false;
 		}
@@ -122,7 +122,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 			return false;
 		}
 
-		// does the requester looking for the identity service definition?
+		// does the requester look for the identity service definition?
 		ServiceInstanceLookupRequestDTO dto = null; // expected type for service definition lookup
 		try {
 			// check if the content type can be mapped to the expected DTO

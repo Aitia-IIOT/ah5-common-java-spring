@@ -82,7 +82,7 @@ public abstract class SystemInfo {
 	private SSLProperties sslProperties;
 
 	@Autowired
-	private SystemNameNormalizer systemNameNormalizer;
+	protected SystemNameNormalizer systemNameNormalizer;
 
 	@Autowired
 	private AddressNormalizer addressNormalizer;
@@ -199,7 +199,7 @@ public abstract class SystemInfo {
 					defaultsMap.put(key, null);
 				} catch (final IllegalArgumentException __) {
 					// never happens
-					throw new IllegalStateException("Something that should never happen, happened.");
+					throw new IllegalStateException("Something that should never happen, happened");
 				} catch (final IllegalAccessException ex) {
 					throw new ServiceConfigurationError("Java security does not allow to read the default values from class " + defaults.getName());
 				}

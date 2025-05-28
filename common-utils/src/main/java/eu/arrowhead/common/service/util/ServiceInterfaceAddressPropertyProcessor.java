@@ -147,6 +147,7 @@ public class ServiceInterfaceAddressPropertyProcessor {
 	//=================================================================================================
 	// nested record
 
+	//-------------------------------------------------------------------------------------------------
 	public record AddressData(
 			List<String> addresses,
 			String addressKey,

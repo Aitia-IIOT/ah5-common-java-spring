@@ -38,29 +38,6 @@ public abstract class UnmodifiableArrowheadEntity {
 		this.createdAt = Utilities.utcNow();
 	}
 
-	//=================================================================================================
-	// boilerplate
-
-	//-------------------------------------------------------------------------------------------------
-	public long getId() {
-		return id;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public void setId(final long id) {
-		this.id = id;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public ZonedDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public void setCreatedAt(final ZonedDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public int hashCode() {
@@ -84,5 +61,28 @@ public abstract class UnmodifiableArrowheadEntity {
 
 		final ArrowheadEntity other = (ArrowheadEntity) obj;
 		return id == other.id;
+	}
+
+	//=================================================================================================
+	// boilerplate
+
+	//-------------------------------------------------------------------------------------------------
+	public long getId() {
+		return id;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public void setId(final long id) {
+		this.id = id;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public ZonedDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public void setCreatedAt(final ZonedDateTime createdAt) {
+		this.createdAt = createdAt;
 	}
 }

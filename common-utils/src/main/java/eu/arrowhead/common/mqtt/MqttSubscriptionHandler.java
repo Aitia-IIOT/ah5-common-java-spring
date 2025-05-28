@@ -84,6 +84,7 @@ public class MqttSubscriptionHandler {
 			@Override
 			public void messageArrived(final String topic, final MqttMessage message) throws Exception {
 				logger.debug("MQTT message arrived to service topic: " + topic);
+
 				topicQueueMap.get(topic).add(message);
 			}
 

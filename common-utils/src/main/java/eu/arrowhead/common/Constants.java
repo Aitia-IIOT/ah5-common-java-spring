@@ -28,6 +28,7 @@ public final class Constants {
 	public static final int HTTP_PORT = 80;
 	public static final String UNKNOWN = "<unknown>";
 	public static final String VERBOSE = "verbose";
+	public static final String UNBOUND = "unbound";
 	public static final String ARROWHEAD_CONTEXT = "arrowheadContext";
 	public static final String SERVER_STANDALONE_MODE = "server.standalone.mode";
 	public static final String SERVER_COMMON_NAME = "server.common.name";
@@ -255,8 +256,8 @@ public final class Constants {
 
 	public static final String SERVICE_DEF_AUTHORIZATION = "authorization";
 	public static final String SERVICE_DEF_AUTHORIZATION_MANAGEMENT = "authorizationManagement";
-	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN = "authorization-token";
-	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN_MANAGEMENT = "authorization-token-management";
+	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN = "authorizationToken";
+	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN_MANAGEMENT = "authorizationTokenManagement";
 
 	// Operation related
 

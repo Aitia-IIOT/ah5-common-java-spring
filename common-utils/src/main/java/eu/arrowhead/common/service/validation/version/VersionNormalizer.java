@@ -12,12 +12,12 @@ public class VersionNormalizer {
 	//=================================================================================================
 	// members
 
-	public static final String DEFAULT_MAJOR = "1";
-	public static final String DEFAULT_MINOR = "0";
-	public static final String DEFAULT_PATCH = "0";
-	public static final String DOT = ".";
-	public static final String DOT_REGEX = "\\.";
-	public static final String DEFAULT_VERSION = DEFAULT_MAJOR + DOT + DEFAULT_MINOR + DOT + DEFAULT_PATCH;
+	private static final String DEFAULT_MAJOR = "1";
+	private static final String DEFAULT_MINOR = "0";
+	private static final String DEFAULT_PATCH = "0";
+	private static final String DOT = ".";
+	private static final String DOT_REGEX = "\\.";
+	private static final String DEFAULT_VERSION = DEFAULT_MAJOR + DOT + DEFAULT_MINOR + DOT + DEFAULT_PATCH;
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 

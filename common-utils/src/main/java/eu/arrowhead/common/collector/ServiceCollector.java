@@ -34,7 +34,7 @@ public class ServiceCollector {
 	private ServiceDefinitionNameNormalizer serviceDefNameNormalizer;
 
 	@Autowired
-	private InterfaceTemplateNameNormalizer intTemplateNameNormalizer;
+	private InterfaceTemplateNameNormalizer interfaceTemplateNameNormalizer;
 
 	@Autowired
 	private SystemNameNormalizer systemNameNormalizer;
@@ -53,7 +53,7 @@ public class ServiceCollector {
 		Assert.isTrue(!Utilities.isEmpty(templateName), "template name is empty");
 
 		final String nServiceDefinition = serviceDefNameNormalizer.normalize(serviceDefinition);
-		final String nTemplateName = intTemplateNameNormalizer.normalize(templateName);
+		final String nTemplateName = interfaceTemplateNameNormalizer.normalize(templateName);
 		final String nProviderName = !Utilities.isEmpty(providerName) ? systemNameNormalizer.normalize(providerName) : null;
 
 		final String key = Constants.KEY_PREFIX_FOR_SERVICE_MODEL + nServiceDefinition;

@@ -104,7 +104,7 @@ public abstract class ApplicationInitListener {
 			final KeyStore keyStore = initializeKeyStore();
 			obtainKeys(keyStore);
 			if (sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE) {
-				// in this case the certificate must be compliant with the Arrowhead Certificate Structure
+				// in this case the certificate must be compliant with the Arrowhead Certificate structure
 				checkServerCertificate(keyStore);
 			}
 		}
@@ -215,7 +215,6 @@ public abstract class ApplicationInitListener {
 
 		final X509Certificate serverCertificate = SecurityUtilities.getCertificateFromKeyStore(keyStore, sysInfo.getSslProperties().getKeyAlias());
 		if (serverCertificate == null) {
-			// never happens because checkServer
 			throw new ServiceConfigurationError("Cannot find server certificate in the specified key store");
 		}
 
@@ -292,7 +291,7 @@ public abstract class ApplicationInitListener {
 		for (int i = 0; i <= retries; ++i) {
 			try {
 				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
-				logger.info("Service Registry is accessable...");
+				logger.info("ServiceRegistry is accessable...");
 				break;
 			} catch (final ForbiddenException | AuthException ex) {
 				throw ex;
@@ -300,7 +299,7 @@ public abstract class ApplicationInitListener {
 				if (i >= retries) {
 					throw ex;
 				} else {
-					logger.info("Service Registry is unavailable at the moment, retrying in {} seconds...", period);
+					logger.info("ServiceRegistry is unavailable at the moment, retrying in {} seconds...", period);
 					Thread.sleep(period * Constants.CONVERSION_MILLISECOND_TO_SECOND);
 				}
 			}
