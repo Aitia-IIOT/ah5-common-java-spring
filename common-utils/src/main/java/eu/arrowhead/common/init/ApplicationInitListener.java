@@ -291,7 +291,7 @@ public abstract class ApplicationInitListener {
 		for (int i = 0; i <= retries; ++i) {
 			try {
 				serviceCollector.getServiceModel(Constants.SERVICE_DEF_SYSTEM_DISCOVERY, templateName, Constants.SYS_NAME_SERVICE_REGISTRY);
-				logger.info("ServiceRegistry is accessable...");
+				logger.info("ServiceRegistry is accessible...");
 				break;
 			} catch (final ForbiddenException | AuthException ex) {
 				throw ex;

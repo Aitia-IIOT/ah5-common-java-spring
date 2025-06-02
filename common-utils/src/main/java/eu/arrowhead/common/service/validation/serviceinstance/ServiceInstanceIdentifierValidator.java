@@ -18,6 +18,8 @@ public class ServiceInstanceIdentifierValidator {
 	//=================================================================================================
 	// members
 
+	private static final int IDENTIFIER_LENGTH = 3;
+
 	@Autowired
 	private SystemNameValidator systemNameValidator;
 
@@ -33,7 +35,6 @@ public class ServiceInstanceIdentifierValidator {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	@SuppressWarnings("checkstyle:magicnumber")
 	public void validateServiceInstanceIdentifier(final String identifier) {
 		logger.debug("validateServiceInstanceIdentifier started: {}", identifier);
 
@@ -44,7 +45,7 @@ public class ServiceInstanceIdentifierValidator {
 
 		// accepted format <ProviderName><delimiter><serviceDefinitionName><delimiter><semantic version>
 		final String[] parts = identifier.split(Constants.COMPOSITE_ID_DELIMITER_REGEXP);
-		if (parts.length != 3) {
+		if (parts.length != IDENTIFIER_LENGTH) {
 			throw new InvalidParameterException("The specified service instance identifier does not match the naming convention: " + identifier);
 		}
 
