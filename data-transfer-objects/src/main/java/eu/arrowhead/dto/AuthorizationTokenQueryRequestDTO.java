@@ -7,5 +7,6 @@ public record AuthorizationTokenQueryRequestDTO(
 		String consumerCloud,
 		String consumer,
 		String provider,
-		String serviceDefinition) {
+		String targetType,
+		String target) {
 }
