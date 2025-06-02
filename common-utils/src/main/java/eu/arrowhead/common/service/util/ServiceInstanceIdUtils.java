@@ -25,7 +25,7 @@ public final class ServiceInstanceIdUtils {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public static String retrieveSystemNameFromInstaceId(final String instanceId) {
+	public static String retrieveSystemNameFromInstanceId(final String instanceId) {
 		Assert.isTrue(!Utilities.isEmpty(instanceId), "instanceId is empty");
 
 		final String[] split = instanceId.split(Constants.COMPOSITE_ID_DELIMITER_REGEXP);
