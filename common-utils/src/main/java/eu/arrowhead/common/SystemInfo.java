@@ -21,7 +21,7 @@ import eu.arrowhead.common.http.filter.authorization.ManagementPolicy;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.model.SystemModel;
 import eu.arrowhead.common.service.validation.address.AddressNormalizer;
-import eu.arrowhead.common.service.validation.name.NameNormalizer;
+import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
@@ -44,10 +44,10 @@ public abstract class SystemInfo {
 	@Value(Constants.$DOMAIN_NAME)
 	private String domainAddress;
 
-	@Value(Constants.$SERVICEREGISTRY_ADDRESS_WD)
+	@Value(Constants.$SERVICE_REGISTRY_ADDRESS_WD)
 	private String serviceRegistryAddress;
 
-	@Value(Constants.$SERVICEREGISTRY_PORT_WD)
+	@Value(Constants.$SERVICE_REGISTRY_PORT_WD)
 	private int serviceRegistryPort;
 
 	@Value(Constants.$AUTHENTICATION_POLICY_WD)
@@ -82,10 +82,10 @@ public abstract class SystemInfo {
 	private SSLProperties sslProperties;
 
 	@Autowired
-	private AddressNormalizer addressNormalizer;
+	protected SystemNameNormalizer systemNameNormalizer;
 
 	@Autowired
-	private NameNormalizer nameNormalizer;
+	private AddressNormalizer addressNormalizer;
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	private Map<String, Object> arrowheadContext;
@@ -114,10 +114,11 @@ public abstract class SystemInfo {
 		if (!Utilities.isEmpty(managementWhitelist) && Utilities.isEmpty(normalizedManagementWhitelist)) {
 			for (final String name : managementWhitelist) {
 				if (!Utilities.isEmpty(name)) {
-					normalizedManagementWhitelist.add(nameNormalizer.normalize(name));
+					normalizedManagementWhitelist.add(systemNameNormalizer.normalize(name));
 				}
 			}
 		}
+
 		return normalizedManagementWhitelist;
 	}
 
@@ -198,7 +199,7 @@ public abstract class SystemInfo {
 					defaultsMap.put(key, null);
 				} catch (final IllegalArgumentException __) {
 					// never happens
-					throw new IllegalStateException("Something that should never happen, happened.");
+					throw new IllegalStateException("Something that should never happen, happened");
 				} catch (final IllegalAccessException ex) {
 					throw new ServiceConfigurationError("Java security does not allow to read the default values from class " + defaults.getName());
 				}

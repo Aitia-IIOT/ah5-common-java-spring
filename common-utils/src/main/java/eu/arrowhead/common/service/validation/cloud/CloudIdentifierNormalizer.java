@@ -5,8 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Defaults;
-import eu.arrowhead.common.service.validation.name.NameNormalizer;
+import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 
 @Component
 public class CloudIdentifierNormalizer {
@@ -15,7 +17,7 @@ public class CloudIdentifierNormalizer {
 	// members
 
 	@Autowired
-	private NameNormalizer nameNormalizer;
+	private SystemNameNormalizer systemNameNormalizer; // the two parts of the cloud identifier should follow the naming convention of systems
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -26,7 +28,7 @@ public class CloudIdentifierNormalizer {
 	public String normalize(final String cloudIdentifier) {
 		logger.debug("normalize cloud identitifer started...");
 
-		if (cloudIdentifier == null) {
+		if (Utilities.isEmpty(cloudIdentifier)) {
 			return null;
 		}
 
@@ -34,6 +36,11 @@ public class CloudIdentifierNormalizer {
 			return Defaults.DEFAULT_CLOUD;
 		}
 
-		return nameNormalizer.normalize(cloudIdentifier);
+		final String[] parts = cloudIdentifier.split(Constants.COMPOSITE_ID_DELIMITER_REGEXP);
+		for (int i = 0; i < parts.length; ++i) {
+			parts[i] = systemNameNormalizer.normalize(parts[i]);
+		}
+
+		return String.join(Constants.COMPOSITE_ID_DELIMITER, parts);
 	}
 }

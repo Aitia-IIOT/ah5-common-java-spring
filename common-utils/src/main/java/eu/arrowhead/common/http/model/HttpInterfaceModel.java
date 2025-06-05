@@ -40,13 +40,14 @@ public record HttpInterfaceModel(
 
 	//-------------------------------------------------------------------------------------------------
 	public String protocol() {
-		return templateName.equals(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME) ? "http" : "https";
+		return templateName.equals(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME) ? Constants.HTTP : Constants.HTTPS;
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public Map<String, Object> properties() {
-		return Map.of(PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
+		return Map.of(
+				PROP_NAME_ACCESS_ADDRESSES, accessAddresses,
 				PROP_NAME_ACCESS_PORT, accessPort,
 				PROP_NAME_BASE_PATH, basePath,
 				PROP_NAME_OPERATIONS, operations);

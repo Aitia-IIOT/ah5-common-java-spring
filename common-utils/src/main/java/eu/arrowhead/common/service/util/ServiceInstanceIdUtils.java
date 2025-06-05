@@ -2,6 +2,7 @@ package eu.arrowhead.common.service.util;
 
 import org.springframework.util.Assert;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 
 public final class ServiceInstanceIdUtils {
@@ -9,7 +10,6 @@ public final class ServiceInstanceIdUtils {
 	//=================================================================================================
 	// members
 
-	private static final String delimiter = "::";
 	private static final int parts = 3;
 
 	//=================================================================================================
@@ -21,15 +21,16 @@ public final class ServiceInstanceIdUtils {
 		Assert.isTrue(!Utilities.isEmpty(serviceDefinitionName), "serviceDefinitionName is empty");
 		Assert.isTrue(!Utilities.isEmpty(version), "version is empty");
 
-		return systemName + delimiter + serviceDefinitionName + delimiter + version;
+		return systemName + Constants.COMPOSITE_ID_DELIMITER + serviceDefinitionName + Constants.COMPOSITE_ID_DELIMITER + version;
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public static String retrieveSystemNameFromInstaceId(final String instanceId) {
+	public static String retrieveSystemNameFromInstanceId(final String instanceId) {
 		Assert.isTrue(!Utilities.isEmpty(instanceId), "instanceId is empty");
 
-		final String[] split = instanceId.split(delimiter);
+		final String[] split = instanceId.split(Constants.COMPOSITE_ID_DELIMITER_REGEXP);
 		Assert.isTrue(split.length == parts, "Invalid instanceId");
+
 		return split[0];
 	}
 
@@ -37,8 +38,9 @@ public final class ServiceInstanceIdUtils {
 	public static ServiceInstanceIdParts breakDownInstanceId(final String instanceId) {
 		Assert.isTrue(!Utilities.isEmpty(instanceId), "instanceId is empty");
 
-		final String[] split = instanceId.split(delimiter);
+		final String[] split = instanceId.split(Constants.COMPOSITE_ID_DELIMITER_REGEXP);
 		Assert.isTrue(split.length == parts, "Invalid instanceId");
+
 		return new ServiceInstanceIdParts(split[0], split[1], split[2]);
 	}
 

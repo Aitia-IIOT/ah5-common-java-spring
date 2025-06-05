@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.service.validation.MetadataValidation;
 import jakarta.annotation.Nullable;
 
 public final class MetadataKeyEvaluator {
@@ -12,7 +13,6 @@ public final class MetadataKeyEvaluator {
 	//=================================================================================================
 	// members
 
-	private static final String DELIMITER = "\\.";
 	private static final String IDX_PREFIX = "[";
 	private static final String IDX_SUFFIX = "]";
 
@@ -27,7 +27,7 @@ public final class MetadataKeyEvaluator {
 		}
 
 		Object result = metadata;
-		final String[] parts = compositeKey.trim().split(DELIMITER);
+		final String[] parts = compositeKey.trim().split(MetadataValidation.METADATA_COMPOSITE_KEY_DELIMITER_REGEXP);
 		for (final String key : parts) {
 			result = getValueForKey(result, key);
 			if (result == null) {

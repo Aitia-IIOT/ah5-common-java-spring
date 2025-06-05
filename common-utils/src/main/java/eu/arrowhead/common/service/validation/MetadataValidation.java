@@ -10,7 +10,8 @@ public final class MetadataValidation {
 	//=================================================================================================
 	// members
 
-	public static final String DOT = ".";
+	public static final String METADATA_COMPOSITE_KEY_DELIMITER = ".";
+	public static final String METADATA_COMPOSITE_KEY_DELIMITER_REGEXP = "\\.";
 
 	//=================================================================================================
 	// methods
@@ -31,8 +32,8 @@ public final class MetadataValidation {
 			for (final String key : map.keySet()) {
 
 				// check the key
-				if (key.contains(DOT)) {
-					throw new InvalidParameterException("Invalid metadata key: " + key + ", it should not contain " + DOT + " character!");
+				if (key.contains(METADATA_COMPOSITE_KEY_DELIMITER)) {
+					throw new InvalidParameterException("Invalid metadata key: " + key + ", it should not contain " + METADATA_COMPOSITE_KEY_DELIMITER + " character");
 				}
 
 				// check the value

@@ -3,6 +3,7 @@ package eu.arrowhead.common;
 import eu.arrowhead.common.collector.HttpCollectorMode;
 import eu.arrowhead.common.http.filter.authentication.AuthenticationPolicy;
 import eu.arrowhead.common.http.filter.authorization.ManagementPolicy;
+import eu.arrowhead.common.service.normalization.NormalizationMode;
 import eu.arrowhead.dto.DTODefaults;
 
 public class Defaults {
@@ -13,6 +14,7 @@ public class Defaults {
 	// Global
 
 	public static final String MAX_PAGE_SIZE_DEFAULT = "1000";
+	public static final String NORMALIZATION_MODE_DEFAULT = NormalizationMode.EXTENDED_VALUE;
 	public static final String DEFAULT_CLOUD = DTODefaults.DEFAULT_CLOUD;
 	public static final String DEFAULT_AUTHORIZATION_SCOPE = DTODefaults.DEFAULT_AUTHORIZATION_SCOPE;
 
@@ -21,8 +23,8 @@ public class Defaults {
 	public static final String SERVER_ADDRESS_DEFAULT = "";
 	public static final String SERVER_PORT_DEFAULT = "0"; // just to avoid NullPointerException
 	public static final String DOMAIN_NAME_DEFAULT = "";
-	public static final String SERVICEREGISTRY_ADDRESS_DEFAULT = Constants.LOCALHOST;
-	public static final String SERVICEREGISTRY_PORT_DEFAULT = "8443";
+	public static final String SERVICE_REGISTRY_ADDRESS_DEFAULT = Constants.LOCALHOST;
+	public static final String SERVICE_REGISTRY_PORT_DEFAULT = "8443";
 	public static final String AUTHENTICATION_POLICY_DEFAULT = AuthenticationPolicy.CERTIFICATE_VALUE;
 	public static final String ENABLE_MANAGEMENT_FILTER_DEFAULT = "false";
 	public static final String MANAGEMENT_POLICY_DEFAULT = ManagementPolicy.SYSOP_ONLY_VALUE;

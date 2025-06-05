@@ -16,6 +16,15 @@ public enum AuthorizationLevel {
 		return prefix;
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	public static AuthorizationLevel fromPrefix(final String prefix) {
+		return switch (prefix) {
+		case "MGMT" -> AuthorizationLevel.MGMT;
+		case "PR" -> AuthorizationLevel.PROVIDER;
+		case null, default -> null;
+		};
+	}
+
 	//=================================================================================================
 	// assistant methods
 
