@@ -223,9 +223,9 @@ public abstract class MqttTopicHandler extends Thread {
 		}
 
 		final MqttStatus status = calculateStatusFromException(ex);
-		
+
 		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(new ArrowheadException(ex.getMessage(), request.getBaseTopic() + request.getOperation()));
-		
+
 		ahMqttService.response(
 				request.getRequester(),
 				request.getResponseTopic(),
