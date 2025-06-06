@@ -3,6 +3,8 @@ package eu.arrowhead.common.http.filter.authentication;
 import java.io.IOException;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 
 import eu.arrowhead.common.Constants;
@@ -14,6 +16,7 @@ import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
+import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,8 +29,14 @@ public class CertificateFilter extends ArrowheadFilter implements IAuthenticatio
 	//=================================================================================================
 	// members
 
+	@Autowired
+	private ApplicationContext appContext;
+
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	private Map<String, Object> arrowheadContext;
+
+	@Autowired
+	private SystemNameNormalizer systemNameNormalizer;
 
 	//=================================================================================================
 	// assistant methods
@@ -66,7 +75,7 @@ public class CertificateFilter extends ArrowheadFilter implements IAuthenticatio
 
 		final String serverCN = (String) arrowheadContext.get(Constants.SERVER_COMMON_NAME);
 		final String cloudCN = SecurityUtilities.getCloudCN(serverCN);
-		if (!SecurityUtilities.isClientInTheLocalCloudByCNs(requesterData.commonName(), cloudCN)) {
+		if (!SecurityUtilities.isClientInTheLocalCloudByCNs(appContext, requesterData.commonName(), cloudCN)) {
 			log.error("Unauthorized access: {}, from foreign cloud", requestTarget);
 			throw new ForbiddenException("Unauthorized access: " + requestTarget + ", from foreign cloud");
 		}
@@ -76,7 +85,9 @@ public class CertificateFilter extends ArrowheadFilter implements IAuthenticatio
 	private void fillRequestAttributes(final HttpServletRequest request, final CommonNameAndType requesterData) {
 		log.debug("CertificateFilter.checkClientAuthenticated started...");
 
+		final String clientName = systemNameNormalizer.normalize(SecurityUtilities.getClientNameFromClientCN(requesterData.commonName()));
+
+		request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, clientName);
 		request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST, CertificateProfileType.OPERATOR == requesterData.profileType());
-		request.setAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM, SecurityUtilities.getClientNameFromClientCN(requesterData.commonName()));
 	}
 }

@@ -1,7 +1,6 @@
 package eu.arrowhead.common.mqtt;
 
 public enum MqttStatus {
-
 	OK(200),
 	CREATED(201),
 	NO_CONTENT(204),

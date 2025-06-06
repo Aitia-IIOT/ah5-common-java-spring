@@ -126,7 +126,8 @@ public class HttpService {
 
 		try {
 			final WebClient client = createWebClient(usedClient);
-			final RequestBodySpec spec = client.method(method)
+			final RequestBodySpec spec = client
+					.method(method)
 					.uri(uri.toUri());
 
 			RequestHeadersSpec<?> headersSpec = (payload != null) ? spec.bodyValue(payload) : spec;
@@ -137,7 +138,8 @@ public class HttpService {
 				}
 			}
 
-			return headersSpec.retrieve()
+			return headersSpec
+					.retrieve()
 					.bodyToMono(responseType)
 					.block();
 		} catch (final WebClientResponseException ex) {
@@ -223,8 +225,10 @@ public class HttpService {
 
 		try {
 			final WebClient client = createWebClient(usedClient);
-			final RequestBodySpec spec = client.method(method)
+			final RequestBodySpec spec = client
+					.method(method)
 					.uri(uri.toUri());
+
 			RequestHeadersSpec<?> headersSpec = (payload != null) ? spec.bodyValue(payload) : spec;
 
 			if (!Utilities.isEmpty(customHeaders)) {
@@ -233,7 +237,8 @@ public class HttpService {
 				}
 			}
 
-			return headersSpec.retrieve()
+			return headersSpec
+					.retrieve()
 					.bodyToMono(responseType)
 					.block();
 		} catch (final WebClientResponseException ex) {
@@ -337,19 +342,20 @@ public class HttpService {
 				});
 
 		if (sslContext != null) {
-			client = client.secure(t -> t.sslContext(sslContext)
-					.handlerConfigurator(handler -> {
-						final SSLEngine sslEngine = handler.engine();
-						final SSLParameters sslParameters = sslEngine.getSSLParameters();
-						sslParameters.setEndpointIdentificationAlgorithm(Constants.HTTPS);
+			client = client
+					.secure(t -> t.sslContext(sslContext)
+							.handlerConfigurator(handler -> {
+								final SSLEngine sslEngine = handler.engine();
+								final SSLParameters sslParameters = sslEngine.getSSLParameters();
+								sslParameters.setEndpointIdentificationAlgorithm(Constants.HTTPS);
 
-						if (disableHostnameVerifier) {
-							sslParameters.setEndpointIdentificationAlgorithm("");
-							// see: https://stackoverflow.com/a/67964695
-						}
+								if (disableHostnameVerifier) {
+									sslParameters.setEndpointIdentificationAlgorithm("");
+									// see: https://stackoverflow.com/a/67964695
+								}
 
-						sslEngine.setSSLParameters(sslParameters);
-					}));
+								sslEngine.setSSLParameters(sslParameters);
+							}));
 		}
 
 		return client;
@@ -357,7 +363,9 @@ public class HttpService {
 
 	//-------------------------------------------------------------------------------------------------
 	private WebClient createWebClient(final HttpClient client) {
-		final Builder builder = WebClient.builder().clientConnector(new ReactorClientHttpConnector(client))
+		final Builder builder = WebClient
+				.builder()
+				.clientConnector(new ReactorClientHttpConnector(client))
 				.defaultHeader(HttpHeaderNames.ACCEPT.toString(), MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE)
 				.defaultHeader(HttpHeaderNames.CONTENT_TYPE.toString(), MediaType.APPLICATION_JSON_VALUE);
 
@@ -414,6 +422,7 @@ public class HttpService {
 
 			final String message = Utilities.isEmpty(ex.getResponseBodyAsString()) ? ex.getStatusText() : ex.getResponseBodyAsString();
 			final String code = getStatusCodeAsString(ex);
+
 			return new ArrowheadException(message + ", status code: " + code);
 		}
 

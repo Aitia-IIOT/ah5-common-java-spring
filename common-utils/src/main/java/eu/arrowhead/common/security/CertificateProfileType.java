@@ -1,7 +1,6 @@
 package eu.arrowhead.common.security;
 
 public enum CertificateProfileType {
-
 	MASTER("ma"),
 	GATE("ga"),
 	ORGANIZATION("or"),

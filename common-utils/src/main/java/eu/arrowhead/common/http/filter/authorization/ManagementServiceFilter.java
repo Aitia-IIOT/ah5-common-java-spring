@@ -17,12 +17,14 @@ import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ForbiddenException;
 import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.http.ArrowheadHttpService;
+import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.common.http.filter.ArrowheadFilter;
 import eu.arrowhead.common.http.model.HttpInterfaceModel;
 import eu.arrowhead.common.http.model.HttpOperationModel;
 import eu.arrowhead.common.model.InterfaceModel;
 import eu.arrowhead.common.model.ServiceModel;
-import eu.arrowhead.common.service.validation.name.NameNormalizer;
+import eu.arrowhead.common.service.validation.name.ServiceDefinitionNameNormalizer;
+import eu.arrowhead.common.service.validation.name.ServiceOperationNameNormalizer;
 import eu.arrowhead.dto.AuthorizationVerifyRequestDTO;
 import eu.arrowhead.dto.enums.AuthorizationTargetType;
 import jakarta.servlet.FilterChain;
@@ -40,7 +42,10 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 	private SystemInfo sysInfo;
 
 	@Autowired
-	private NameNormalizer nameNormalizer;
+	private ServiceDefinitionNameNormalizer serviceDefNameNormalizer;
+
+	@Autowired
+	private ServiceOperationNameNormalizer operationNameNormalizer;
 
 	@Autowired
 	private ArrowheadHttpService httpService;
@@ -59,8 +64,7 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 
 		final String requestTarget = request.getRequestURL().toString();
 		if (requestTarget.contains(mgmtPath)) {
-			final String systemName = (String) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM);
-			final String normalizedSystemName = nameNormalizer.normalize(systemName);
+			final String systemName = (String) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM); // already normalized
 			boolean allowed = false;
 
 			switch (sysInfo.getManagementPolicy()) {
@@ -69,11 +73,11 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 				break;
 
 			case WHITELIST:
-				allowed = isSystemOperator(request) || isWhitelisted(normalizedSystemName);
+				allowed = isSystemOperator(request) || isWhitelisted(systemName);
 				break;
 
 			case AUTHORIZATION:
-				allowed = isSystemOperator(request) || isWhitelisted(normalizedSystemName) || isAuthorized(normalizedSystemName, request.getRequestURI(), request.getMethod());
+				allowed = isSystemOperator(request) || isWhitelisted(systemName) || isAuthorized(systemName, request.getRequestURI(), request.getMethod());
 				break;
 
 			default:
@@ -83,19 +87,16 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 			if (!allowed) {
 				throw new ForbiddenException("Requester has no management permission", requestTarget);
 			}
-
 		}
 
 		super.doFilterInternal(request, response, chain);
-
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	private boolean isSystemOperator(final HttpServletRequest request) {
 		logger.debug("ManagementServiceFilter.isSystemOperator started...");
 
-		final Object isSysOp = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_SYSOP_REQUEST);
-		return isSysOp == null ? false : (Boolean) isSysOp;
+		return HttpUtilities.isSysop(request, null);
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -117,12 +118,12 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 		}
 
 		final AuthorizationVerifyRequestDTO payload = new AuthorizationVerifyRequestDTO(
-				nameNormalizer.normalize(sysInfo.getSystemName()),
+				sysInfo.getSystemName(),
 				systemName,
 				Defaults.DEFAULT_CLOUD,
 				AuthorizationTargetType.SERVICE_DEF.name(),
-				nameNormalizer.normalize(match.get().getFirst()),
-				nameNormalizer.normalize(match.get().getSecond()));
+				serviceDefNameNormalizer.normalize(match.get().getFirst()),
+				operationNameNormalizer.normalize(match.get().getSecond()));
 
 		try {
 			return httpService.consumeService(
@@ -147,10 +148,12 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 		String operation = null;
 
 		OUTER: for (final ServiceModel sModel : sysInfo.getServices()) {
-			final Optional<InterfaceModel> iModelOpt = sModel.interfaces()
+			final Optional<InterfaceModel> iModelOpt = sModel
+					.interfaces()
 					.stream()
 					.filter(im -> im.templateName().equals(templateName))
 					.findFirst();
+
 			if (iModelOpt.isPresent()) {
 				final HttpInterfaceModel iModel = (HttpInterfaceModel) iModelOpt.get();
 				for (final Entry<String, HttpOperationModel> opEntry : iModel.operations().entrySet()) {

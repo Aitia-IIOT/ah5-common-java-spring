@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
@@ -19,6 +21,7 @@ import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.common.security.CertificateProfileType;
 import eu.arrowhead.common.security.SecurityUtilities;
 import eu.arrowhead.common.security.SecurityUtilities.CommonNameAndType;
+import eu.arrowhead.common.service.validation.name.SystemNameNormalizer;
 import jakarta.annotation.Resource;
 
 public class CertificateMqttFilter implements ArrowheadMqttFilter {
@@ -28,6 +31,12 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 
 	@Resource(name = Constants.ARROWHEAD_CONTEXT)
 	private Map<String, Object> arrowheadContext;
+
+	@Autowired
+	private ApplicationContext appContext;
+
+	@Autowired
+	private SystemNameNormalizer systemNameNormalizer;
 
 	private static final String beginCert = "-----BEGIN CERTIFICATE-----";
 	private static final String endCert = "-----END CERTIFICATE-----";
@@ -56,8 +65,8 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 			throw new AuthException("Unauthenticated access attempt: " + request.getBaseTopic());
 		}
 
+		checkClientAuthorized(requesterData, request.getBaseTopic() + request.getOperation());
 		fillRequestAttributes(request, requesterData);
-		checkClientAuthorized(requesterData, request.getBaseTopic());
 	}
 
 	//=================================================================================================
@@ -80,8 +89,8 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 		try {
 			final CertificateFactory certificateFactory = CertificateFactory.getInstance(Constants.X_509);
 			final ByteArrayInputStream certStream = new ByteArrayInputStream(decodedX509RawContent);
-			return (X509Certificate) certificateFactory.generateCertificate(certStream);
 
+			return (X509Certificate) certificateFactory.generateCertificate(certStream);
 		} catch (final CertificateException ex) {
 			logger.error(ex.getMessage());
 			logger.debug(ex);
@@ -100,7 +109,7 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 
 		final String serverCN = (String) arrowheadContext.get(Constants.SERVER_COMMON_NAME);
 		final String cloudCN = SecurityUtilities.getCloudCN(serverCN);
-		if (!SecurityUtilities.isClientInTheLocalCloudByCNs(requesterData.commonName(), cloudCN)) {
+		if (!SecurityUtilities.isClientInTheLocalCloudByCNs(appContext, requesterData.commonName(), cloudCN)) {
 			logger.error("Unauthorized access: {}, from foreign cloud", requestTarget);
 			throw new ForbiddenException("Unauthorized access: " + requestTarget + ", from foreign cloud");
 		}
@@ -110,7 +119,9 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 	private void fillRequestAttributes(final MqttRequestModel request, final CommonNameAndType requesterData) {
 		logger.debug("CertificateMqttFilter.checkClientAuthenticated started...");
 
+		final String clientName = systemNameNormalizer.normalize(SecurityUtilities.getClientNameFromClientCN(requesterData.commonName()));
+
+		request.setRequester(clientName);
 		request.setSysOp(CertificateProfileType.OPERATOR == requesterData.profileType());
-		request.setRequester(SecurityUtilities.getClientNameFromClientCN(requesterData.commonName()));
 	}
 }
