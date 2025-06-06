@@ -32,7 +32,7 @@ public final class MetadataValidation {
 
 				// check the key
 				if (key.contains(DOT)) {
-					throw new InvalidParameterException("Invalid metadata key: " + key + ", it should not contain " + DOT + " character!");
+					throw new InvalidParameterException("Invalid metadata key: " + key + ", it should not contain " + DOT + " character");
 				}
 
 				// check the value
