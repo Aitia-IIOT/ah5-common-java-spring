@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.apache.bcel.classfile.ExceptionTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -30,6 +31,7 @@ import eu.arrowhead.common.mqtt.model.MqttRequestModel;
 import eu.arrowhead.dto.ErrorMessageDTO;
 import eu.arrowhead.common.service.validation.name.ServiceOperationNameNormalizer;
 import eu.arrowhead.dto.MqttRequestTemplate;
+import eu.arrowhead.dto.enums.ExceptionType;
 import jakarta.servlet.http.HttpUpgradeHandler;
 
 public abstract class MqttTopicHandler extends Thread {
@@ -228,57 +230,55 @@ public abstract class MqttTopicHandler extends Thread {
 			return;
 		}
 
-		final MqttStatus status = calculateStatusFromException(ex);
+		final ExceptionType exType = calculateExceptionType(ex);
 
-		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(new ArrowheadException(ex.getMessage(), request.getBaseTopic() + request.getOperation()));
+		final ErrorMessageDTO dto = new ErrorMessageDTO(
+				ex.getMessage(),
+				exType.getErrorCode(),
+				exType,
+				request.getBaseTopic() + request.getOperation());
 
 		ahMqttService.response(
 				request.getRequester(),
 				request.getResponseTopic(),
 				request.getTraceId(),
 				request.getQosRequirement(),
-				status,
+				calculateStatusFromExceptionType(exType),
 				dto);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private MqttStatus calculateStatusFromException(final Exception ex) {
-		logger.debug("calculateStatusFromException started...");
+	private MqttStatus calculateStatusFromExceptionType(final ExceptionType exType) {
+		logger.debug("calculateStatusFromExceptionType started...");
 
-		if (!(ex instanceof ArrowheadException)) {
+		switch (exType) {
+		case AUTH:
+			return MqttStatus.UNAUTHORIZED;
+		case FORBIDDEN:
+			return MqttStatus.FORBIDDEN;
+		case INVALID_PARAMETER:
+			return MqttStatus.BAD_REQUEST;
+		case DATA_NOT_FOUND:
+			return MqttStatus.NOT_FOUND;
+		case EXTERNAL_SERVER_ERROR:
+			return MqttStatus.EXTERNAL_SERVER_ERROR;
+		case TIMEOUT:
+			return MqttStatus.TIMEOUT;
+		case LOCKED:
+			return MqttStatus.LOCKED;
+		default:
 			return MqttStatus.INTERNAL_SERVER_ERROR;
 		}
+	}
 
-		final ArrowheadException ahEx = (ArrowheadException) ex;
-		MqttStatus status = MqttStatus.resolve(ahEx.getExceptionType().getErrorCode());
-		if (status == null) {
-			switch (ahEx.getExceptionType()) {
-			case AUTH:
-				status = MqttStatus.UNAUTHORIZED;
-				break;
-			case FORBIDDEN:
-				status = MqttStatus.FORBIDDEN;
-				break;
-			case INVALID_PARAMETER:
-				status = MqttStatus.BAD_REQUEST;
-				break;
-			case DATA_NOT_FOUND:
-				status = MqttStatus.NOT_FOUND;
-				break;
-			case EXTERNAL_SERVER_ERROR:
-				status = MqttStatus.EXTERNAL_SERVER_ERROR;
-				break;
-			case TIMEOUT:
-				status = MqttStatus.TIMEOUT;
-				break;
-			case LOCKED:
-				status = MqttStatus.LOCKED;
-				break;
-			default:
-				status = MqttStatus.INTERNAL_SERVER_ERROR;
-			}
+	//-------------------------------------------------------------------------------------------------
+	private ExceptionType calculateExceptionType(final Exception ex) {
+		logger.debug("calculateExceptionType started...");
+
+		if (!(ex instanceof ArrowheadException)) {
+			return ExceptionType.INTERNAL_SERVER_ERROR;
 		}
 
-		return status;
+		return ((ArrowheadException) ex).getExceptionType();
 	}
 }
