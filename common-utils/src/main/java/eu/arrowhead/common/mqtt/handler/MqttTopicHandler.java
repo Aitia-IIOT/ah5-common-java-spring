@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.aspectj.apache.bcel.classfile.ExceptionTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -21,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
-import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.common.mqtt.ArrowheadMqttService;
 import eu.arrowhead.common.mqtt.MqttResourceManager;
 import eu.arrowhead.common.mqtt.MqttStatus;
@@ -32,7 +30,6 @@ import eu.arrowhead.dto.ErrorMessageDTO;
 import eu.arrowhead.common.service.validation.name.ServiceOperationNameNormalizer;
 import eu.arrowhead.dto.MqttRequestTemplate;
 import eu.arrowhead.dto.enums.ExceptionType;
-import jakarta.servlet.http.HttpUpgradeHandler;
 
 public abstract class MqttTopicHandler extends Thread {
 
