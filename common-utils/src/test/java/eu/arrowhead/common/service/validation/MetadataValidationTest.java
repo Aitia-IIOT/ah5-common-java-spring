@@ -19,7 +19,7 @@ public class MetadataValidationTest {
 	private static final String KEY = "key";
 	private static final String INVALID_KEY = "key.key";
 	private static final String VALUE = "value";
-	private static final String EXPECTED_ERROR_MESSAGE = "Invalid metadata key: " + INVALID_KEY + ", it should not contain . character!";
+	private static final String EXPECTED_ERROR_MESSAGE = "Invalid metadata key: " + INVALID_KEY + ", it should not contain . character";
 
 	//=================================================================================================
 	// methods
