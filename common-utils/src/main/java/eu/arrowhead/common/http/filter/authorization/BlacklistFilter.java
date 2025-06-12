@@ -73,8 +73,9 @@ public class BlacklistFilter extends ArrowheadFilter {
 			try {
 				final String systemName = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString();
 
-				// if requester is blacklist, no need for check
-				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)) {
+				// if requester is blacklist or is on the exclude list, no need for check
+				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)
+						&& !sysInfo.getBlacklistCheckExcludeList().contains(systemName)) {
 					final boolean isBlacklisted = arrowheadHttpService.consumeService(
 							Constants.SERVICE_DEF_BLACKLIST_DISCOVERY,
 							Constants.SERVICE_OP_CHECK,
