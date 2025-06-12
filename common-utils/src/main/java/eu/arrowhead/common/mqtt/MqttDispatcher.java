@@ -1,5 +1,6 @@
 package eu.arrowhead.common.mqtt;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +30,8 @@ public class MqttDispatcher {
 	@Autowired
 	private List<MqttTopicHandler> handlers;
 
-	private final Map<String, BlockingQueue<MqttMessageContainer>> topicQueueMap = new ConcurrentHashMap<>();
+	private final Map<String, BlockingQueue<MqttMessageContainer>> baseTopicQueueMap = new ConcurrentHashMap<>();
+	private final Set<String> fullTopicSet = new HashSet<>();
 
 	//=================================================================================================
 	// assistant methods
@@ -38,36 +40,37 @@ public class MqttDispatcher {
 	protected void addTopic(final String topic) {
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
+		fullTopicSet.add(topic);
 		final String baseTopic = getBaseTopic(topic);
 
-		if (topicQueueMap.containsKey(baseTopic)) {
+		if (baseTopicQueueMap.containsKey(baseTopic)) {
 			return;
 		}
 
-		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> getBaseTopic(h.baseTopic()).equals(baseTopic)).findFirst();
+		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> h.baseTopic().equals(baseTopic)).findFirst();
 		if (handlerOpt.isEmpty()) {
 			throw new IllegalArgumentException("No service handler exists for topic: " + topic);
 		}
 
-		topicQueueMap.put(baseTopic, new LinkedBlockingQueue<>());
-		handlerOpt.get().init(topicQueueMap.get(baseTopic));
+		baseTopicQueueMap.put(baseTopic, new LinkedBlockingQueue<>());
+		handlerOpt.get().init(baseTopicQueueMap.get(baseTopic));
 		if (!handlerOpt.get().isAlive()) {
 			handlerOpt.get().start();
 		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	protected void revokeTopic(final String topic) {
-		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
+	protected void revokeBaseTopic(final String baseTopic) {
+		Assert.isTrue(!Utilities.isEmpty(baseTopic), "baseTopic is empty");
 
-		final String baseTopic = getBaseTopic(topic);
-
-		if (!topicQueueMap.containsKey(baseTopic)) {
+		if (!baseTopicQueueMap.containsKey(baseTopic)) {
 			return;
 		}
 
-		topicQueueMap.remove(baseTopic);
-		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> getBaseTopic(h.baseTopic()).equals(baseTopic)).findFirst();
+		fullTopicSet.removeIf(fullTopic -> baseTopic.equals(getBaseTopic(fullTopic)));
+		baseTopicQueueMap.remove(baseTopic);
+
+		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> h.baseTopic().equals(baseTopic)).findFirst();
 		if (handlerOpt.isPresent() && handlerOpt.get().isAlive()) {
 			handlerOpt.get().interrupt();
 		}
@@ -78,14 +81,14 @@ public class MqttDispatcher {
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
 		final String baseTopic = getBaseTopic(topic);
-		Assert.isTrue(topicQueueMap.containsKey(baseTopic), "unknown base topic");
+		Assert.isTrue(baseTopicQueueMap.containsKey(baseTopic), "unknown base topic");
 
-		topicQueueMap.get(baseTopic).add(new MqttMessageContainer(topic, msg));
+		baseTopicQueueMap.get(baseTopic).add(new MqttMessageContainer(topic, msg));
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	protected Set<String> getTopicSet() {
-		return topicQueueMap.keySet();
+	protected Set<String> getFullTopicSet() {
+		return fullTopicSet;
 	}
 
 	//-------------------------------------------------------------------------------------------------
