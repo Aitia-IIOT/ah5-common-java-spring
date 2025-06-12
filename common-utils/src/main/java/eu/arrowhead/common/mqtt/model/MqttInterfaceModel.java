@@ -31,7 +31,6 @@ public record MqttInterfaceModel(
 	//=================================================================================================
 	// members
 
-	private static final String mqttTemplateName = "generic-mqtt";
 	public static final String PROP_NAME_ACCESS_ADDRESSES = "accessAddresses";
 	public static final String PROP_NAME_ACCESS_PORT = "accessPort";
 	public static final String PROP_NAME_BASE_TOPIC = "baseTopic";
@@ -42,7 +41,7 @@ public record MqttInterfaceModel(
 
 	//-------------------------------------------------------------------------------------------------
 	public String protocol() {
-		return templateName.equals(mqttTemplateName) ? "tcp" : "ssl";
+		return templateName.equals(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME) ? "tcp" : "ssl";
 	}
 
 	//-------------------------------------------------------------------------------------------------
