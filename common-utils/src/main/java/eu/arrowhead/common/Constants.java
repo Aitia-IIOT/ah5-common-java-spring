@@ -126,6 +126,8 @@ public final class Constants {
 	public static final String AUTHENTICATION_PREFIX_SYSTEM = "SYSTEM";
 	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 
+	public static final String AUTHORIZATION_TOKEN_TYPE_SUFFIX = "TOKEN_AUTH";
+
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
 	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
 

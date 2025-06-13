@@ -16,6 +16,7 @@ public record OrchestrationResultDTO(
 		String aliveUntil,
 		String exclusiveUntil,
 		Map<String, Object> metadata,
-		List<ServiceInstanceInterfaceResponseDTO> interfaces) {
+		List<ServiceInstanceInterfaceResponseDTO> interfaces,
+		Map<String, Map<String, String>> authorizationTokens) {
 
 }
