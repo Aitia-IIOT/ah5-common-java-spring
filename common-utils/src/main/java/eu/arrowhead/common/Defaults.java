@@ -35,7 +35,6 @@ public class Defaults {
 	public static final String ENABLE_BLACKLIST_FILTER_DEFAULT = "false";
 	public static final String FORCE_BLACKLIST_FILTER_DEFAULT = "true";
 	public static final String SERVICE_ADDRESS_ALIAS_DEFAULT = "\"\"";
-	//	public static final String BLACKLIST_CHECK_EXCLUDE_LIST_DEFAULT = "ServiceRegistry,Authentication,ConsumerAuthorization,DyncamicServiceOrchestration";
 	public static final String BLACKLIST_CHECK_EXCLUDE_LIST_DEFAULT = Constants.SYS_NAME_SERVICE_REGISTRY + ","
 			+ Constants.SYS_NAME_AUTHENTICATION + ","
 			+ Constants.SYS_NAME_CONSUMER_AUTHORIZATION + ","
