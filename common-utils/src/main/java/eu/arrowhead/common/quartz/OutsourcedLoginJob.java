@@ -82,6 +82,7 @@ public class OutsourcedLoginJob implements Job {
 			systemInfo.getArrowheadContext().put(Constants.KEY_IDENTITY_TOKEN, response.token());
 			final ZonedDateTime renewalThreshold = expiration.minus(MULTIPLICATOR * interval + 1, ChronoUnit.MILLIS);
 			systemInfo.getArrowheadContext().put(Constants.KEY_IDENTITY_RENEWAL_THRESHOLD, renewalThreshold);
+			logger.info("(Re-)Login is successful");
 		} catch (final AuthException ex) {
 			logger.error("After login, the Authentication server responds with: {}", ex.getMessage());
 			logger.debug(ex);

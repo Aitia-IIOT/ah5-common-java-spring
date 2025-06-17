@@ -95,7 +95,7 @@ public final class Constants {
 	public static final String AUTHENTICATION_POLICY = "authentication.policy";
 	public static final String $AUTHENTICATION_POLICY_WD = "${" + AUTHENTICATION_POLICY + ":" + Defaults.AUTHENTICATION_POLICY_DEFAULT + "}";
 	public static final String AUTHENTICATOR_SECRET_KEYS = "authenticator.secret.keys";
-	public static final String $AUTHENTICATOR_SECRET_KEYS = "#{${" + AUTHENTICATOR_SECRET_KEYS + "}}";
+	public static final String $AUTHENTICATOR_SECRET_KEYS = "#{${" + AUTHENTICATOR_SECRET_KEYS + ":null}}";
 	public static final String AUTHENTICATOR_CREDENTIALS = "authenticator.credentials";
 	public static final String $AUTHENTICATOR_CREDENTIALS = "#{${" + AUTHENTICATOR_CREDENTIALS + ":null}}";
 	public static final String AUTHENTICATIOR_LOGIN_INTERVAL = "authenticator.login.interval";
@@ -116,6 +116,8 @@ public final class Constants {
 	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
 	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":" + Defaults.FORCE_BLACKLIST_FILTER_DEFAULT + "}";
+	public static final String BLACKLIST_CHECK_EXCLUDE_LIST = "blacklist.check.exclude.list";
+	public static final String $BLACKLIST_CHECK_EXCLUDE_LIST_WD = "${" + BLACKLIST_CHECK_EXCLUDE_LIST + ":" + Defaults.BLACKLIST_CHECK_EXCLUDE_LIST_DEFAULT + "}";
 	public static final String SERVICE_ADDRESS_ALIAS = "service.address.alias";
 	public static final String $SERVICE_ADDRESS_ALIAS = "${" + SERVICE_ADDRESS_ALIAS + "}";
 

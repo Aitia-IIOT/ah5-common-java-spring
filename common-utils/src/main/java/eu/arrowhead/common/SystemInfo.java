@@ -66,6 +66,10 @@ public abstract class SystemInfo {
 	private List<String> managementWhitelist;
 	private final List<String> normalizedManagementWhitelist = new ArrayList<>();
 
+	@Value(Constants.$BLACKLIST_CHECK_EXCLUDE_LIST_WD)
+	private List<String> blacklistCheckExcludeList;
+	private final List<String> normalizedBlacklistCheckExcludeList = new ArrayList<>();
+
 	@Value(Constants.$MQTT_API_ENABLED_WD)
 	private boolean mqttEnabled;
 
@@ -120,6 +124,19 @@ public abstract class SystemInfo {
 		}
 
 		return normalizedManagementWhitelist;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public List<String> getBlacklistCheckExcludeList() {
+		if (!Utilities.isEmpty(blacklistCheckExcludeList) && Utilities.isEmpty(normalizedBlacklistCheckExcludeList)) {
+			for (final String name : blacklistCheckExcludeList) {
+				if (!Utilities.isEmpty(name)) {
+					normalizedBlacklistCheckExcludeList.add(systemNameNormalizer.normalize(name));
+				}
+			}
+		}
+
+		return normalizedBlacklistCheckExcludeList;
 	}
 
 	//=================================================================================================

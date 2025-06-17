@@ -79,11 +79,6 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	@Override
 	public void init() throws ArrowheadException {
 		logger.debug("HttpCollectorDriver.init started...");
-
-		if (HttpCollectorMode.SR_AND_ORCH == mode) {
-			// try to lookup orchestration service and cache it
-			lookupAndCacheOrchestration();
-		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
