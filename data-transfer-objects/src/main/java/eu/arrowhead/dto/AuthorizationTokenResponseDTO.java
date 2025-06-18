@@ -9,7 +9,7 @@ import eu.arrowhead.dto.enums.AuthorizationTokenType;
 @JsonInclude(Include.NON_NULL)
 public record AuthorizationTokenResponseDTO(
 		AuthorizationTokenType tokenType,
-		String variant,
+		String variant, // the exact token related ServiceInterfacePolicy
 		String token, // Raw or encrypted token
 		String tokenReference, // Hashed token (as stored in DB)
 		String requester,
