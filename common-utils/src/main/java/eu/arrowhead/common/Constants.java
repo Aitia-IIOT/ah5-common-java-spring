@@ -114,6 +114,7 @@ public final class Constants {
 	public static final String HTTP_COLLECTOR_MODE = "http.collector.mode";
 	public static final String $HTTP_COLLECTOR_MODE_WD = "${" + HTTP_COLLECTOR_MODE + ":" + Defaults.HTTP_COLLECTOR_MODE_DEFAULT + "}";
 	public static final String ENABLE_BLACKLIST_FILTER = "enable.blacklist.filter";
+	public static final String $ENABLE_BLACKLIST_FILTER_WD = "${" + ENABLE_BLACKLIST_FILTER + ":" + Defaults.ENABLE_BLACKLIST_FILTER_DEFAULT + "}";
 	public static final String FORCE_BLACKLIST_FILTER = "force.blacklist.filter";
 	public static final String $FORCE_BLACKLIST_FILTER_WD = "${" + FORCE_BLACKLIST_FILTER + ":" + Defaults.FORCE_BLACKLIST_FILTER_DEFAULT + "}";
 	public static final String BLACKLIST_CHECK_EXCLUDE_LIST = "blacklist.check.exclude.list";
@@ -126,6 +127,8 @@ public final class Constants {
 	public static final String AUTHENTICATION_PREFIX_AUTHENTICATOR_KEY = "AUTHENTICATOR-KEY";
 	public static final String AUTHENTICATION_PREFIX_SYSTEM = "SYSTEM";
 	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
+
+	public static final String AUTHORIZATION_TOKEN_TYPE_SUFFIX = "TOKEN_AUTH";
 
 	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
 	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
