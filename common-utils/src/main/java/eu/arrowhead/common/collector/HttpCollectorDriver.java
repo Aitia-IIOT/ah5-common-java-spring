@@ -187,11 +187,11 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final String intfTemplateName = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
 
 		// try to lookup for dynamic orchestration service
-		orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION);
+		orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_SERVICE_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION);
 
 		// if unsuccessful, try to lookup for flexible store orchestration service
 		if (orchestrationCache == null) {
-			orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION);
+			orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_SERVICE_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION);
 		}
 	}
 
