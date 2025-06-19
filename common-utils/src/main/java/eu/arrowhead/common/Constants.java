@@ -251,10 +251,10 @@ public final class Constants {
 	public static final String SERVICE_DEF_BLACKLIST_MANAGEMENT = "blacklistManagement";
 	public static final String SERVICE_DEF_MONITOR = "monitor";
 
-	public static final String SERVICE_DEF_ORCHESTRATION = "orchestration";
-	public static final String SERVICE_DEF_ORCHESTRATION_PUSH_MANAGEMENT = "orchestrationPushManagement";
-	public static final String SERVICE_DEF_ORCHESTRATION_LOCK_MANAGEMENT = "orchestrationLockManagement";
-	public static final String SERVICE_DEF_ORCHESTRATION_HISTORY_MANAGEMENT = "orchestrationHistoryManagement";
+	public static final String SERVICE_DEF_SERVICE_ORCHESTRATION = "serviceOrchestration";
+	public static final String SERVICE_DEF_SERVICE_ORCHESTRATION_PUSH_MANAGEMENT = "serviceOrchestrationPushManagement";
+	public static final String SERVICE_DEF_SERVICE_ORCHESTRATION_LOCK_MANAGEMENT = "serviceOrchestrationLockManagement";
+	public static final String SERVICE_DEF_SERVICE_ORCHESTRATION_HISTORY_MANAGEMENT = "serviceOrchestrationHistoryManagement";
 
 	public static final String SERVICE_DEF_IDENTITY = "identity";
 	public static final String SERVICE_DEF_IDENTITY_MANAGEMENT = "identityManagement";
