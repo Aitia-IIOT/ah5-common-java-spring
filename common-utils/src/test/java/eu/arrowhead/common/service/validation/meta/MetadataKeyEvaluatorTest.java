@@ -18,6 +18,27 @@ public class MetadataKeyEvaluatorTest {
 
 	//-------------------------------------------------------------------------------------------------
 	@Test
+	public void getMetadataValueForEmptyInputs() {
+		assertAll("Empty inputs",
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(null, "key")),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(Map.of(), "key")),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(Map.of("key", "text"), null)),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(Map.of("key", "text"), "")));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	public void getMetadataValueForWrongInputs() {
+		assertAll("Wrong inputs",
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(Map.of("key", List.of()), "key.subkey")),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(Map.of("key", List.of()), "otherkey[0]")),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(Map.of("key", Map.of()), "key[1]"))
+
+		);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
 	public void getMetadataValueForCompositeKeySimpleKeyText() {
 		final String key = "key";
 		final Map<String, Object> map = Map.of("key", "text");
@@ -106,6 +127,18 @@ public class MetadataKeyEvaluatorTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	@SuppressWarnings("checkstyle:magicnumber")
+	public void getMetadataValueForCompositeKeyNoArrayAccessor() {
+		final Map<String, Object> map = Map.of("key", List.of(1, 2));
+
+		assertAll("Composite key (not array accessor)",
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(map, "otherkey")),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(map, "other[]key")),
+				() -> assertNull(MetadataKeyEvaluator.getMetadataValueForCompositeKey(map, "otherkey[]")));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	@SuppressWarnings("checkstyle:magicnumber")
 	public void getMetadataValueForCompositeKeyExistingCompositeKeyArrayAccessor() {
 		final String key = "key[1]";
 		final Map<String, Object> map = Map.of("key", List.of(1, 2));
@@ -153,7 +186,7 @@ public class MetadataKeyEvaluatorTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	@SuppressWarnings("checkstyle:magicnumber")
-	public void getMetadataValueForCompositeKeySimpleKeyWtihBrackets() {
+	public void getMetadataValueForCompositeKeySimpleKeyWithBrackets() {
 		final String key = "key[text]";
 		final Map<String, Object> map = Map.of("key[text]", 10);
 		final Object value = MetadataKeyEvaluator.getMetadataValueForCompositeKey(map, key);
