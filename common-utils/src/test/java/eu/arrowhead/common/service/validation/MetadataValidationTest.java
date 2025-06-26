@@ -1,9 +1,11 @@
 package eu.arrowhead.common.service.validation;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,14 +31,20 @@ public class MetadataValidationTest {
 	public void isMetadataValid() {
 		final Map<String, Object> simpleMetadata = Map.of(KEY, VALUE);
 		final Map<String, Object> mapMetadata = Map.of(KEY, Map.of(KEY, VALUE));
+		final Map<String, Object> mapMetadata2 = Map.of(KEY, Map.of(1, 2));
+		final Map<String, Object> nullValuedMap = new HashMap<>();
+		nullValuedMap.put(KEY, null);
+		final Map<String, Object> mapMetadata3 = Map.of(KEY, nullValuedMap);
 		final Map<String, Object> listMetadata = Map.of(KEY, List.of(VALUE, VALUE));
 		final Map<String, Object> mapInListMetadata = Map.of(KEY, List.of(Map.of(KEY, VALUE), Map.of(KEY, VALUE)));
 
 		assertAll(
-			() -> MetadataValidation.validateMetadataKey(simpleMetadata),
-			() -> MetadataValidation.validateMetadataKey(mapMetadata),
-			() -> MetadataValidation.validateMetadataKey(listMetadata),
-			() -> MetadataValidation.validateMetadataKey(mapInListMetadata));
+				() -> assertDoesNotThrow(() -> MetadataValidation.validateMetadataKey(simpleMetadata)),
+				() -> assertDoesNotThrow(() -> MetadataValidation.validateMetadataKey(mapMetadata)),
+				() -> assertDoesNotThrow(() -> MetadataValidation.validateMetadataKey(listMetadata)),
+				() -> assertDoesNotThrow(() -> MetadataValidation.validateMetadataKey(mapInListMetadata)),
+				() -> assertDoesNotThrow(() -> MetadataValidation.validateMetadataKey(mapMetadata2)),
+				() -> assertDoesNotThrow(() -> MetadataValidation.validateMetadataKey(mapMetadata3)));
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -44,11 +52,11 @@ public class MetadataValidationTest {
 	public void isKeyInvalid() {
 		final Map<String, Object> invalidMetadata = Map.of(INVALID_KEY, VALUE);
 
-        final Throwable ex = assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidMetadata);
-        });
+		final Throwable ex = assertThrows(InvalidParameterException.class, () -> {
+			MetadataValidation.validateMetadataKey(invalidMetadata);
+		});
 
-        assertEquals(EXPECTED_ERROR_MESSAGE, ex.getMessage());
+		assertEquals(EXPECTED_ERROR_MESSAGE, ex.getMessage());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -58,17 +66,17 @@ public class MetadataValidationTest {
 		final Map<String, Object> invalidMapMetadata_LongerMap = Map.of(KEY, Map.of(KEY, VALUE, INVALID_KEY, VALUE));
 		final Map<String, Object> invalidMapMetadata_MapInMap = Map.of(KEY, Map.of(KEY, Map.of(INVALID_KEY, VALUE)));
 
-        assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidMapMetadata);
-        });
+		assertThrows(InvalidParameterException.class, () -> {
+			MetadataValidation.validateMetadataKey(invalidMapMetadata);
+		});
 
-        assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidMapMetadata_LongerMap);
-        });
+		assertThrows(InvalidParameterException.class, () -> {
+			MetadataValidation.validateMetadataKey(invalidMapMetadata_LongerMap);
+		});
 
-        assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidMapMetadata_MapInMap);
-        });
+		assertThrows(InvalidParameterException.class, () -> {
+			MetadataValidation.validateMetadataKey(invalidMapMetadata_MapInMap);
+		});
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -78,22 +86,21 @@ public class MetadataValidationTest {
 		final Map<String, Object> invalidListMetadata_ListInList = Map.of(KEY, List.of(List.of(Map.of(KEY, VALUE), Map.of(INVALID_KEY, VALUE))));
 
 		assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidListMetadata);
-        });
+			MetadataValidation.validateMetadataKey(invalidListMetadata);
+		});
 
-        assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidListMetadata_ListInList);
-        });
+		assertThrows(InvalidParameterException.class, () -> {
+			MetadataValidation.validateMetadataKey(invalidListMetadata_ListInList);
+		});
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void isVeryComplicatedMetadataInvalid() {
-		final Map<String, Object> invalidVeryComplicatedMetadata =
-				Map.of(KEY, List.of(List.of(KEY, Map.of(KEY, VALUE), Map.of(KEY, Map.of(KEY, List.of(Map.of(KEY, VALUE), Map.of(KEY, VALUE, INVALID_KEY, VALUE)))))));
+		final Map<String, Object> invalidVeryComplicatedMetadata = Map.of(KEY, List.of(List.of(KEY, Map.of(KEY, VALUE), Map.of(KEY, Map.of(KEY, List.of(Map.of(KEY, VALUE), Map.of(KEY, VALUE, INVALID_KEY, VALUE)))))));
 
 		assertThrows(InvalidParameterException.class, () -> {
-        	MetadataValidation.validateMetadataKey(invalidVeryComplicatedMetadata);
-        });
+			MetadataValidation.validateMetadataKey(invalidVeryComplicatedMetadata);
+		});
 	}
 }
