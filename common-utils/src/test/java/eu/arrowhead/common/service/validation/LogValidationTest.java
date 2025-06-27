@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,7 @@ public class LogValidationTest {
 	// members
 
 	@InjectMocks
-	private final LogValidation validator = new LogValidation();
+	private LogValidation validator;
 
 	@Mock
 	private PageValidator pageValidator;
@@ -82,8 +84,106 @@ public class LogValidationTest {
 
 	//-------------------------------------------------------------------------------------------------
 	@Test
+	public void testValidateLogRequestInvalidInterval() {
+		doNothing().when(pageValidator).validatePageParameter(any(PageDTO.class), anyList(), eq("test"));
+
+		final PageDTO pageDto = new PageDTO(0, 10, "ASC", "logId");
+		final LogRequestDTO request = new LogRequestDTO(
+				pageDto,
+				"2025-06-26T12:00:00Z",
+				"2025-06-26T10:00:00Z",
+				null,
+				null);
+
+		final Throwable ex = assertThrows(
+				InvalidParameterException.class,
+				() -> validator.validateLogRequest(request, "test"));
+
+		verify(pageValidator).validatePageParameter(pageDto, LogEntity.SORTABLE_FIELDS_BY, "test");
+
+		assertEquals("Invalid time interval", ex.getMessage());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	public void testValidateLogRequestInvalidSeverity() {
+		doNothing().when(pageValidator).validatePageParameter(any(PageDTO.class), anyList(), eq("test"));
+
+		final PageDTO pageDto = new PageDTO(0, 10, "ASC", "logId");
+		final LogRequestDTO request = new LogRequestDTO(
+				pageDto,
+				null,
+				null,
+				"KOMOLY",
+				null);
+
+		final Throwable ex = assertThrows(
+				InvalidParameterException.class,
+				() -> validator.validateLogRequest(request, "test"));
+
+		verify(pageValidator).validatePageParameter(pageDto, LogEntity.SORTABLE_FIELDS_BY, "test");
+
+		assertTrue(ex.getMessage().startsWith("Invalid severity is specified. Allowed values are: "));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
 	public void testValidateLogRequestOk() {
+		doNothing().when(pageValidator).validatePageParameter(any(PageDTO.class), anyList(), eq("test"));
+		final PageDTO pageDto = new PageDTO(0, 10, "ASC", "logId");
+
 		assertAll("valid log request",
-				() -> assertDoesNotThrow(() -> validator.validateLogRequest(null, "test")));
+				() -> assertDoesNotThrow(() -> validator.validateLogRequest(null, "test")),
+				() -> assertDoesNotThrow(() -> {
+					final LogRequestDTO request = new LogRequestDTO(
+							pageDto,
+							null,
+							"2025-06-26T10:00:00Z",
+							null,
+							null);
+					validator.validateLogRequest(request, "test");
+
+					verify(pageValidator).validatePageParameter(pageDto, LogEntity.SORTABLE_FIELDS_BY, "test");
+
+				}),
+				() -> assertDoesNotThrow(() -> {
+					final LogRequestDTO request = new LogRequestDTO(
+							pageDto,
+							"2025-06-26T10:00:00Z",
+							null,
+							"",
+							null);
+					validator.validateLogRequest(request, "test");
+
+					verify(pageValidator, times(2)).validatePageParameter(pageDto, LogEntity.SORTABLE_FIELDS_BY, "test");
+
+				}),
+				() -> assertDoesNotThrow(() -> {
+					final LogRequestDTO request = new LogRequestDTO(
+							pageDto,
+							"2025-06-26T10:00:00Z",
+							"2025-06-26T11:00:00Z",
+							"",
+							null);
+					validator.validateLogRequest(request, "test");
+
+					verify(pageValidator, times(3)).validatePageParameter(pageDto, LogEntity.SORTABLE_FIELDS_BY, "test");
+
+				}),
+				() -> assertDoesNotThrow(() -> {
+					final LogRequestDTO request = new LogRequestDTO(
+							pageDto,
+							"2025-06-26T10:00:00Z",
+							"2025-06-26T11:00:00Z",
+							"ERROR",
+							null);
+					validator.validateLogRequest(request, "test");
+
+					verify(pageValidator, times(4)).validatePageParameter(pageDto, LogEntity.SORTABLE_FIELDS_BY, "test");
+
+				})
+
+		);
 	}
 }

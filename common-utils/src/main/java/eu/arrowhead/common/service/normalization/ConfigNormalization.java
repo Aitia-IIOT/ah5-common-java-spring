@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import eu.arrowhead.common.Utilities;
+
 @Service
 public class ConfigNormalization {
 
@@ -22,10 +24,14 @@ public class ConfigNormalization {
 	public List<String> normalizeConfigKeyList(final List<String> keys) {
 		logger.debug("normalizeConfigKeyList started");
 
+		if (Utilities.isEmpty(keys)) {
+			return List.of();
+		}
+
 		return keys
-			.stream()
-			.distinct()
-			.map(k -> k.trim())
-			.collect(Collectors.toList());
+				.stream()
+				.map(k -> k.trim())
+				.distinct()
+				.collect(Collectors.toList());
 	}
 }
