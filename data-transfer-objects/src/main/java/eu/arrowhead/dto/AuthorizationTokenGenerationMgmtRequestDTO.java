@@ -1,7 +1,7 @@
 package eu.arrowhead.dto;
 
 public record AuthorizationTokenGenerationMgmtRequestDTO(
-		String tokenType,
+		String tokenVariant,
 		String targetType,
 		String consumerCloud,
 		String consumer,
