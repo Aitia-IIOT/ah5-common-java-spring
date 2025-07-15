@@ -176,6 +176,9 @@ public class AddressValidatorTest {
 				() -> assertDoesNotThrow(() -> {
 					addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "a.b.c");
 				}),
+				() -> assertDoesNotThrow(() -> {
+					addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "123x.10.20.30");
+				}),
 				// invalid hostname
 				() -> assertThrows(InvalidParameterException.class, () -> {
 					addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "example..com");
@@ -203,6 +206,9 @@ public class AddressValidatorTest {
 					addressValidator.validateNormalizedAddress(AddressType.HOSTNAME,
 							"too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long."
 									+ "too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.too-long.com");
+				}),
+				() -> assertThrows(InvalidParameterException.class, () -> {
+					addressValidator.validateNormalizedAddress(AddressType.HOSTNAME, "300.1.10.12");
 				}));
 	}
 
