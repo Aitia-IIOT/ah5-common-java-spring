@@ -33,7 +33,7 @@ public class VersionValidator {
 
 		// check size
 		if (version.length() > Constants.SYSTEM_VERSION_MAX_LENGTH) {
-			throw new InvalidParameterException(ERROR_MSG_PREFIX + "version length is too long");
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + "version is too long");
 		}
 
 		// check the number of the dot characters
@@ -49,7 +49,7 @@ public class VersionValidator {
 
 		for (int i = 0; i < chunksOfVersion.length; ++i) {
 			if (!DIGITS_ONLY_PATTERN.matcher(chunksOfVersion[i]).matches()) {
-				throw new InvalidParameterException(ERROR_MSG_PREFIX + "the version should only contain numbers and separator dot characters");
+				throw new InvalidParameterException(ERROR_MSG_PREFIX + "the version should only contain numbers and separator " + DOT + " characters");
 			}
 		}
 	}

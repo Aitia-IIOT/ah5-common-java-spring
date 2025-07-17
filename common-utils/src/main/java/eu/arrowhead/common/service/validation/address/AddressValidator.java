@@ -19,6 +19,7 @@ public class AddressValidator {
 	//=================================================================================================
 	// members
 
+	private static final String DELIMITER_DOT_REGEX = "\\.";
 	private static final String ERROR_MSG_PREFIX = "Address verification failure: ";
 	private static final String IPV4_REGEX_STRING = "\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
 	private static final String IPV6_REGEX_STRING = "^([0-9a-fA-F]{4}:){7}[0-9a-fA-F]{4}$";
@@ -174,7 +175,7 @@ public class AddressValidator {
 		// Could not filter out directed broadcast (cannot determine it without the subnet mask)
 
 		// Filter out multicast (Class D: 224.0.0.0 - 239.255.255.255)
-		final String[] octets = address.split("\\.");
+		final String[] octets = address.split(DELIMITER_DOT_REGEX);
 		final Integer firstOctet = Integer.valueOf(octets[0]);
 		if (firstOctet >= IPV4_MULTICAST_1ST_OCTET_START && firstOctet <= IPV4_MULTICAST_1ST_OCTET_END) {
 			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " IPv4 address is invalid: multicast addresses are denied");
@@ -225,6 +226,14 @@ public class AddressValidator {
 		}
 
 		if (!hostnamePattern.matcher(address).matches()) {
+			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " is not a hostname");
+		}
+
+		// Filter out host names that has highest-level component which only contains digits
+		final String hlComponent = address.split(DELIMITER_DOT_REGEX)[0];
+		boolean isHlComponentNumber = !hlComponent.chars().anyMatch(c -> Character.isAlphabetic(c));
+
+		if (isHlComponentNumber) {
 			throw new InvalidParameterException(ERROR_MSG_PREFIX + address + " is not a hostname");
 		}
 

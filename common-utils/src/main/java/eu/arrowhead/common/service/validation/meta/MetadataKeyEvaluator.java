@@ -54,7 +54,7 @@ public final class MetadataKeyEvaluator {
 					if (map.containsKey(pair.getKey())) {
 						// map value has to be a list
 						final List<?> list = castToList(map.get(pair.getKey()));
-						if (list.size() > pair.getValue()) {
+						if (list != null && list.size() > pair.getValue()) {
 							return list.get(pair.getValue().intValue());
 						}
 					}
@@ -80,7 +80,7 @@ public final class MetadataKeyEvaluator {
 		final int openIdx = key.indexOf(IDX_PREFIX);
 		final int endIdx = key.indexOf(IDX_SUFFIX);
 
-		return openIdx != -1 && endIdx == key.length() - 1 && endIdx > openIdx && openIdx != endIdx - 1;
+		return openIdx != -1 && endIdx == key.length() - 1 && openIdx != endIdx - 1;
 	}
 
 	//-------------------------------------------------------------------------------------------------

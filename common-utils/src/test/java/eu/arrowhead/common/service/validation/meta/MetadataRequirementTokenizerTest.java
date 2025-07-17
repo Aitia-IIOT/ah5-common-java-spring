@@ -87,6 +87,23 @@ public class MetadataRequirementTokenizerTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	@SuppressWarnings("checkstyle:magicnumber")
+	public void parseRequirementsDefaultWithMap2() {
+		final MetadataRequirementDTO req = new MetadataRequirementDTO();
+		req.put("key", Map.of("subkey", "something", "op", "UNKNOWN"));
+
+		final List<MetadataRequirementExpression> expressions = MetadataRequirementTokenizer.parseRequirements(req);
+		assertAll("Default requirement with map",
+				() -> assertNotNull(expressions),
+				() -> assertEquals(1, expressions.size()),
+				() -> assertEquals("key", expressions.get(0).keyPath()),
+				() -> assertEquals(MetaOps.EQUALS, expressions.get(0).operation()),
+				() -> assertInstanceOf(Map.class, expressions.get(0).value()),
+				() -> assertEquals(2, ((Map<?, ?>) expressions.get(0).value()).size()));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	@SuppressWarnings("checkstyle:magicnumber")
 	public void parseRequirementsInvalidOperation() {
 		final MetadataRequirementDTO req = new MetadataRequirementDTO();
 		req.put("key", Map.of("op", "NOT_IMPLEMENTED", "value", List.of(1, 2, 3)));

@@ -46,11 +46,11 @@ public abstract class DefaultSwaggerConfig implements WebMvcConfigurer {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	// TODO: add Licence name here
 	protected License apiLicence() {
 		return new License()
-				.name("Licence: TODO")
-				.url("");
+				.name("Eclipse Public License 2.0")
+				.url("http://www.eclipse.org/legal/epl-2.0")
+				.identifier("EPL-2.0");
 	}
 
 	//-------------------------------------------------------------------------------------------------

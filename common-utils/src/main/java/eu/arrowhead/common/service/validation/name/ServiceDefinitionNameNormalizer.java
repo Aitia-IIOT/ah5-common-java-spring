@@ -50,10 +50,10 @@ public class ServiceDefinitionNameNormalizer {
 	private String transformName(final String name) {
 		logger.debug("ServiceDefinitionNameNormalizer.transformName started...");
 
-		// replace all delimiter chunks (hyphens and underscores) with a single underscore
-		String result = name.replaceAll(NormalizationUtils.DELIMITER_REGEXP, NormalizationUtils.UNDERSCORE);
 		// replaces chunks of one or more consecutive whitespaces with a single underscore
-		result = result.replaceAll(NormalizationUtils.WHITESPACE_REGEXP, NormalizationUtils.UNDERSCORE);
+		String result = name.replaceAll(NormalizationUtils.WHITESPACE_REGEXP, NormalizationUtils.UNDERSCORE);
+		// replace all delimiter chunks (hyphens and underscores) with a single underscore
+		result = result.replaceAll(NormalizationUtils.DELIMITER_REGEXP, NormalizationUtils.UNDERSCORE);
 
 		return NormalizationUtils.convertSnakeCaseToCamelCase(result);
 	}
