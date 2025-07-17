@@ -93,7 +93,7 @@ public class OutsourcedLoginJobTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void testExecuteAuthExceptionHandled() throws SchedulerException {
-		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow()));
+		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow().minusMinutes(1)));
 		when(systemInfo.getSystemName()).thenReturn("TestSystem");
 		when(systemInfo.getAuthenticatorCredentials()).thenReturn(Map.of("password", "12345"));
 		when(httpService.consumeService(eq("identity"), eq("identity-login"), eq(IdentityLoginResponseDTO.class), any(IdentityRequestDTO.class))).thenThrow(new AuthException("test"));
@@ -112,7 +112,7 @@ public class OutsourcedLoginJobTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void testExecuteSchedulerExceptionAfterAuthException() throws SchedulerException {
-		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow()));
+		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow().minusMinutes(1)));
 		when(systemInfo.getSystemName()).thenReturn("TestSystem");
 		when(systemInfo.getAuthenticatorCredentials()).thenReturn(Map.of("password", "12345"));
 		when(httpService.consumeService(eq("identity"), eq("identity-login"), eq(IdentityLoginResponseDTO.class), any(IdentityRequestDTO.class))).thenThrow(new AuthException("test"));

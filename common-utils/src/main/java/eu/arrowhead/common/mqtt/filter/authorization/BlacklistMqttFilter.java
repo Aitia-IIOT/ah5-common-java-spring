@@ -62,10 +62,13 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 
 		// if requester is sysop, no need for check
 		final boolean isSysop = request.isSysOp();
+		if (isSysop) {
+			return;
+		}
 
 		// if request is for lookup for authentication, no need for check
 		final boolean isAuthLookup = isAuthenticationLookup(request);
-		if (!isSysop && !isAuthLookup) {
+		if (!isAuthLookup) {
 			logger.debug("checking Blacklist");
 			try {
 				final String systemName = request.getRequester();
@@ -89,6 +92,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 			} catch (final ArrowheadException ex) {
 				logger.error("Blacklist server is not available");
 				logger.debug("Strict blacklist filter: " + force);
+				logger.debug(ex);
 				if (force) {
 					throw new ForbiddenException("Blacklist system is not available, the system might be blacklisted");
 				}
@@ -152,6 +156,7 @@ public class BlacklistMqttFilter implements ArrowheadMqttFilter {
 			// dto is null or the requester is not (only) looking for the identity
 			return false;
 		}
+
 		return true;
 	}
 }
