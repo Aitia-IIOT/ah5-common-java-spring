@@ -74,7 +74,7 @@ public class ArrowheadMqttService {
 			return subscriptionHandler.addSubscription(topic);
 		} catch (final MqttException ex) {
 			logger.debug(ex);
-			throw new ExternalServerError("MQTT service publish failed: " + ex.getMessage());
+			throw new ExternalServerError("MQTT subscribe failed: " + ex.getMessage());
 		}
 	}
 

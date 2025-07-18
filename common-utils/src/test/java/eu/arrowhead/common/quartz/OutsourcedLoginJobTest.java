@@ -134,7 +134,7 @@ public class OutsourcedLoginJobTest {
 	public void testExecuteRenewalOk() throws SchedulerException {
 		ReflectionTestUtils.setField(job, "interval", 10000);
 		final Map<String, Object> context = new HashMap<>();
-		context.put("identity-renewal-threshold", Utilities.utcNow());
+		context.put("identity-renewal-threshold", Utilities.utcNow().minusMinutes(1));
 		final IdentityLoginResponseDTO response = new IdentityLoginResponseDTO(
 				"testToken",
 				"2025-07-16T12:00:00Z");

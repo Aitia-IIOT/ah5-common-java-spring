@@ -505,7 +505,7 @@ public class BlacklistMqttFilterTest {
 	// nested classes
 
 	//-------------------------------------------------------------------------------------------------
-	public class DummyMqttInterfaceModel implements InterfaceModel {
+	public static class DummyMqttInterfaceModel implements InterfaceModel {
 		private String name;
 
 		//-------------------------------------------------------------------------------------------------
