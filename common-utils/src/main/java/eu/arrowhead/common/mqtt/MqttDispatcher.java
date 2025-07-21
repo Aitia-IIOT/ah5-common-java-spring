@@ -40,8 +40,8 @@ public class MqttDispatcher {
 	protected void addTopic(final String topic) {
 		Assert.isTrue(!Utilities.isEmpty(topic), "topic is empty");
 
-		fullTopicSet.add(topic);
 		final String baseTopic = getBaseTopic(topic);
+		fullTopicSet.add(topic);
 
 		if (baseTopicQueueMap.containsKey(baseTopic)) {
 			return;
@@ -49,6 +49,7 @@ public class MqttDispatcher {
 
 		final Optional<MqttTopicHandler> handlerOpt = handlers.stream().filter(h -> h.baseTopic().equals(baseTopic)).findFirst();
 		if (handlerOpt.isEmpty()) {
+			fullTopicSet.remove(topic);
 			throw new IllegalArgumentException("No service handler exists for topic: " + topic);
 		}
 

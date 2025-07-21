@@ -230,15 +230,15 @@ public class MqttHandlerUtilsTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void testSuccessResponseOk() {
-		final MqttRequestModel request = new MqttRequestModel("test/", "test-operation", new MqttRequestTemplate("trace", "auth", "response", 0, Map.of(), "payload"));
+		final MqttRequestModel request = new MqttRequestModel("test/", "test-operation", new MqttRequestTemplate("trace", "auth", "response", 2, Map.of(), "payload"));
 		request.setRequester("requester");
 		final String response = "ACK";
 
-		doNothing().when(ahMqttService).response("requester", "response", "trace", MqttQoS.valueOf(0), MqttStatus.OK, response);
+		doNothing().when(ahMqttService).response("requester", "response", "trace", MqttQoS.valueOf(2), MqttStatus.OK, response);
 
 		assertDoesNotThrow(() -> utils.successResponse(request, MqttStatus.OK, response));
 
-		verify(ahMqttService).response("requester", "response", "trace", MqttQoS.valueOf(0), MqttStatus.OK, response);
+		verify(ahMqttService).response("requester", "response", "trace", MqttQoS.valueOf(2), MqttStatus.OK, response);
 	}
 
 	//-------------------------------------------------------------------------------------------------
