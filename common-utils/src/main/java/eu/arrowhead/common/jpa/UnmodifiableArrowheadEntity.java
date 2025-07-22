@@ -59,7 +59,7 @@ public abstract class UnmodifiableArrowheadEntity {
 			return false;
 		}
 
-		final ArrowheadEntity other = (ArrowheadEntity) obj;
+		final UnmodifiableArrowheadEntity other = (UnmodifiableArrowheadEntity) obj;
 		return id == other.id;
 	}
 
