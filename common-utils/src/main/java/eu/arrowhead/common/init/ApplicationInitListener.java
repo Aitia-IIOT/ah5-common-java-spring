@@ -101,6 +101,7 @@ public abstract class ApplicationInitListener {
 		}
 
 		if (sysInfo.isSslEnabled()) {
+			checkSSLProperties();
 			final KeyStore keyStore = initializeKeyStore();
 			obtainKeys(keyStore);
 			if (sysInfo.getAuthenticationPolicy() == AuthenticationPolicy.CERTIFICATE) {
@@ -170,43 +171,26 @@ public abstract class ApplicationInitListener {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private KeyStore initializeKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		logger.debug("initializeKeyStore started...");
-		Assert.isTrue(sysInfo.isSslEnabled(), "SSL is not enabled");
+	private void checkSSLProperties() {
+		logger.debug("checkSSLProperties started...");
+
 		final String messageNotDefined = " is not defined";
 		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
 		Assert.notNull(sysInfo.getSslProperties().getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
 		Assert.isTrue(sysInfo.getSslProperties().getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
 		Assert.notNull(sysInfo.getSslProperties().getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
+		Assert.isTrue(!Utilities.isEmpty(sysInfo.getSslProperties().getKeyAlias()), Constants.SERVER_SSL_KEY__ALIAS + messageNotDefined);
+		Assert.notNull(sysInfo.getSslProperties().getKeyPassword(), Constants.SERVER_SSL_KEY__PASSWORD + messageNotDefined);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private KeyStore initializeKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		logger.debug("initializeKeyStore started...");
 
 		final KeyStore keystore = KeyStore.getInstance(sysInfo.getSslProperties().getKeyStoreType());
 		keystore.load(sysInfo.getSslProperties().getKeyStore().getInputStream(), sysInfo.getSslProperties().getKeyStorePassword().toCharArray());
 
 		return keystore;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	private void checkServerCertificate(final KeyStore keyStore) {
-		logger.debug("checkServerCertificate started...");
-
-		final X509Certificate serverCertificate = (X509Certificate) arrowheadContext.get(Constants.SERVER_CERTIFICATE);
-		final CommonNameAndType serverData = SecurityUtilities.getIdentificationDataFromSubjectDN(serverCertificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
-
-		if (serverData == null) {
-			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, common name and profile type not found");
-		}
-		if (CertificateProfileType.SYSTEM != serverData.profileType()) {
-			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, invalid profile type: " + serverData.profileType());
-		}
-
-		if (!SecurityUtilities.isValidSystemCommonName(serverData.commonName())) {
-			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have {} parts", serverData.commonName(), Constants.SYSTEM_CERT_CN_LENGTH);
-			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have "
-					+ Constants.SYSTEM_CERT_CN_LENGTH + " parts");
-		}
-		logger.info("Server CN: {}", serverData.commonName());
-
-		arrowheadContext.put(Constants.SERVER_COMMON_NAME, serverData.commonName());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -227,6 +211,32 @@ public abstract class ApplicationInitListener {
 			throw new ServiceConfigurationError("Cannot find private key in the specified key store");
 		}
 		arrowheadContext.put(Constants.SERVER_PRIVATE_KEY, privateKey);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void checkServerCertificate(final KeyStore keyStore) {
+		logger.debug("checkServerCertificate started...");
+
+		final X509Certificate serverCertificate = (X509Certificate) arrowheadContext.get(Constants.SERVER_CERTIFICATE);
+		final CommonNameAndType serverData = SecurityUtilities.getIdentificationDataFromSubjectDN(serverCertificate.getSubjectX500Principal().getName(X500Principal.RFC2253));
+
+		if (serverData == null) {
+			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, common name and profile type not found");
+		}
+
+		if (CertificateProfileType.SYSTEM != serverData.profileType()) {
+			throw new AuthException("Server certificate is not compliant with the Arrowhead certificate structure, invalid profile type: " + serverData.profileType());
+		}
+
+		if (!SecurityUtilities.isValidSystemCommonName(serverData.commonName())) {
+			logger.error("Server CN ({}) is not compliant with the Arrowhead certificate structure, since it does not have {} parts", serverData.commonName(), Constants.SYSTEM_CERT_CN_LENGTH);
+			throw new AuthException("Server CN (" + serverData.commonName() + ") is not compliant with the Arrowhead certificate structure, since it does not have "
+					+ Constants.SYSTEM_CERT_CN_LENGTH + " parts");
+		}
+
+		logger.info("Server CN: {}", serverData.commonName());
+
+		arrowheadContext.put(Constants.SERVER_COMMON_NAME, serverData.commonName());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -294,6 +304,7 @@ public abstract class ApplicationInitListener {
 				logger.info("ServiceRegistry is accessible...");
 				break;
 			} catch (final ForbiddenException | AuthException ex) {
+				// should never happen
 				throw ex;
 			} catch (final ArrowheadException ex) {
 				if (i >= retries) {

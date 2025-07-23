@@ -26,10 +26,10 @@ public class NotEmptyAddressListValidator implements IPropertyValidator {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	@Autowired
-	private AddressNormalizer normalizer;
+	private AddressNormalizer addressNormalizer;
 
 	@Autowired
-	private AddressValidator validator;
+	private AddressValidator addressValidator;
 
 	//=================================================================================================
 	// methods
@@ -72,14 +72,14 @@ public class NotEmptyAddressListValidator implements IPropertyValidator {
 	private String validateAndNormalizeAddress(final String addressStr) throws InvalidParameterException {
 		logger.debug("NotEmptyAddressListValidator.validateAndNormalizeAddress started...");
 
-		final String normalized = normalizer.normalize(addressStr);
-		final AddressType addressType = validator.detectType(normalized);
+		final String normalized = addressNormalizer.normalize(addressStr);
+		final AddressType addressType = addressValidator.detectType(normalized);
 
 		if (!acceptableAddressTypes.contains(addressType)) {
 			throw new InvalidParameterException("Unacceptable address type in property value: " + addressType.name());
 		}
 
-		validator.validateNormalizedAddress(addressType, normalized);
+		addressValidator.validateNormalizedAddress(addressType, normalized);
 
 		return normalized;
 	}
