@@ -130,11 +130,21 @@ public abstract class ApplicationInitListener {
 
 		try {
 			customDestroy();
+		} catch (final Throwable t) {
+			logger.error(t.getMessage());
+			logger.debug(t);
+		}
 
+		try {
 			if (sysInfo.isMqttApiEnabled()) {
 				mqttController.disconnect();
 			}
+		} catch (final Throwable t) {
+			logger.error(t.getMessage());
+			logger.debug(t);
+		}
 
+		try {
 			// logout attempt
 			if (AuthenticationPolicy.OUTSOURCED == sysInfo.getAuthenticationPolicy()) {
 				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_IDENTITY, Constants.SERVICE_OP_IDENTITY_LOGOUT, Void.TYPE, getLogoutPayload());
@@ -351,7 +361,7 @@ public abstract class ApplicationInitListener {
 				arrowheadHttpService.consumeService(Constants.SERVICE_DEF_SERVICE_DISCOVERY, Constants.SERVICE_OP_REVOKE, Constants.SYS_NAME_SERVICE_REGISTRY, Void.class, List.of(serviceInstanceId));
 			}
 
-			logger.info("Core system {} revoked {} service(s)", sysInfo, registeredServices.size());
+			logger.info("Core system {} revoked {} service(s)", sysInfo.getSystemName(), registeredServices.size());
 			registeredServices.clear();
 		} catch (final Throwable t) {
 			logger.error(t.getMessage());

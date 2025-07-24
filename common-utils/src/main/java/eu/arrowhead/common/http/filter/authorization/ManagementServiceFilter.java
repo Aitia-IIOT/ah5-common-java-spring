@@ -14,6 +14,7 @@ import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Defaults;
 import eu.arrowhead.common.SystemInfo;
 import eu.arrowhead.common.Utilities;
+import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.ForbiddenException;
 import eu.arrowhead.common.exception.InternalServerError;
 import eu.arrowhead.common.http.ArrowheadHttpService;
@@ -62,34 +63,38 @@ public class ManagementServiceFilter extends ArrowheadFilter {
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		logger.debug("ManagementServiceFilter.doFilterInternal started...");
 
-		final String requestTarget = request.getRequestURL().toString();
-		if (requestTarget.contains(mgmtPath)) {
-			final String systemName = (String) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM); // already normalized
-			boolean allowed = false;
+		try {
+			final String requestTarget = request.getRequestURL().toString();
+			if (requestTarget.contains(mgmtPath)) {
+				final String systemName = (String) request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM); // already normalized
+				boolean allowed = false;
 
-			switch (sysInfo.getManagementPolicy()) {
-			case SYSOP_ONLY:
-				allowed = isSystemOperator(request);
-				break;
+				switch (sysInfo.getManagementPolicy()) {
+				case SYSOP_ONLY:
+					allowed = isSystemOperator(request);
+					break;
 
-			case WHITELIST:
-				allowed = isSystemOperator(request) || isWhitelisted(systemName);
-				break;
+				case WHITELIST:
+					allowed = isSystemOperator(request) || isWhitelisted(systemName);
+					break;
 
-			case AUTHORIZATION:
-				allowed = isSystemOperator(request) || isWhitelisted(systemName) || isAuthorized(systemName, request.getRequestURI(), request.getMethod());
-				break;
+				case AUTHORIZATION:
+					allowed = isSystemOperator(request) || isWhitelisted(systemName) || isAuthorized(systemName, request.getRequestURI(), request.getMethod());
+					break;
 
-			default:
-				throw new InternalServerError("Unimplemented management policy: " + sysInfo.getManagementPolicy(), requestTarget);
+				default:
+					throw new InternalServerError("Unimplemented management policy: " + sysInfo.getManagementPolicy(), requestTarget);
+				}
+
+				if (!allowed) {
+					throw new ForbiddenException("Requester has no management permission", requestTarget);
+				}
 			}
 
-			if (!allowed) {
-				throw new ForbiddenException("Requester has no management permission", requestTarget);
-			}
+			chain.doFilter(request, response);
+		} catch (final ArrowheadException ex) {
+			handleException(ex, response);
 		}
-
-		super.doFilterInternal(request, response, chain);
 	}
 
 	//-------------------------------------------------------------------------------------------------
