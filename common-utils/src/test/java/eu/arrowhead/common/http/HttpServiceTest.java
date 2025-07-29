@@ -1,15 +1,19 @@
-package eu.arrowhead.common.http;
+package eu.arrowhead.common.http; // checkstyle file length checker can not be suppressed with @SuppressWarnings
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -18,13 +22,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -59,9 +67,15 @@ import eu.arrowhead.dto.enums.ExceptionType;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.el.MethodNotFoundException;
 import reactor.core.publisher.Mono;
+import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.tcp.SslProvider;
+import reactor.netty.tcp.SslProvider.SslContextSpec;
 
 @ExtendWith(MockitoExtension.class)
 public class HttpServiceTest {
@@ -1582,6 +1596,7 @@ public class HttpServiceTest {
 			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
 			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
 			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(false);
 
 			assertNull(ReflectionTestUtils.getField(service, "httpClient"));
 			ReflectionTestUtils.invokeMethod(service, "init");
@@ -1590,9 +1605,473 @@ public class HttpServiceTest {
 			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
 			verify(httpClientMock).doOnConnected(any(Consumer.class));
 			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
 
 			assertEquals(httpClientMock, ReflectionTestUtils.getField(service, "httpClient"));
 		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLKeyStoreTypeEmpty() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("");
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+
+			assertEquals("server.ssl.key-store-type is not defined", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLKeyStoreNull() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(null);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties).getKeyStore();
+
+			assertEquals("server.ssl.key-store is not defined", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLKeyStoreNotExists() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(false);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+
+			assertEquals("server.ssl.key-store file is not found", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLKeyStorePasswordNull() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getKeyStorePassword()).thenReturn(null);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+			verify(sslProperties).getKeyStorePassword();
+
+			assertEquals("server.ssl.key-store-password is not defined", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLKeyPasswordNull() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getKeyStorePassword()).thenReturn("123456");
+			when(sslProperties.getKeyPassword()).thenReturn(null);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+			verify(sslProperties).getKeyStorePassword();
+			verify(sslProperties).getKeyPassword();
+
+			assertEquals("server.ssl.key-password is not defined", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLTrustStoreNull() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getKeyStorePassword()).thenReturn("123456");
+			when(sslProperties.getKeyPassword()).thenReturn("123456");
+			when(sslProperties.getTrustStore()).thenReturn(null);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+			verify(sslProperties).getKeyStorePassword();
+			verify(sslProperties).getKeyPassword();
+			verify(sslProperties).getTrustStore();
+
+			assertEquals("server.ssl.trust-store is not defined", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLTrustStoreNotExists() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+			final Resource trustStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getKeyStorePassword()).thenReturn("123456");
+			when(sslProperties.getKeyPassword()).thenReturn("123456");
+			when(sslProperties.getTrustStore()).thenReturn(trustStoreMock);
+			when(trustStoreMock.exists()).thenReturn(false);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+			verify(sslProperties).getKeyStorePassword();
+			verify(sslProperties).getKeyPassword();
+			verify(sslProperties, times(2)).getTrustStore();
+			verify(trustStoreMock).exists();
+
+			assertEquals("server.ssl.trust-store file is not found", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLTrustStorePasswordNull() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+			final Resource trustStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getKeyStorePassword()).thenReturn("123456");
+			when(sslProperties.getKeyPassword()).thenReturn("123456");
+			when(sslProperties.getTrustStore()).thenReturn(trustStoreMock);
+			when(trustStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getTrustStorePassword()).thenReturn(null);
+
+			final Throwable ex = assertThrows(IllegalArgumentException.class,
+					() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+			verify(sslProperties).getKeyStorePassword();
+			verify(sslProperties).getKeyPassword();
+			verify(sslProperties, times(2)).getTrustStore();
+			verify(trustStoreMock).exists();
+			verify(sslProperties).getTrustStorePassword();
+
+			assertEquals("server.ssl.trust-store-password is not defined", ex.getMessage());
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "unchecked" })
+	@Test
+	public void testInitSSLKeyStoreException() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStoreMock = Mockito.mock(Resource.class);
+			final Resource trustStoreMock = Mockito.mock(Resource.class);
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStoreMock);
+			when(keyStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getKeyStorePassword()).thenReturn("123456");
+			when(sslProperties.getKeyPassword()).thenReturn("123456");
+			when(sslProperties.getTrustStore()).thenReturn(trustStoreMock);
+			when(trustStoreMock.exists()).thenReturn(true);
+			when(sslProperties.getTrustStorePassword()).thenReturn("123456");
+
+			try (MockedStatic<KeyStore> staticMock = Mockito.mockStatic(KeyStore.class)) {
+				staticMock.when(() -> KeyStore.getInstance("pkcs12")).thenThrow(new KeyStoreException("test key store exception"));
+
+				final Throwable ex = assertThrows(UndeclaredThrowableException.class,
+						() -> ReflectionTestUtils.invokeMethod(service, "init"));
+
+				staticMock.verify(() -> KeyStore.getInstance("pkcs12"));
+
+				assertEquals("test key store exception", ex.getCause().getMessage());
+			}
+
+			httpClientStaticMock.verify(() -> HttpClient.create());
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties, times(2)).getKeyStoreType();
+			verify(sslProperties, times(2)).getKeyStore();
+			verify(keyStoreMock).exists();
+			verify(sslProperties).getKeyStorePassword();
+			verify(sslProperties).getKeyPassword();
+			verify(sslProperties, times(2)).getTrustStore();
+			verify(trustStoreMock).exists();
+			verify(sslProperties).getTrustStorePassword();
+
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings({ "checkstyle:nowhitespaceafter", "checkstyle:MagicNumber", "unchecked" })
+	@Test
+	public void testInitSSLOk() {
+		try (MockedStatic<HttpClient> httpClientStaticMock = Mockito.mockStatic(HttpClient.class)) {
+			final HttpClient httpClientMock = Mockito.mock(HttpClient.class);
+			final HttpClient sslClientMock = Mockito.mock(HttpClient.class);
+			final Resource keyStore = new ClassPathResource("certs/ConsumerAuthorization.p12");
+			final Resource trustStore = new ClassPathResource("certs/truststore.p12");
+
+			httpClientStaticMock.when(() -> HttpClient.create()).thenReturn(httpClientMock, sslClientMock);
+			when(httpClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(httpClientMock);
+			when(httpClientMock.doOnConnected(any(Consumer.class))).thenReturn(httpClientMock);
+			when(sslProperties.isSslEnabled()).thenReturn(true);
+			when(sslProperties.getKeyStoreType()).thenReturn("pkcs12");
+			when(sslProperties.getKeyStore()).thenReturn(keyStore);
+			when(sslProperties.getKeyStorePassword()).thenReturn("123456");
+			when(sslProperties.getKeyPassword()).thenReturn("123456");
+			when(sslProperties.getTrustStore()).thenReturn(trustStore);
+			when(sslProperties.getTrustStorePassword()).thenReturn("123456");
+			when(sslClientMock.option(any(ChannelOption.class), anyInt())).thenReturn(sslClientMock);
+			when(sslClientMock.doOnConnected(any(Consumer.class))).thenReturn(sslClientMock);
+			when(sslClientMock.secure(any(Consumer.class))).thenReturn(sslClientMock);
+
+			assertNull(ReflectionTestUtils.getField(service, "httpClient"));
+			assertNull(ReflectionTestUtils.getField(service, "sslClient"));
+			ReflectionTestUtils.invokeMethod(service, "init");
+
+			httpClientStaticMock.verify(() -> HttpClient.create(), times(2));
+			verify(httpClientMock).option(any(ChannelOption.class), anyInt());
+			verify(httpClientMock).doOnConnected(any(Consumer.class));
+			verify(httpClientMock, never()).secure(any(Consumer.class));
+			verify(sslProperties).isSslEnabled();
+			verify(sslProperties, times(4)).getKeyStoreType();
+			verify(sslProperties, times(3)).getKeyStore();
+			verify(sslProperties, times(3)).getKeyStorePassword();
+			verify(sslProperties).getKeyPassword();
+			verify(sslProperties, times(3)).getTrustStore();
+			verify(sslProperties, times(2)).getTrustStorePassword();
+			verify(sslClientMock).option(any(ChannelOption.class), anyInt());
+			verify(sslClientMock).doOnConnected(any(Consumer.class));
+			verify(sslClientMock).secure(any(Consumer.class));
+
+			assertEquals(httpClientMock, ReflectionTestUtils.getField(service, "httpClient"));
+			assertEquals(sslClientMock, ReflectionTestUtils.getField(service, "sslClient"));
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
+	public void testInitConnectionHandlers() {
+		ReflectionTestUtils.setField(service, "socketTimeout", 12345);
+		final Connection connMock = Mockito.mock(Connection.class);
+
+		when(connMock.addHandlerLast(any(ReadTimeoutHandler.class))).thenReturn(connMock);
+		when(connMock.addHandlerLast(any(WriteTimeoutHandler.class))).thenReturn(connMock);
+
+		assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(service, "initConnectionHandlers", connMock));
+
+		final ArgumentCaptor<ReadTimeoutHandler> readCaptor = ArgumentCaptor.forClass(ReadTimeoutHandler.class);
+		final ArgumentCaptor<WriteTimeoutHandler> writeCaptor = ArgumentCaptor.forClass(WriteTimeoutHandler.class);
+
+		verify(connMock).addHandlerLast(readCaptor.capture());
+		verify(connMock).addHandlerLast(writeCaptor.capture());
+
+		final long writeTimeOut = TimeUnit.NANOSECONDS.toMillis((long) ReflectionTestUtils.getField(writeCaptor.getValue(), "timeoutNanos"));
+		assertEquals(12345, readCaptor.getValue().getReaderIdleTimeInMillis());
+		assertEquals(12345, writeTimeOut);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testInitSecuritySettings() throws KeyManagementException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		final SslContextSpec specMock = Mockito.mock(SslContextSpec.class);
+		final SslContext context = createSSLContext();
+		final SslProvider.Builder builderMock = Mockito.mock(SslProvider.Builder.class);
+
+		when(specMock.sslContext(context)).thenReturn(builderMock);
+		when(builderMock.handlerConfigurator(any(Consumer.class))).thenReturn(builderMock);
+
+		assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(service, "initSecuritySettings", specMock, context));
+
+		verify(specMock).sslContext(context);
+		verify(builderMock).handlerConfigurator(any(Consumer.class));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	public void testInitSSLHandlerNoDisableHostnameVerifier() {
+		final SslHandler sslHandlerMock = Mockito.mock(SslHandler.class);
+		final SSLEngine engineMock = Mockito.mock(SSLEngine.class);
+		final SSLParameters paramsMock = Mockito.mock(SSLParameters.class);
+
+		when(sslHandlerMock.engine()).thenReturn(engineMock);
+		when(engineMock.getSSLParameters()).thenReturn(paramsMock);
+		doNothing().when(paramsMock).setEndpointIdentificationAlgorithm("https");
+		doNothing().when(engineMock).setSSLParameters(paramsMock);
+
+		assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(service, "initSSLHandler", sslHandlerMock));
+
+		verify(sslHandlerMock).engine();
+		verify(engineMock).getSSLParameters();
+		verify(paramsMock).setEndpointIdentificationAlgorithm("https");
+		verify(paramsMock, never()).setEndpointIdentificationAlgorithm("");
+		verify(engineMock).setSSLParameters(paramsMock);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	public void testInitSSLHandlerDisableHostnameVerifier() {
+		ReflectionTestUtils.setField(service, "disableHostnameVerifier", true);
+
+		final SslHandler sslHandlerMock = Mockito.mock(SslHandler.class);
+		final SSLEngine engineMock = Mockito.mock(SSLEngine.class);
+		final SSLParameters paramsMock = Mockito.mock(SSLParameters.class);
+
+		when(sslHandlerMock.engine()).thenReturn(engineMock);
+		when(engineMock.getSSLParameters()).thenReturn(paramsMock);
+		doNothing().when(paramsMock).setEndpointIdentificationAlgorithm("https");
+		doNothing().when(paramsMock).setEndpointIdentificationAlgorithm("");
+		doNothing().when(engineMock).setSSLParameters(paramsMock);
+
+		assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(service, "initSSLHandler", sslHandlerMock));
+
+		verify(sslHandlerMock).engine();
+		verify(engineMock).getSSLParameters();
+		verify(paramsMock).setEndpointIdentificationAlgorithm("https");
+		verify(paramsMock).setEndpointIdentificationAlgorithm("");
+		verify(engineMock).setSSLParameters(paramsMock);
 	}
 
 	//-------------------------------------------------------------------------------------------------

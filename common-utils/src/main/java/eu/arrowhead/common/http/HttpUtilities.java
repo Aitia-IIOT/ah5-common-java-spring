@@ -58,6 +58,15 @@ public final class HttpUtilities {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public static ErrorMessageDTO createErrorMessageDTO(final ArrowheadException ex, final String origin) {
+		return new ErrorMessageDTO(
+				ex.getMessage(),
+				calculateHttpStatusFromArrowheadException(ex).value(),
+				ex.getExceptionType(),
+				Utilities.isEmpty(origin) ? ex.getOrigin() : origin);
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public static ArrowheadException createExceptionFromErrorMessageDTO(final ErrorMessageDTO dto) {
 		Assert.notNull(dto, "Error message object is null");
 

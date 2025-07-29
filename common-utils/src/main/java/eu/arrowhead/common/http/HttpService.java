@@ -48,12 +48,15 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.annotation.PostConstruct;
 import jakarta.el.MethodNotFoundException;
 import reactor.netty.Connection;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.tcp.SslProvider;
+import reactor.netty.tcp.SslProvider.SslContextSpec;
 
 @Component
 public class HttpService {
@@ -326,7 +329,7 @@ public class HttpService {
 
 			try {
 				sslContext = createSSLContext();
-			} catch (final KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+			} catch (final KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | IllegalArgumentException ex) {
 				// it's initialization so we just logging the exception then let the application die
 				logger.error("Error while creating SSL context: {}", ex.getMessage());
 				logger.debug("Exception", ex);
@@ -343,36 +346,39 @@ public class HttpService {
 	private HttpClient createHttpClient(final SslContext sslContext) {
 		HttpClient client = HttpClient.create()
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectionTimeout)
-//				.doOnConnected(this::initConnectionHandlers);
-				.doOnConnected(connection -> {
-					connection.addHandlerLast(new ReadTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
-					connection.addHandlerLast(new WriteTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
-				});
+				.doOnConnected(this::initConnectionHandlers);
 
 		if (sslContext != null) {
-			client = client
-					.secure(t -> t.sslContext(sslContext)
-							.handlerConfigurator(handler -> {
-								final SSLEngine sslEngine = handler.engine();
-								final SSLParameters sslParameters = sslEngine.getSSLParameters();
-								sslParameters.setEndpointIdentificationAlgorithm(Constants.HTTPS);
-
-								if (disableHostnameVerifier) {
-									sslParameters.setEndpointIdentificationAlgorithm("");
-									// see: https://stackoverflow.com/a/67964695
-								}
-
-								sslEngine.setSSLParameters(sslParameters);
-							}));
+			client = client.secure(t -> this.initSecuritySettings(t, sslContext));
 		}
 
 		return client;
 	}
-	
+
 	//-------------------------------------------------------------------------------------------------
 	private void initConnectionHandlers(final Connection connection) {
 		connection.addHandlerLast(new ReadTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
 		connection.addHandlerLast(new WriteTimeoutHandler(socketTimeout, TimeUnit.MILLISECONDS));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private SslProvider.Builder initSecuritySettings(final SslContextSpec spec, final SslContext context) {
+		return spec.sslContext(context)
+				.handlerConfigurator(this::initSSLHandler);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	private void initSSLHandler(final SslHandler handler) {
+		final SSLEngine sslEngine = handler.engine();
+		final SSLParameters sslParameters = sslEngine.getSSLParameters();
+		sslParameters.setEndpointIdentificationAlgorithm(Constants.HTTPS);
+
+		if (disableHostnameVerifier) {
+			sslParameters.setEndpointIdentificationAlgorithm("");
+			// see: https://stackoverflow.com/a/67964695
+		}
+
+		sslEngine.setSSLParameters(sslParameters);
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -393,11 +399,11 @@ public class HttpService {
 		final String messageNotDefined = " is not defined";
 		Assert.isTrue(!Utilities.isEmpty(sslProperties.getKeyStoreType()), Constants.SERVER_SSL_KEY__STORE__TYPE + messageNotDefined);
 		Assert.notNull(sslProperties.getKeyStore(), Constants.SERVER_SSL_KEY__STORE + messageNotDefined);
-		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found.");
+		Assert.isTrue(sslProperties.getKeyStore().exists(), Constants.SERVER_SSL_KEY__STORE + " file is not found");
 		Assert.notNull(sslProperties.getKeyStorePassword(), Constants.SERVER_SSL_KEY__STORE__PASSWORD + messageNotDefined);
 		Assert.notNull(sslProperties.getKeyPassword(), Constants.SERVER_SSL_KEY__PASSWORD + messageNotDefined);
 		Assert.notNull(sslProperties.getTrustStore(), Constants.SERVER_SSL_TRUST__STORE + messageNotDefined);
-		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.SERVER_SSL_TRUST__STORE + " file is not found.");
+		Assert.isTrue(sslProperties.getTrustStore().exists(), Constants.SERVER_SSL_TRUST__STORE + " file is not found");
 		Assert.notNull(sslProperties.getTrustStorePassword(), Constants.SERVER_SSL_TRUST__STORE__PASSWORD + messageNotDefined);
 
 		final KeyStore keyStore = KeyStore.getInstance(sslProperties.getKeyStoreType());

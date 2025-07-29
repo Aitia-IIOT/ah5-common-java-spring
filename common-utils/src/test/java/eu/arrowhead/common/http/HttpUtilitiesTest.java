@@ -81,7 +81,7 @@ public class HttpUtilitiesTest {
 	//-------------------------------------------------------------------------------------------------
 	@SuppressWarnings("checkstyle:MagicNumber")
 	@Test
-	public void testCreateErrorMessageDTO() {
+	public void testCreateErrorMessageDTO1() {
 		final ExternalServerError ex = new ExternalServerError("test", "testOrigin");
 
 		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex);
@@ -90,6 +90,34 @@ public class HttpUtilitiesTest {
 		assertEquals(503, dto.errorCode());
 		assertEquals(ExceptionType.EXTERNAL_SERVER_ERROR, dto.exceptionType());
 		assertEquals("testOrigin", dto.origin());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
+	public void testCreateErrorMessageDTO2ExternalOriginNull() {
+		final ExternalServerError ex = new ExternalServerError("test", "testOrigin");
+
+		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex, null);
+
+		assertEquals("test", dto.errorMessage());
+		assertEquals(503, dto.errorCode());
+		assertEquals(ExceptionType.EXTERNAL_SERVER_ERROR, dto.exceptionType());
+		assertEquals("testOrigin", dto.origin());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
+	public void testCreateErrorMessageDTO2ExternalOriginNotNull() {
+		final ExternalServerError ex = new ExternalServerError("test", "testOrigin");
+
+		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex, "externalOrigin");
+
+		assertEquals("test", dto.errorMessage());
+		assertEquals(503, dto.errorCode());
+		assertEquals(ExceptionType.EXTERNAL_SERVER_ERROR, dto.exceptionType());
+		assertEquals("externalOrigin", dto.origin());
 	}
 
 	//-------------------------------------------------------------------------------------------------
