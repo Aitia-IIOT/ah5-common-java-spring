@@ -1,8 +1,12 @@
 package eu.arrowhead.common.collector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -116,6 +120,118 @@ public class ServiceCollectorTest {
 		assertEquals("localhost", interfaceModel.accessAddresses().get(0));
 		assertEquals(1234, interfaceModel.accessPort());
 		assertEquals("/test", interfaceModel.basePath());
+	}
 
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
+	public void testGetServiceModelContextNotFound() {
+		final Map<String, Object> context = new HashMap<>();
+		ReflectionTestUtils.setField(collector, "arrowheadContext", context);
+
+		when(serviceDefNameNormalizer.normalize("testService")).thenReturn("testService");
+		when(interfaceTemplateNameNormalizer.normalize("generic_http")).thenReturn("generic_http");
+		when(systemNameNormalizer.normalize("ProviderName")).thenReturn("ProviderName");
+		when(driver.acquireService("testService", "generic_http", "ProviderName")).thenReturn(null);
+
+		assertFalse(context.containsKey("service-model$$testService"));
+		final ServiceModel result = collector.getServiceModel("testService", "generic_http", "ProviderName");
+		assertFalse(context.containsKey("service-model$$testService"));
+
+		verify(serviceDefNameNormalizer).normalize("testService");
+		verify(interfaceTemplateNameNormalizer).normalize("generic_http");
+		verify(systemNameNormalizer).normalize("ProviderName");
+		verify(driver).acquireService("testService", "generic_http", "ProviderName");
+
+		assertNull(result);
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
+	public void testGetServiceModelContextNotContains() {
+		final ServiceModel serviceModel = new ServiceModel.Builder()
+				.serviceDefinition("testService")
+				.version("1.0.0")
+				.serviceInterface(new HttpInterfaceModel.Builder("generic_http")
+						.accessAddress("localhost")
+						.accessPort(1234)
+						.basePath("/test")
+						.operation("test-operation", new HttpOperationModel("/op", "POST"))
+						.build())
+				.build();
+
+		final Map<String, Object> context = new HashMap<>();
+		ReflectionTestUtils.setField(collector, "arrowheadContext", context);
+
+		when(serviceDefNameNormalizer.normalize("testService")).thenReturn("testService");
+		when(interfaceTemplateNameNormalizer.normalize("generic_http")).thenReturn("generic_http");
+		when(systemNameNormalizer.normalize("ProviderName")).thenReturn("ProviderName");
+		when(driver.acquireService("testService", "generic_http", "ProviderName")).thenReturn(serviceModel);
+
+		assertFalse(context.containsKey("service-model$$testService"));
+		final ServiceModel result = collector.getServiceModel("testService", "generic_http", "ProviderName");
+		assertTrue(context.containsKey("service-model$$testService"));
+
+		verify(serviceDefNameNormalizer).normalize("testService");
+		verify(interfaceTemplateNameNormalizer).normalize("generic_http");
+		verify(systemNameNormalizer).normalize("ProviderName");
+		verify(driver).acquireService("testService", "generic_http", "ProviderName");
+
+		assertEquals("testService", result.serviceDefinition());
+		assertEquals("1.0.0", result.version());
+		final HttpInterfaceModel interfaceModel = (HttpInterfaceModel) result.interfaces().get(0);
+		assertEquals("localhost", interfaceModel.accessAddresses().get(0));
+		assertEquals(1234, interfaceModel.accessPort());
+		assertEquals("/test", interfaceModel.basePath());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
+	@Test
+	public void testGetServiceModelContextNotContainsWithoutProviderName() {
+		final ServiceModel serviceModel = new ServiceModel.Builder()
+				.serviceDefinition("testService")
+				.version("1.0.0")
+				.serviceInterface(new HttpInterfaceModel.Builder("generic_http")
+						.accessAddress("localhost")
+						.accessPort(1234)
+						.basePath("/test")
+						.operation("test-operation", new HttpOperationModel("/op", "POST"))
+						.build())
+				.build();
+
+		final Map<String, Object> context = new HashMap<>();
+		ReflectionTestUtils.setField(collector, "arrowheadContext", context);
+
+		when(serviceDefNameNormalizer.normalize("testService")).thenReturn("testService");
+		when(interfaceTemplateNameNormalizer.normalize("generic_http")).thenReturn("generic_http");
+		when(driver.acquireService("testService", "generic_http", null)).thenReturn(serviceModel);
+
+		assertFalse(context.containsKey("service-model$$testService"));
+		final ServiceModel result = collector.getServiceModel("testService", "generic_http", null);
+		assertTrue(context.containsKey("service-model$$testService"));
+
+		verify(serviceDefNameNormalizer).normalize("testService");
+		verify(interfaceTemplateNameNormalizer).normalize("generic_http");
+		verify(systemNameNormalizer, never()).normalize(anyString());
+		verify(driver).acquireService("testService", "generic_http", null);
+
+		assertEquals("testService", result.serviceDefinition());
+		assertEquals("1.0.0", result.version());
+		final HttpInterfaceModel interfaceModel = (HttpInterfaceModel) result.interfaces().get(0);
+		assertEquals("localhost", interfaceModel.accessAddresses().get(0));
+		assertEquals(1234, interfaceModel.accessPort());
+		assertEquals("/test", interfaceModel.basePath());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@Test
+	public void testInit() {
+		doNothing().when(driver).init();
+
+		ReflectionTestUtils.invokeMethod(collector, "init");
+
+		verify(driver).init();
 	}
 }

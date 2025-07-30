@@ -21,7 +21,7 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 	//=================================================================================================
 	// members
 
-	private static final String ARG_OPERATION = "OPERATION";
+	public static final String ARG_OPERATION = "OPERATION";
 
 	@Autowired
 	private ServiceOperationNameNormalizer operationNameNormalizer;
