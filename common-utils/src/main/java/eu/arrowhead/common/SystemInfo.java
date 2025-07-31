@@ -139,6 +139,11 @@ public abstract class SystemInfo {
 		return normalizedBlacklistCheckExcludeList;
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	public boolean isSslEnabled() {
+		return sslProperties != null && sslProperties.isSslEnabled();
+	}
+
 	//=================================================================================================
 	// assistant methods
 
@@ -169,7 +174,7 @@ public abstract class SystemInfo {
 	@PostConstruct
 	private void init() {
 		if (Utilities.isEmpty(getSystemName())) {
-			throw new InvalidParameterException("'systemName' is missing or empty");
+			throw new InvalidParameterException("System name is missing or empty");
 		}
 
 		if (Utilities.isEmpty(domainAddress)) {
@@ -197,7 +202,7 @@ public abstract class SystemInfo {
 	private void collectConfigDefaults() {
 		final PublicConfigurationKeysAndDefaults configInfo = getPublicConfigurationKeysAndDefaults();
 		if (configInfo != null && configInfo.defaultsClass() != null && !Utilities.isEmpty(configInfo.configKeys())) {
-			final Class<?> defaults = configInfo.defaultsClass;
+			final Class<?> defaults = configInfo.defaultsClass();
 			final Set<String> configKeys = configInfo.configKeys();
 
 			final Map<String, String> defaultsMap = new HashMap<>(configKeys.size());
@@ -307,11 +312,6 @@ public abstract class SystemInfo {
 	//-------------------------------------------------------------------------------------------------
 	public Map<String, Object> getArrowheadContext() {
 		return arrowheadContext;
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	public boolean isSslEnabled() {
-		return sslProperties != null && sslProperties.isSslEnabled();
 	}
 
 	//-------------------------------------------------------------------------------------------------

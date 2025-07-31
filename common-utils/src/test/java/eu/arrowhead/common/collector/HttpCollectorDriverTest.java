@@ -2,6 +2,8 @@ package eu.arrowhead.common.collector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -45,6 +46,9 @@ import eu.arrowhead.common.intf.properties.validators.NotEmptyStringSetValidator
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.mqtt.model.MqttInterfaceModel;
 import eu.arrowhead.dto.AddressDTO;
+import eu.arrowhead.dto.OrchestrationRequestDTO;
+import eu.arrowhead.dto.OrchestrationResponseDTO;
+import eu.arrowhead.dto.OrchestrationResultDTO;
 import eu.arrowhead.dto.ServiceDefinitionResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceInterfaceResponseDTO;
 import eu.arrowhead.dto.ServiceInstanceListResponseDTO;
@@ -472,11 +476,12 @@ public class HttpCollectorDriverTest {
 	public void testAcquireServiceLookupOrchestrationFailure() {
 		ReflectionTestUtils.setField(driver, "mode", HttpCollectorMode.SR_AND_ORCH);
 
-		when(sysInfo.isSslEnabled()).thenReturn(true);
+		when(sysInfo.isSslEnabled()).thenReturn(false);
 		when(sysInfo.getServiceRegistryAddress()).thenReturn("localhost");
 		when(sysInfo.getServiceRegistryPort()).thenReturn(8443);
 		when(sysInfo.getIdentityToken()).thenReturn(null);
-		when(sysInfo.getAuthenticationPolicy()).thenReturn(AuthenticationPolicy.CERTIFICATE);
+		when(sysInfo.getAuthenticationPolicy()).thenReturn(AuthenticationPolicy.DECLARED);
+		when(sysInfo.getSystemName()).thenReturn("ConsumerName");
 		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap()))
 				.thenReturn(new ServiceInstanceListResponseDTO(List.of(), 0));
 
@@ -489,20 +494,21 @@ public class HttpCollectorDriverTest {
 		verify(sysInfo, times(3)).getServiceRegistryPort();
 		verify(sysInfo, times(3)).getIdentityToken();
 		verify(sysInfo, times(3)).getAuthenticationPolicy();
+		verify(sysInfo, times(3)).getSystemName();
 		verify(httpService, times(3)).sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap());
 
 		assertNull(result);
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
 	@Test
-	@Disabled
 	public void testAcquireServiceLookupOrchestrationSuccessNoMatch() {
 		ReflectionTestUtils.setField(driver, "mode", HttpCollectorMode.SR_AND_ORCH);
 
 		final ServiceInstanceInterfaceResponseDTO intf = new ServiceInstanceInterfaceResponseDTO(
-				"generic_http",
-				"http",
+				"generic_https",
+				"https",
 				"NONE",
 				Map.of(
 						"accessAddresses", List.of("localhost"),
@@ -527,29 +533,246 @@ public class HttpCollectorDriverTest {
 				"2025-07-30T08:00:05Z",
 				"2025-07-30T08:00:05Z");
 
-		when(sysInfo.isSslEnabled()).thenReturn(false);
+		final HttpOperationsValidator httpOperationsValidatorMock = Mockito.mock(HttpOperationsValidator.class);
+
+		when(sysInfo.isSslEnabled()).thenReturn(true);
 		when(sysInfo.getServiceRegistryAddress()).thenReturn("localhost");
 		when(sysInfo.getServiceRegistryPort()).thenReturn(8443);
 		when(sysInfo.getIdentityToken()).thenReturn(null);
 		when(sysInfo.getAuthenticationPolicy()).thenReturn(AuthenticationPolicy.CERTIFICATE);
 		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap()))
 				.thenReturn(new ServiceInstanceListResponseDTO(List.of(), 0))
-				.thenReturn(new ServiceInstanceListResponseDTO(List.of(orchLookupResponse), 1))
-				.thenReturn(new ServiceInstanceListResponseDTO(List.of(), 0));
-
-		// TODO: continue from line 166
+				.thenReturn(new ServiceInstanceListResponseDTO(List.of(orchLookupResponse), 1));
+		when(validators.getValidator(PropertyValidatorType.HTTP_OPERATIONS)).thenReturn(httpOperationsValidatorMock);
+		when(httpOperationsValidatorMock.validateAndNormalize(anyMap())).thenReturn(Map.of("pull", new HttpOperationModel.Builder().path("/pull").method("POST").build()));
+		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(OrchestrationResponseDTO.class), any(OrchestrationRequestDTO.class), isNull(), anyMap()))
+				.thenReturn(new OrchestrationResponseDTO(List.of(), List.of()));
 
 		assertNull(ReflectionTestUtils.getField(driver, "orchestrationCache"));
-		final ServiceModel result = driver.acquireService("testService", "generic_http", null);
-		assertNull(ReflectionTestUtils.getField(driver, "orchestrationCache"));
+		final ServiceModel result = driver.acquireService("testService", "generic_https", null);
+		final ServiceModel orchCache = (ServiceModel) ReflectionTestUtils.getField(driver, "orchestrationCache");
+		assertNotNull(orchCache);
+		assertEquals("serviceOrchestration", orchCache.serviceDefinition());
 
-		verify(sysInfo, times(4)).isSslEnabled();
+		verify(sysInfo, times(5)).isSslEnabled();
 		verify(sysInfo, times(2)).getServiceRegistryAddress();
 		verify(sysInfo, times(2)).getServiceRegistryPort();
-		verify(sysInfo, times(2)).getIdentityToken();
-		verify(sysInfo, times(2)).getAuthenticationPolicy();
-		verify(httpService, times(3)).sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap());
+		verify(sysInfo, times(3)).getIdentityToken();
+		verify(sysInfo, times(3)).getAuthenticationPolicy();
+		verify(httpService, times(2)).sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap());
+		verify(validators).getValidator(PropertyValidatorType.HTTP_OPERATIONS);
+		verify(httpOperationsValidatorMock).validateAndNormalize(anyMap());
+
+		final ArgumentCaptor<UriComponents> uriCaptor = ArgumentCaptor.forClass(UriComponents.class);
+		final ArgumentCaptor<OrchestrationRequestDTO> payloadCaptor = ArgumentCaptor.forClass(OrchestrationRequestDTO.class);
+		final ArgumentCaptor<HashMap<String, String>> headerCaptor = ArgumentCaptor.forClass(HashMap.class);
+
+		verify(httpService).sendRequest(uriCaptor.capture(), eq(HttpMethod.POST), eq(OrchestrationResponseDTO.class), payloadCaptor.capture(), isNull(), headerCaptor.capture());
 
 		assertNull(result);
+		assertEquals("https://localhost:8441/serviceorchestration/orchestration/pull", uriCaptor.getValue().toUriString());
+		final OrchestrationRequestDTO payload = payloadCaptor.getValue();
+		assertEquals("testService", payload.serviceRequirement().serviceDefinition());
+		assertEquals(1, payload.serviceRequirement().interfaceTemplateNames().size());
+		assertEquals("generic_https", payload.serviceRequirement().interfaceTemplateNames().get(0));
+		assertTrue(payload.orchestrationFlags().get("MATCHMAKING"));
+		assertFalse(payload.orchestrationFlags().get("ALLOW_INTERCLOUD"));
+		assertFalse(payload.orchestrationFlags().get("ALLOW_TRANSLATION"));
+		assertTrue(headerCaptor.getValue().isEmpty());
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAcquireServiceCachedOrchestrationSuccessNoOperations() {
+		ReflectionTestUtils.setField(driver, "mode", HttpCollectorMode.SR_AND_ORCH);
+
+		final ServiceModel orchModel = new ServiceModel.Builder()
+				.serviceDefinition("serviceOrchestration")
+				.version("1.0.0")
+				.serviceInterface(new HttpInterfaceModel.Builder("generic_http")
+						.accessAddress("localhost")
+						.accessPort(8441)
+						.basePath("/serviceorchestration/orchestration")
+						.operation("pull", new HttpOperationModel.Builder().path("/pull").method("POST").build())
+						.build())
+				.build();
+		ReflectionTestUtils.setField(driver, "orchestrationCache", orchModel);
+
+		final ServiceInstanceInterfaceResponseDTO intf = new ServiceInstanceInterfaceResponseDTO(
+				"generic_http",
+				"http",
+				"NONE",
+				Map.of(
+						"accessAddresses", List.of("localhost"),
+						"accessPort", 12345,
+						"basePath", "/test"));
+
+		final OrchestrationResultDTO orchResult = new OrchestrationResultDTO(
+				"TestProvider|testService|1.0.0",
+				null,
+				"TestProvider",
+				"testService",
+				"1.0.0",
+				null,
+				null,
+				Map.of(),
+				List.of(intf),
+				Map.of());
+
+		when(sysInfo.isSslEnabled()).thenReturn(false);
+		when(sysInfo.getServiceRegistryAddress()).thenReturn("localhost");
+		when(sysInfo.getServiceRegistryPort()).thenReturn(8443);
+		when(sysInfo.getIdentityToken()).thenReturn(null);
+		when(sysInfo.getAuthenticationPolicy()).thenReturn(AuthenticationPolicy.DECLARED);
+		when(sysInfo.getSystemName()).thenReturn("ConsumerName");
+		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap()))
+				.thenReturn(new ServiceInstanceListResponseDTO(List.of(), 0));
+		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(OrchestrationResponseDTO.class), any(OrchestrationRequestDTO.class), isNull(), anyMap()))
+				.thenReturn(new OrchestrationResponseDTO(List.of(orchResult), List.of()));
+
+		ServiceModel orchCache = (ServiceModel) ReflectionTestUtils.getField(driver, "orchestrationCache");
+		assertNotNull(ReflectionTestUtils.getField(driver, "orchestrationCache"));
+		assertEquals("serviceOrchestration", orchCache.serviceDefinition());
+		final ServiceModel result = driver.acquireService("testService", "generic_http", "ProviderName");
+		orchCache = (ServiceModel) ReflectionTestUtils.getField(driver, "orchestrationCache");
+		assertNotNull(orchCache);
+		assertEquals("serviceOrchestration", orchCache.serviceDefinition());
+
+		verify(sysInfo, times(3)).isSslEnabled();
+		verify(sysInfo).getServiceRegistryAddress();
+		verify(sysInfo).getServiceRegistryPort();
+		verify(sysInfo, times(2)).getIdentityToken();
+		verify(sysInfo, times(2)).getAuthenticationPolicy();
+		verify(sysInfo, times(2)).getSystemName();
+		verify(httpService).sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap());
+
+		final ArgumentCaptor<UriComponents> uriCaptor = ArgumentCaptor.forClass(UriComponents.class);
+		final ArgumentCaptor<OrchestrationRequestDTO> payloadCaptor = ArgumentCaptor.forClass(OrchestrationRequestDTO.class);
+		final ArgumentCaptor<HashMap<String, String>> headerCaptor = ArgumentCaptor.forClass(HashMap.class);
+
+		verify(httpService).sendRequest(uriCaptor.capture(), eq(HttpMethod.POST), eq(OrchestrationResponseDTO.class), payloadCaptor.capture(), isNull(), headerCaptor.capture());
+
+		assertNull(result);
+		assertEquals("http://localhost:8441/serviceorchestration/orchestration/pull", uriCaptor.getValue().toUriString());
+		final OrchestrationRequestDTO payload = payloadCaptor.getValue();
+		assertEquals("testService", payload.serviceRequirement().serviceDefinition());
+		assertEquals(1, payload.serviceRequirement().interfaceTemplateNames().size());
+		assertEquals("generic_http", payload.serviceRequirement().interfaceTemplateNames().get(0));
+		assertEquals(1, payload.serviceRequirement().preferredProviders().size());
+		assertEquals("ProviderName", payload.serviceRequirement().preferredProviders().get(0));
+		assertTrue(payload.orchestrationFlags().get("MATCHMAKING"));
+		assertFalse(payload.orchestrationFlags().get("ALLOW_INTERCLOUD"));
+		assertFalse(payload.orchestrationFlags().get("ALLOW_TRANSLATION"));
+		assertTrue(payload.orchestrationFlags().get("ONLY_PREFERRED"));
+		assertEquals(1, headerCaptor.getValue().size());
+		assertEquals("Bearer SYSTEM//ConsumerName", headerCaptor.getValue().get("Authorization"));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAcquireServiceCachedOrchestrationOk() {
+		ReflectionTestUtils.setField(driver, "mode", HttpCollectorMode.SR_AND_ORCH);
+
+		final ServiceModel orchModel = new ServiceModel.Builder()
+				.serviceDefinition("serviceOrchestration")
+				.version("1.0.0")
+				.serviceInterface(new HttpInterfaceModel.Builder("generic_http")
+						.accessAddress("localhost")
+						.accessPort(8441)
+						.basePath("/serviceorchestration/orchestration")
+						.operation("pull", new HttpOperationModel.Builder().path("/pull").method("POST").build())
+						.build())
+				.build();
+		ReflectionTestUtils.setField(driver, "orchestrationCache", orchModel);
+
+		final ServiceInstanceInterfaceResponseDTO intf = new ServiceInstanceInterfaceResponseDTO(
+				"generic_http",
+				"http",
+				"NONE",
+				Map.of(
+						"accessAddresses", List.of("localhost"),
+						"accessPort", 12345,
+						"basePath", "/test",
+						"operations", Map.of("op", Map.of("path", "/op", "method", "POST"))));
+
+		final OrchestrationResultDTO orchResult = new OrchestrationResultDTO(
+				"TestProvider|testService|1.0.0",
+				null,
+				"TestProvider",
+				"testService",
+				"1.0.0",
+				null,
+				null,
+				Map.of(),
+				List.of(intf),
+				Map.of());
+
+		final HttpOperationsValidator httpOperationsValidatorMock = Mockito.mock(HttpOperationsValidator.class);
+
+		when(sysInfo.isSslEnabled()).thenReturn(false);
+		when(sysInfo.getServiceRegistryAddress()).thenReturn("localhost");
+		when(sysInfo.getServiceRegistryPort()).thenReturn(8443);
+		when(sysInfo.getIdentityToken()).thenReturn(null);
+		when(sysInfo.getAuthenticationPolicy()).thenReturn(AuthenticationPolicy.DECLARED);
+		when(sysInfo.getSystemName()).thenReturn("ConsumerName");
+		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap()))
+				.thenReturn(new ServiceInstanceListResponseDTO(List.of(), 0));
+		when(validators.getValidator(PropertyValidatorType.HTTP_OPERATIONS)).thenReturn(httpOperationsValidatorMock);
+		when(httpOperationsValidatorMock.validateAndNormalize(anyMap())).thenReturn(Map.of("op", new HttpOperationModel.Builder().path("/op").method("POST").build()));
+		when(httpService.sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(OrchestrationResponseDTO.class), any(OrchestrationRequestDTO.class), isNull(), anyMap()))
+				.thenReturn(new OrchestrationResponseDTO(List.of(orchResult), List.of()));
+
+		ServiceModel orchCache = (ServiceModel) ReflectionTestUtils.getField(driver, "orchestrationCache");
+		assertNotNull(ReflectionTestUtils.getField(driver, "orchestrationCache"));
+		assertEquals("serviceOrchestration", orchCache.serviceDefinition());
+		final ServiceModel result = driver.acquireService("testService", "generic_http", "ProviderName");
+		orchCache = (ServiceModel) ReflectionTestUtils.getField(driver, "orchestrationCache");
+		assertNotNull(orchCache);
+		assertEquals("serviceOrchestration", orchCache.serviceDefinition());
+
+		verify(sysInfo, times(3)).isSslEnabled();
+		verify(sysInfo).getServiceRegistryAddress();
+		verify(sysInfo).getServiceRegistryPort();
+		verify(sysInfo, times(2)).getIdentityToken();
+		verify(sysInfo, times(2)).getAuthenticationPolicy();
+		verify(sysInfo, times(2)).getSystemName();
+		verify(httpService).sendRequest(any(UriComponents.class), eq(HttpMethod.POST), eq(ServiceInstanceListResponseDTO.class), any(ServiceInstanceLookupRequestDTO.class), isNull(), anyMap());
+
+		final ArgumentCaptor<UriComponents> uriCaptor = ArgumentCaptor.forClass(UriComponents.class);
+		final ArgumentCaptor<OrchestrationRequestDTO> payloadCaptor = ArgumentCaptor.forClass(OrchestrationRequestDTO.class);
+		final ArgumentCaptor<HashMap<String, String>> headerCaptor = ArgumentCaptor.forClass(HashMap.class);
+
+		verify(httpService).sendRequest(uriCaptor.capture(), eq(HttpMethod.POST), eq(OrchestrationResponseDTO.class), payloadCaptor.capture(), isNull(), headerCaptor.capture());
+		verify(validators).getValidator(PropertyValidatorType.HTTP_OPERATIONS);
+		verify(httpOperationsValidatorMock).validateAndNormalize(anyMap());
+
+		assertEquals("testService", result.serviceDefinition());
+		assertEquals("1.0.0", result.version());
+		assertEquals(1, result.interfaces().size());
+		HttpInterfaceModel resultIntf = (HttpInterfaceModel) result.interfaces().get(0);
+		assertEquals("generic_http", resultIntf.templateName());
+		assertEquals("http", resultIntf.protocol());
+		assertEquals("localhost", resultIntf.accessAddresses().get(0));
+		assertEquals(12345, resultIntf.accessPort());
+		assertEquals("/test", resultIntf.basePath());
+		assertEquals(1, resultIntf.operations().size());
+		HttpOperationModel opModel = resultIntf.operations().get("op");
+		assertEquals("/op", opModel.path());
+		assertEquals("POST", opModel.method());
+		assertEquals("http://localhost:8441/serviceorchestration/orchestration/pull", uriCaptor.getValue().toUriString());
+		final OrchestrationRequestDTO payload = payloadCaptor.getValue();
+		assertEquals("testService", payload.serviceRequirement().serviceDefinition());
+		assertEquals(1, payload.serviceRequirement().interfaceTemplateNames().size());
+		assertEquals("generic_http", payload.serviceRequirement().interfaceTemplateNames().get(0));
+		assertEquals(1, payload.serviceRequirement().preferredProviders().size());
+		assertEquals("ProviderName", payload.serviceRequirement().preferredProviders().get(0));
+		assertTrue(payload.orchestrationFlags().get("MATCHMAKING"));
+		assertFalse(payload.orchestrationFlags().get("ALLOW_INTERCLOUD"));
+		assertFalse(payload.orchestrationFlags().get("ALLOW_TRANSLATION"));
+		assertTrue(payload.orchestrationFlags().get("ONLY_PREFERRED"));
+		assertEquals(1, headerCaptor.getValue().size());
+		assertEquals("Bearer SYSTEM//ConsumerName", headerCaptor.getValue().get("Authorization"));
 	}
 }
