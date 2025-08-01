@@ -18,7 +18,7 @@ public record AuthorizationMgmtGrantRequestDTO(
 	// nested classes
 
 	//-------------------------------------------------------------------------------------------------
-	public class Builder {
+	public static class Builder {
 
 		//=================================================================================================
 		// members
