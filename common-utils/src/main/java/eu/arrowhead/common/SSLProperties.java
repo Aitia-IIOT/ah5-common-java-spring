@@ -49,7 +49,7 @@ public class SSLProperties {
 			}
 
 			if (keyStore == null) {
-				throw new InvalidParameterException("keyStorePath is missing");
+				throw new InvalidParameterException("keyStore is missing");
 			}
 
 			if (Utilities.isEmpty(keyStorePassword)) {
@@ -65,7 +65,7 @@ public class SSLProperties {
 			}
 
 			if (trustStore == null) {
-				throw new InvalidParameterException("trustStorePath is missing");
+				throw new InvalidParameterException("trustStore is missing");
 			}
 
 			if (Utilities.isEmpty(trustStorePassword)) {
