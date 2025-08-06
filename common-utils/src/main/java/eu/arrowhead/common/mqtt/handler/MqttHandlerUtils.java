@@ -7,12 +7,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.arrowhead.common.Constants;
 import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.exception.ArrowheadException;
 import eu.arrowhead.common.exception.InvalidParameterException;
@@ -26,6 +28,7 @@ import eu.arrowhead.dto.MqttRequestTemplate;
 import eu.arrowhead.dto.enums.ExceptionType;
 
 @Service
+@ConditionalOnProperty(name = Constants.MQTT_API_ENABLED, matchIfMissing = false)
 public class MqttHandlerUtils {
 
 	//=================================================================================================

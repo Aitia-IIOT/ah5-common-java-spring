@@ -93,7 +93,7 @@ public class OutsourcedLoginJobTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void testExecuteAuthExceptionHandled() throws SchedulerException {
-		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow()));
+		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow().minusMinutes(1)));
 		when(systemInfo.getSystemName()).thenReturn("TestSystem");
 		when(systemInfo.getAuthenticatorCredentials()).thenReturn(Map.of("password", "12345"));
 		when(httpService.consumeService(eq("identity"), eq("identity-login"), eq(IdentityLoginResponseDTO.class), any(IdentityRequestDTO.class))).thenThrow(new AuthException("test"));
@@ -112,7 +112,7 @@ public class OutsourcedLoginJobTest {
 	//-------------------------------------------------------------------------------------------------
 	@Test
 	public void testExecuteSchedulerExceptionAfterAuthException() throws SchedulerException {
-		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow()));
+		when(systemInfo.getArrowheadContext()).thenReturn(Map.of("identity-renewal-threshold", Utilities.utcNow().minusMinutes(1)));
 		when(systemInfo.getSystemName()).thenReturn("TestSystem");
 		when(systemInfo.getAuthenticatorCredentials()).thenReturn(Map.of("password", "12345"));
 		when(httpService.consumeService(eq("identity"), eq("identity-login"), eq(IdentityLoginResponseDTO.class), any(IdentityRequestDTO.class))).thenThrow(new AuthException("test"));
@@ -134,7 +134,7 @@ public class OutsourcedLoginJobTest {
 	public void testExecuteRenewalOk() throws SchedulerException {
 		ReflectionTestUtils.setField(job, "interval", 10000);
 		final Map<String, Object> context = new HashMap<>();
-		context.put("identity-renewal-threshold", Utilities.utcNow());
+		context.put("identity-renewal-threshold", Utilities.utcNow().minusMinutes(1));
 		final IdentityLoginResponseDTO response = new IdentityLoginResponseDTO(
 				"testToken",
 				"2025-07-16T12:00:00Z");

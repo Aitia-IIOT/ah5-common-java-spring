@@ -1,9 +1,7 @@
 package eu.arrowhead.common.collector;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +26,7 @@ import eu.arrowhead.common.http.model.HttpInterfaceModel;
 import eu.arrowhead.common.http.model.HttpOperationModel;
 import eu.arrowhead.common.intf.properties.PropertyValidatorType;
 import eu.arrowhead.common.intf.properties.PropertyValidators;
+import eu.arrowhead.common.intf.properties.validators.NotEmptyStringSetValidator;
 import eu.arrowhead.common.model.InterfaceModel;
 import eu.arrowhead.common.model.ServiceModel;
 import eu.arrowhead.common.mqtt.model.MqttInterfaceModel;
@@ -108,11 +107,12 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		logger.debug("acquireServiceFromSR started...");
 
 		// 1. uri
-		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
+		final String scheme = sysInfo.isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
 		final UriComponents uri = HttpUtilities.createURI(scheme, sysInfo.getServiceRegistryAddress(), sysInfo.getServiceRegistryPort(), SR_LOOKUP_PATH, VERBOSE_KEY, VERBOSE_VALUE);
 
 		// 2. payload
-		final ServiceInstanceLookupRequestDTO payload = providerName == null ? createSRRequestPayload(serviceDefinitionName, interfaceTemplateName)
+		final ServiceInstanceLookupRequestDTO payload = providerName == null
+				? createSRRequestPayload(serviceDefinitionName, interfaceTemplateName)
 				: createSRRequestPayload(serviceDefinitionName, interfaceTemplateName, providerName);
 
 		// 3. headers
@@ -143,8 +143,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		// orchestrate the service
 
 		// 1. finding the corresponding interface
-		final String intfTemplateNameToSendRequest = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME
-				: Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
+		final String intfTemplateNameToSendRequest = sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
 		final HttpInterfaceModel orchestrationIntf = (HttpInterfaceModel) orchestrationCache
 				.interfaces()
 				.stream()
@@ -154,7 +153,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		// 2. uri
 		final String orchestrationPullPath = orchestrationIntf.operations().get(Constants.SERVICE_OP_ORCHESTRATION_PULL).path();
-		final String scheme = sysInfo.getSslProperties().isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
+		final String scheme = sysInfo.isSslEnabled() ? Constants.HTTPS : Constants.HTTP;
 		final UriComponents uri = HttpUtilities.createURI(
 				scheme,
 				orchestrationIntf.accessAddresses().getFirst(),
@@ -184,7 +183,7 @@ public class HttpCollectorDriver implements ICollectorDriver {
 	private void lookupAndCacheOrchestration() {
 		logger.debug("lookupAndCacheOrchestration started...");
 
-		final String intfTemplateName = sysInfo.getSslProperties().isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
+		final String intfTemplateName = sysInfo.isSslEnabled() ? Constants.GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME : Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME;
 
 		// try to lookup for dynamic orchestration service
 		orchestrationCache = acquireServiceFromSR(Constants.SERVICE_DEF_SERVICE_ORCHESTRATION, intfTemplateName, Constants.SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION);
@@ -273,6 +272,10 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		// create the list of interface models for the service model
 		final List<InterfaceModel> interfaceModelList = convertInterfaceResponsesToInterfaceModels(instance.interfaces(), interfaceTemplateName);
 
+		if (interfaceModelList.isEmpty()) {
+			return null;
+		}
+
 		// build the service model
 		return new ServiceModel.Builder()
 				.serviceDefinition(instance.serviceDefinition().name())
@@ -295,6 +298,10 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 		// create the list of interface models for the service model
 		final List<InterfaceModel> interfaceModelList = convertInterfaceResponsesToInterfaceModels(instance.interfaces(), interfaceTemplateName);
+
+		if (interfaceModelList.isEmpty()) {
+			return null;
+		}
 
 		// build the service model
 		return new ServiceModel.Builder()
@@ -321,12 +328,18 @@ public class HttpCollectorDriver implements ICollectorDriver {
 
 			// HTTP or HTTPS
 			if (templateName.contains(Constants.GENERIC_HTTP_INTERFACE_TEMPLATE_NAME)) {
-				interfaceModelList.add(createHttpInterfaceModel(templateName, properties));
+				final HttpInterfaceModel model = createHttpInterfaceModel(templateName, properties);
+				if (model != null) {
+					interfaceModelList.add(model);
+				}
 			}
 
 			// MQTT or MQTTS
 			if (templateName.contains(Constants.GENERIC_MQTT_INTERFACE_TEMPLATE_NAME)) {
-				interfaceModelList.add(createMqttInterfaceModel(templateName, properties));
+				final MqttInterfaceModel model = createMqttInterfaceModel(templateName, properties);
+				if (model != null) {
+					interfaceModelList.add(model);
+				}
 			}
 		}
 
@@ -347,9 +360,12 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final String basePath = (String) properties.get(HttpInterfaceModel.PROP_NAME_BASE_PATH);
 
 		// operations
-		final Map<String, HttpOperationModel> operations = properties.containsKey(HttpInterfaceModel.PROP_NAME_OPERATIONS)
-				? (Map<String, HttpOperationModel>) validators.getValidator(PropertyValidatorType.HTTP_OPERATIONS).validateAndNormalize(properties.get(HttpInterfaceModel.PROP_NAME_OPERATIONS))
-				: Map.of();
+		if (!properties.containsKey(HttpInterfaceModel.PROP_NAME_OPERATIONS)) {
+			return null;
+		}
+
+		final Map<String, HttpOperationModel> operations = (Map<String, HttpOperationModel>) validators.getValidator(PropertyValidatorType.HTTP_OPERATIONS)
+				.validateAndNormalize(properties.get(HttpInterfaceModel.PROP_NAME_OPERATIONS));
 
 		// create the interface model
 		final HttpInterfaceModel model = new HttpInterfaceModel.Builder(templateName)
@@ -376,9 +392,12 @@ public class HttpCollectorDriver implements ICollectorDriver {
 		final String topic = (String) properties.get(MqttInterfaceModel.PROP_NAME_BASE_TOPIC);
 
 		// operations
-		final Set<String> operations = properties.containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)
-				? new HashSet<String>((Collection<? extends String>) properties.get(MqttInterfaceModel.PROP_NAME_OPERATIONS))
-				: Set.of();
+		if (!properties.containsKey(MqttInterfaceModel.PROP_NAME_OPERATIONS)) {
+			return null;
+		}
+
+		final Set<String> operations = (Set<String>) validators.getValidator(PropertyValidatorType.NOT_EMPTY_STRING_SET)
+				.validateAndNormalize(properties.get(MqttInterfaceModel.PROP_NAME_OPERATIONS), NotEmptyStringSetValidator.ARG_OPERATION);
 
 		// create the interface model
 		final MqttInterfaceModel model = new MqttInterfaceModel.Builder(templateName)

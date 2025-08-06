@@ -227,8 +227,7 @@ public class OutsourcedMqttFilter implements ArrowheadMqttFilter {
 				// secret keys aren't the same
 				throw new AuthException("Invalid authentication info");
 			}
-		} catch (final InvalidKeyException | NoSuchAlgorithmException ex) {
-			// should never happen
+		} catch (final InvalidKeyException | NoSuchAlgorithmException | IllegalArgumentException ex) {
 			log.error(ex.getMessage());
 			log.debug(ex);
 

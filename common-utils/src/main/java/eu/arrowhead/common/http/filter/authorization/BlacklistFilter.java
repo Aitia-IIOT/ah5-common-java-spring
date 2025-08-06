@@ -59,46 +59,52 @@ public class BlacklistFilter extends ArrowheadFilter {
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) throws IOException, ServletException {
 		log.debug("BlacklistFilter is active");
 
-		final MultiReadRequestWrapper requestWrapper = (request instanceof MultiReadRequestWrapper) ? (MultiReadRequestWrapper) request : new MultiReadRequestWrapper(request);
+		try {
+			final MultiReadRequestWrapper requestWrapper = (request instanceof MultiReadRequestWrapper) ? (MultiReadRequestWrapper) request : new MultiReadRequestWrapper(request);
 
-		// if requester is sysop, no need for check
-		final boolean isSysop = HttpUtilities.isSysop(requestWrapper, "BlacklistFilter.doFilterInternal");
+			// if requester is sysop, no need for check
+			final boolean isSysop = HttpUtilities.isSysop(requestWrapper, "BlacklistFilter.doFilterInternal");
 
-		// if request is for lookup for authentication, no need for check
-		final boolean isAuthLookup = isAuthenticationLookup(requestWrapper);
+			if (!isSysop) {
+				// if request is for lookup for authentication, no need for check
+				final boolean isAuthLookup = isAuthenticationLookup(requestWrapper);
 
-		if (!isSysop && !isAuthLookup) {
-			log.debug("checking Blacklist");
+				if (!isAuthLookup) {
+					log.debug("checking Blacklist");
 
-			try {
-				final String systemName = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString();
+					try {
+						final String systemName = request.getAttribute(Constants.HTTP_ATTR_ARROWHEAD_AUTHENTICATED_SYSTEM).toString();
 
-				// if requester is blacklist or is on the exclude list, no need for check
-				if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)
-						&& !sysInfo.getBlacklistCheckExcludeList().contains(systemName)) {
-					final boolean isBlacklisted = arrowheadHttpService.consumeService(
-							Constants.SERVICE_DEF_BLACKLIST_DISCOVERY,
-							Constants.SERVICE_OP_CHECK,
-							Constants.SYS_NAME_BLACKLIST,
-							Boolean.TYPE,
-							List.of(systemName));
+						// if requester is blacklist or is on the exclude list, no need for check
+						if (!systemName.equals(Constants.SYS_NAME_BLACKLIST)
+								&& !sysInfo.getBlacklistCheckExcludeList().contains(systemName)) {
+							final boolean isBlacklisted = arrowheadHttpService.consumeService(
+									Constants.SERVICE_DEF_BLACKLIST_DISCOVERY,
+									Constants.SERVICE_OP_CHECK,
+									Constants.SYS_NAME_BLACKLIST,
+									Boolean.TYPE,
+									List.of(systemName));
 
-					if (isBlacklisted) {
-						throw new ForbiddenException(systemName + " system is blacklisted");
+							if (isBlacklisted) {
+								throw new ForbiddenException(systemName + " system is blacklisted");
+							}
+						}
+					} catch (final ForbiddenException | AuthException ex) {
+						throw ex;
+					} catch (final ArrowheadException ex) {
+						logger.error("Blacklist server is not available");
+						logger.debug("Strict blacklist filter: " + force);
+						if (force) {
+							throw new ForbiddenException("Blacklist system is not available, the system might be blacklisted");
+						}
 					}
 				}
-			} catch (final ForbiddenException | AuthException ex) {
-				throw ex;
-			} catch (final ArrowheadException ex) {
-				logger.error("Blacklist server is not available");
-				logger.debug("Strict blacklist filter: " + force);
-				if (force) {
-					throw new ForbiddenException("Blacklist system is not available, the system might be blacklisted");
-				}
 			}
-		}
 
-		chain.doFilter(requestWrapper, response);
+			chain.doFilter(requestWrapper, response);
+		} catch (final ArrowheadException ex) {
+			handleException(ex, response);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------

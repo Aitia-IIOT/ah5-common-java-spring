@@ -21,7 +21,7 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 	//=================================================================================================
 	// members
 
-	private static final String ARG_OPERATION = "OPERATION";
+	public static final String ARG_OPERATION = "OPERATION";
 
 	@Autowired
 	private ServiceOperationNameNormalizer operationNameNormalizer;
@@ -39,14 +39,14 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 	public Object validateAndNormalize(final Object propertyValue, final String... args) throws InvalidParameterException {
 		logger.debug("NotEmptyStringSetValidator.validateAndNormalize started...");
 
-		if (propertyValue instanceof final Collection<?> set) {
-			if (set.isEmpty()) {
-				throw new InvalidParameterException("Property value should be a non-empty set");
+		if (propertyValue instanceof final Collection<?> collection) {
+			if (collection.isEmpty()) {
+				throw new InvalidParameterException("Property value should be a non-empty set/list");
 			}
 
-			final Set<String> normalized = new HashSet<>(set.size());
+			final Set<String> normalized = new HashSet<>(collection.size());
 			final boolean isOperation = (args.length > 0 ? args[0] : "").trim().equalsIgnoreCase(ARG_OPERATION);
-			for (final Object object : set) {
+			for (final Object object : collection) {
 				if (object instanceof final String str) {
 					if (isOperation) {
 						final String normalizedStr = operationNameNormalizer.normalize(str);
@@ -66,6 +66,6 @@ public class NotEmptyStringSetValidator implements IPropertyValidator {
 			return normalized;
 		}
 
-		throw new InvalidParameterException("Property value should be a set of string values");
+		throw new InvalidParameterException("Property value should be a set/list of string values");
 	}
 }

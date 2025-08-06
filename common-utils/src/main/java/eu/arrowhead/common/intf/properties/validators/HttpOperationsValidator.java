@@ -93,6 +93,8 @@ public class HttpOperationsValidator implements IPropertyValidator {
 			}
 
 			return new HttpOperationModel(model.path().trim(), model.method().toUpperCase().trim());
+		} catch (final InvalidParameterException ex) {
+			throw ex;
 		} catch (final ArrowheadException ex) {
 			throw new InvalidParameterException("Value should be a HttpOperationModel record");
 		}

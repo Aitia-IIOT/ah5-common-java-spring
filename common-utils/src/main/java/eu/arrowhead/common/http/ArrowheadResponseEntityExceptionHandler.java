@@ -37,7 +37,7 @@ public class ArrowheadResponseEntityExceptionHandler extends ResponseEntityExcep
 		log.debug("{} at {}: {}", ex.getClass().getName(), origin, ex.getMessage());
 		log.debug("Exception", ex);
 
-		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex);
+		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex, origin);
 		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
 
 		return handleExceptionInternal(ex, dto, headers, status, request);

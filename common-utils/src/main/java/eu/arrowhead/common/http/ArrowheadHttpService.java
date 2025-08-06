@@ -65,11 +65,11 @@ public class ArrowheadHttpService {
 		logger.debug("consumeService started...");
 
 		if (Utilities.isEmpty(serviceDefinition)) {
-			throw new InvalidParameterException("Service definition is not specified.");
+			throw new InvalidParameterException("Service definition is not specified");
 		}
 
 		if (Utilities.isEmpty(operation)) {
-			throw new InvalidParameterException("Service operation is not specified.");
+			throw new InvalidParameterException("Service operation is not specified");
 		}
 
 		final ServiceModel model = collector.getServiceModel(serviceDefinition, templateName, providerName);

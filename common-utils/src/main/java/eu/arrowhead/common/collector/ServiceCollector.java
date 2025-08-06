@@ -53,11 +53,12 @@ public class ServiceCollector {
 		Assert.isTrue(!Utilities.isEmpty(templateName), "template name is empty");
 
 		final String nServiceDefinition = serviceDefNameNormalizer.normalize(serviceDefinition);
-		final String nTemplateName = interfaceTemplateNameNormalizer.normalize(templateName);
-		final String nProviderName = !Utilities.isEmpty(providerName) ? systemNameNormalizer.normalize(providerName) : null;
 
 		final String key = Constants.KEY_PREFIX_FOR_SERVICE_MODEL + nServiceDefinition;
 		if (!arrowheadContext.containsKey(key)) {
+			final String nTemplateName = interfaceTemplateNameNormalizer.normalize(templateName);
+			final String nProviderName = !Utilities.isEmpty(providerName) ? systemNameNormalizer.normalize(providerName) : null;
+
 			final ServiceModel model = driver.acquireService(nServiceDefinition, nTemplateName, nProviderName);
 			if (model != null) {
 				arrowheadContext.put(key, model);

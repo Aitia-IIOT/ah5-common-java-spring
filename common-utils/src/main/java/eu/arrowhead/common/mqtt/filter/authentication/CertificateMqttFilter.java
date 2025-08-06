@@ -80,18 +80,18 @@ public class CertificateMqttFilter implements ArrowheadMqttFilter {
 			throw new AuthException("No authentication key has been provided");
 		}
 
-		// Base64 encoded X.509 certificate PEM format is expected
-		String decodedX509PEM = new String(Base64.getDecoder().decode(authKey));
-		decodedX509PEM = decodedX509PEM.replace(beginCert, "").replace(endCert, "").replaceAll(whitespaceRegexp, "");
-
-		final byte[] decodedX509RawContent = Base64.getDecoder().decode(decodedX509PEM);
-
 		try {
+			// Base64 encoded X.509 certificate PEM format is expected
+			String decodedX509PEM = new String(Base64.getDecoder().decode(authKey));
+			decodedX509PEM = decodedX509PEM.replace(beginCert, "").replace(endCert, "").replaceAll(whitespaceRegexp, "");
+
+			final byte[] decodedX509RawContent = Base64.getDecoder().decode(decodedX509PEM);
+
 			final CertificateFactory certificateFactory = CertificateFactory.getInstance(Constants.X_509);
 			final ByteArrayInputStream certStream = new ByteArrayInputStream(decodedX509RawContent);
 
 			return (X509Certificate) certificateFactory.generateCertificate(certStream);
-		} catch (final CertificateException ex) {
+		} catch (final IllegalArgumentException | CertificateException ex) {
 			logger.error(ex.getMessage());
 			logger.debug(ex);
 			throw new AuthException("Invalid authentication key has been provided");
