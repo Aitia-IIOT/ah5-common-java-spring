@@ -27,7 +27,7 @@ public final class Constants {
 
 	// Framework version
 
-	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
+	public static final String AH_FRAMEWORK_VERSION = "5.1.0";
 
 	// Global
 
@@ -91,6 +91,7 @@ public final class Constants {
 	public static final String SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION = "DynamicServiceOrchestration";
 	public static final String SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION = "FlexibleServiceOrchestration";
 	public static final String SYS_NAME_BLACKLIST = "Blacklist";
+	public static final String SYS_NAME_TRANSLATIONMANAGER = "TranslationManager";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
