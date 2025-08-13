@@ -18,4 +18,17 @@ package eu.arrowhead.dto.enums;
 
 public enum TranslationBridgeEventState {
 	USED, INTERNAL_CLOSED, INTERNAL_ERROR, EXTERNAL_ERROR;
+
+	//=================================================================================================
+	// methods
+
+	//-------------------------------------------------------------------------------------------------
+	public static TranslationBridgeStatus transformToBridgeStatus(final TranslationBridgeEventState state) {
+		return switch (state) {
+		case USED -> TranslationBridgeStatus.USED;
+		case INTERNAL_CLOSED -> TranslationBridgeStatus.CLOSED;
+		case INTERNAL_ERROR, EXTERNAL_ERROR -> TranslationBridgeStatus.ERROR;
+		case null, default -> null;
+		};
+	}
 }

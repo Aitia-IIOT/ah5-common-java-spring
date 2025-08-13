@@ -281,6 +281,9 @@ public final class Constants {
 	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN = "authorizationToken";
 	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN_MANAGEMENT = "authorizationTokenManagement";
 
+	public static final String SERVICE_DEF_TRANSLATION_REPORT = "translationReport";
+	public static final String SERVICE_DEF_TRANSLATION_BRIDGE = "translationBridge";
+
 	// Operation related
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
@@ -296,6 +299,9 @@ public final class Constants {
 	public static final String SERVICE_OP_VERIFY = "verify";
 	public static final String SERVICE_OP_GENERATE = "generate";
 	public static final String SERVICE_OP_GET_PUBLIC_KEY = "get-public-key";
+	public static final String SERVICE_OP_REPORT = "report";
+	public static final String SERVICE_OP_DISCOVERY = "discovery";
+	public static final String SERVICE_OP_NEGOTIATION = "negotiation";
 
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";

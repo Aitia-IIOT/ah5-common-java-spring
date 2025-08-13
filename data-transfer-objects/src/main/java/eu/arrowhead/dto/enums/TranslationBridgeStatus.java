@@ -18,4 +18,27 @@ package eu.arrowhead.dto.enums;
 
 public enum TranslationBridgeStatus {
 	NEW, DISCOVERED, PENDING, INITIALIZED, USED, ABORTED, CLOSED, ERROR;
+
+	//=================================================================================================
+	// methods
+
+	//-------------------------------------------------------------------------------------------------
+	public boolean isValidReportingState() {
+		return this == INITIALIZED || this == USED;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	public static boolean isValidTransition(final TranslationBridgeStatus from, final TranslationBridgeStatus to) {
+		if (from == null || to == null) {
+			return false;
+		}
+
+		return switch (from) {
+		case NEW -> to == DISCOVERED || to == ABORTED || to == ERROR;
+		case DISCOVERED -> to == PENDING || to == ABORTED || to == ERROR;
+		case PENDING -> to == INITIALIZED || to == ABORTED || to == ERROR;
+		case INITIALIZED, USED -> to == USED || to == ABORTED || to == CLOSED || to == ERROR;
+		case ABORTED, CLOSED, ERROR -> false;
+		};
+	}
 }
