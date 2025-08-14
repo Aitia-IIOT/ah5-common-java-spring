@@ -16,9 +16,7 @@
  *******************************************************************************/
 package eu.arrowhead.dto;
 
-import java.util.List;
-
 public record TranslationBridgeCandidateDTO(
 		String serviceInstanceId,
-		List<String> interfaceTemplateNames) {
+		String interfaceTemplateName) {
 }

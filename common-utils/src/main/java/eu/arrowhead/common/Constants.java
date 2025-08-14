@@ -56,6 +56,10 @@ public final class Constants {
 	public static final String KEY_IDENTITY_RENEWAL_THRESHOLD = "identity-renewal-threshold";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
+	public static final String PROPERTY_KEY_DATA_MODELS = "dataModels";
+	public static final String PROPERTY_KEY_INPUT = "input";
+	public static final String PROPERTY_KEY_OUTPUT = "output";
+
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic_http";
 	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic_https";
 	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic_mqtt";
@@ -378,6 +382,7 @@ public final class Constants {
 	public static final int EVENT_TYPE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SCOPE_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int AUTHORIZATION_POLICY_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_LARGE;
+	public static final int DATA_MODEL_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 
 	// Quartz related
 
