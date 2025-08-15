@@ -56,6 +56,13 @@ public final class Constants {
 	public static final String KEY_IDENTITY_RENEWAL_THRESHOLD = "identity-renewal-threshold";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
+	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestrictedDiscovery";
+	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
+	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
+	public static final String METADATA_KEY_INTERFACE_BRIDGE = "interfaceBridge";
+	public static final String METADATA_KEY_FROM = "from";
+	public static final String METADATA_KEY_TO = "to";
+
 	public static final String PROPERTY_KEY_DATA_MODELS = "dataModels";
 	public static final String PROPERTY_KEY_INPUT = "input";
 	public static final String PROPERTY_KEY_OUTPUT = "output";
@@ -79,9 +86,8 @@ public final class Constants {
 	public static final String NORMALIZATION_MODE = "normalization.mode";
 	public static final String $NORMALIZATION_MODE_WD = "${" + NORMALIZATION_MODE + ":" + Defaults.NORMALIZATION_MODE_DEFAULT + "}";
 
-	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestrictedDiscovery";
-
 	public static final String COMMA = ",";
+	public static final String DOT = ".";
 	public static final String COMPOSITE_ID_DELIMITER = "|";
 	public static final String COMPOSITE_ID_DELIMITER_REGEXP = "\\|";
 
@@ -150,9 +156,6 @@ public final class Constants {
 	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 
 	public static final String AUTHORIZATION_TOKEN_VARIANT_SUFFIX = "TOKEN_AUTH";
-
-	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
-	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
 
 	// SSL related
 
@@ -287,6 +290,8 @@ public final class Constants {
 
 	public static final String SERVICE_DEF_TRANSLATION_REPORT = "translationReport";
 	public static final String SERVICE_DEF_TRANSLATION_BRIDGE = "translationBridge";
+
+	public static final String SERVICE_DEF_INTERFACE_BRIDGE_MANAGEMENT = "interfaceBridgeManagement";
 
 	// Operation related
 
