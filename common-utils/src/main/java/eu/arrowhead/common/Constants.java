@@ -62,6 +62,7 @@ public final class Constants {
 	public static final String METADATA_KEY_INTERFACE_BRIDGE = "interfaceBridge";
 	public static final String METADATA_KEY_FROM = "from";
 	public static final String METADATA_KEY_TO = "to";
+	public static final String METADATA_KEY_DATA_MODEL_IDS = "dataModelIds";
 
 	public static final String PROPERTY_KEY_DATA_MODELS = "dataModels";
 	public static final String PROPERTY_KEY_INPUT = "input";
@@ -292,6 +293,7 @@ public final class Constants {
 	public static final String SERVICE_DEF_TRANSLATION_BRIDGE = "translationBridge";
 
 	public static final String SERVICE_DEF_INTERFACE_BRIDGE_MANAGEMENT = "interfaceBridgeManagement";
+	public static final String SERVICE_DEF_DATA_MODEL_TRANSLATION = "dataModelTranslation";
 
 	// Operation related
 
