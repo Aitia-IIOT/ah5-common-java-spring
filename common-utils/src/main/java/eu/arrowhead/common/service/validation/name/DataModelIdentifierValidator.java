@@ -31,8 +31,8 @@ public class DataModelIdentifierValidator {
 	//=================================================================================================
 	// members
 
-	// only allowed characters are lower- and upper-case ASCII letters and numbers
-	private static final String DM_ID_REGEX_STRING = "([A-Z]{1})|(^[A-Z][0-9A-Za-z]+$)";
+	// camelCase naming convention, only allowed characters are lower- and upper-case ASCII letters and numbers
+	private static final String DM_ID_REGEX_STRING = "([a-z]{1})|(^[a-z][0-9A-Za-z]+$)";
 	private static final Pattern DM_ID_REGEX_PATTERN = Pattern.compile(DM_ID_REGEX_STRING);
 
 	private final Logger logger = LogManager.getLogger(this.getClass());

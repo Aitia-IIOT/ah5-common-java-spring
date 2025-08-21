@@ -369,6 +369,8 @@ public final class Constants {
 	public static final String SERVICE_OP_AUTHORIZATION_TOKEN_REGISTER_ENCRYPTION_KEY = "register-encryption-key";
 	public static final String SERVICE_OP_AUTHORIZATION_TOKEN_UNREGISTER_ENCRYPTION_KEY = "unregister-encryption-key";
 
+	public static final String SERVICE_OP_INTERFACE_TRANSLATOR_CHECK_TARGETS = "check-targets";
+
 	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
