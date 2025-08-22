@@ -19,5 +19,6 @@ package eu.arrowhead.dto;
 import java.util.List;
 
 public record TranslationCheckTargetsRequestDTO(
+		String targetOperation,
 		List<TranslationTargetDTO> targets) {
 }
