@@ -21,6 +21,8 @@ import java.util.UUID;
 import eu.arrowhead.common.jpa.ArrowheadEntity;
 
 public final class Constants {
+	
+	// test message
 
 	//=================================================================================================
 	// members
