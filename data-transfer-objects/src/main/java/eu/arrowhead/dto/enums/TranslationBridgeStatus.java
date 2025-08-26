@@ -28,6 +28,11 @@ public enum TranslationBridgeStatus {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	public boolean isEndState() {
+		return this == ABORTED || this == CLOSED || this == ERROR;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	public static boolean isValidTransition(final TranslationBridgeStatus from, final TranslationBridgeStatus to) {
 		if (from == null || to == null) {
 			return false;
