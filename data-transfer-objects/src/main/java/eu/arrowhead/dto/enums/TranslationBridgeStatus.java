@@ -23,12 +23,12 @@ public enum TranslationBridgeStatus {
 	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	public boolean isValidReportingState() {
+	public boolean isActiveStatus() {
 		return this == INITIALIZED || this == USED;
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	public boolean isEndState() {
+	public boolean isEndStatus() {
 		return this == ABORTED || this == CLOSED || this == ERROR;
 	}
 

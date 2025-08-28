@@ -313,6 +313,7 @@ public final class Constants {
 	public static final String SERVICE_OP_REPORT = "report";
 	public static final String SERVICE_OP_DISCOVERY = "discovery";
 	public static final String SERVICE_OP_NEGOTIATION = "negotiation";
+	public static final String SERVICE_OP_ABORT = "abort";
 
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
