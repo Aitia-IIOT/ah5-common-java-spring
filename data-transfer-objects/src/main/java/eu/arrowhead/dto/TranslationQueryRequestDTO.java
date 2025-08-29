@@ -16,11 +16,22 @@
  *******************************************************************************/
 package eu.arrowhead.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.List;
 
-@JsonInclude(Include.NON_NULL)
-public record TranslationBridgeCandidateDTO(
-		String serviceInstanceId,
-		String interfaceTemplateName) {
+public record TranslationQueryRequestDTO(
+		PageDTO pagination,
+		List<String> bridgeIds,
+		List<String> creators,
+		List<String> statuses,
+		List<String> consumers,
+		List<String> providers,
+		List<String> serviceDefinitions,
+		List<String> interfaceTranslators,
+		List<String> dataModelTranslators,
+		String creationFrom,
+		String creationTo,
+		String aliveFrom,
+		String aliveTo,
+		Integer minUsage,
+		Integer maxUsage) {
 }

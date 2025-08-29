@@ -18,7 +18,5 @@ package eu.arrowhead.dto;
 
 public record TranslationNegotiationMgmtRequestDTO(
 		String bridgeId,
-		String targetInstanceId,
-		String operation,
-		String interfaceTemplateName) {
+		String targetInstanceId) {
 }

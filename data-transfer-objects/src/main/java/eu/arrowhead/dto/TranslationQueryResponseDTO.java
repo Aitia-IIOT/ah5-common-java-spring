@@ -20,7 +20,23 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public record TranslationBridgeCandidateDTO(
-		String serviceInstanceId,
-		String interfaceTemplateName) {
+public record TranslationQueryResponseDTO(
+		String bridgeId,
+		String status,
+		int usageReportCount,
+		String aliveAt,
+		String message,
+		String consumer,
+		String provider,
+		String serviceDefinition,
+		String operation,
+		String interfaceTranslator,
+		TranslationInterfaceTranslationDataDescriptorDTO interfaceTranslatorData,
+		String inputDataModelTranslator,
+		TranslationDataModelTranslationDataDescriptorDTO inputDataModelTranslatorData,
+		String outputDataModelTranslator,
+		TranslationDataModelTranslationDataDescriptorDTO outputDataModelTranslatorData,
+		String createdBy,
+		String createdAt,
+		String updatedAt) {
 }
