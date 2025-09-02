@@ -157,6 +157,7 @@ public final class Constants {
 	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 
 	public static final String AUTHORIZATION_TOKEN_VARIANT_SUFFIX = "TOKEN_AUTH";
+	public static final String AUTHORIZATION_SCHEMA = "Bearer";
 
 	// SSL related
 
@@ -291,6 +292,7 @@ public final class Constants {
 
 	public static final String SERVICE_DEF_TRANSLATION_REPORT = "translationReport";
 	public static final String SERVICE_DEF_TRANSLATION_BRIDGE = "translationBridge";
+	public static final String SERVICE_DEF_TRANSLATION_BRIDGE_MANAGEMENT = "translationBridgeManagement";
 
 	public static final String SERVICE_DEF_INTERFACE_BRIDGE_MANAGEMENT = "interfaceBridgeManagement";
 	public static final String SERVICE_DEF_DATA_MODEL_TRANSLATION = "dataModelTranslation";
@@ -314,6 +316,7 @@ public final class Constants {
 	public static final String SERVICE_OP_DISCOVERY = "discovery";
 	public static final String SERVICE_OP_NEGOTIATION = "negotiation";
 	public static final String SERVICE_OP_ABORT = "abort";
+	public static final String SERVICE_OP_QUERY = "query";
 
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";

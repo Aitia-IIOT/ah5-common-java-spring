@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public record TranslationInterfaceTranslationDataDescriptorDTO(
 		String fromInterfaceTemplate,
 		String toInterfaceTemplate,
+		String token,
 		Map<String, Object> interfaceProperties,
 		Map<String, Object> configurationSettings) {
 }
