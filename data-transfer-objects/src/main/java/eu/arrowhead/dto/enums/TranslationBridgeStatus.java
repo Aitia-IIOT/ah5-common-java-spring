@@ -39,9 +39,9 @@ public enum TranslationBridgeStatus {
 		}
 
 		return switch (from) {
-		case NEW -> to == DISCOVERED || to == ABORTED || to == ERROR;
-		case DISCOVERED -> to == PENDING || to == ABORTED || to == ERROR;
-		case PENDING -> to == INITIALIZED || to == ABORTED || to == ERROR;
+		case NEW -> to == DISCOVERED || to == ABORTED || to == CLOSED || to == ERROR;
+		case DISCOVERED -> to == PENDING || to == ABORTED || to == CLOSED || to == ERROR;
+		case PENDING -> to == INITIALIZED || to == ABORTED || to == CLOSED || to == ERROR;
 		case INITIALIZED, USED -> to == USED || to == ABORTED || to == CLOSED || to == ERROR;
 		case ABORTED, CLOSED, ERROR -> false;
 		};
