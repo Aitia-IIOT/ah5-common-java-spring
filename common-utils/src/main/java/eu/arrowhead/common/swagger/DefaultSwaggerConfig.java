@@ -19,6 +19,7 @@ package eu.arrowhead.common.swagger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import eu.arrowhead.common.Constants;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -79,6 +80,6 @@ public abstract class DefaultSwaggerConfig implements WebMvcConfigurer {
 
 	//-------------------------------------------------------------------------------------------------
 	protected String getVersion() {
-		return "5.0.0";
+		return Constants.AH_FRAMEWORK_VERSION;
 	}
 }
