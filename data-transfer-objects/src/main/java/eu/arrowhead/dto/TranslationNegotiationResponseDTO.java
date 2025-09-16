@@ -22,5 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public record TranslationNegotiationResponseDTO(
 		String bridgeId,
-		ServiceInstanceInterfaceResponseDTO bridgeInterface) {
+		ServiceInstanceInterfaceResponseDTO bridgeInterface,
+		String tokenExpiresAt,
+		Integer tokenUsageLimit) {
 }
