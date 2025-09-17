@@ -24,7 +24,7 @@ public record TranslationQueryResponseDTO(
 		String bridgeId,
 		String status,
 		int usageReportCount,
-		String aliveAt,
+		String alivesAt,
 		String message,
 		String consumer,
 		String provider,

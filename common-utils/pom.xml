@@ -11,7 +11,7 @@
 	<name>Arrowhead Common Utils</name>
 	<description>Arrowhead utils</description>
 
-	<url>https://github.com/Aitia-IIOT/ah5-common-java-spring</url>
+	<url>https://github.com/eclipse-arrowhead/ah5-common-java-spring</url>
 	
 	<dependencies>
 		<dependency>

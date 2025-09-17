@@ -8,7 +8,7 @@
 	<name>Arrowhead DTOs</name>
 	<description>Arrowhead DTOs</description>
 
-	<url>https://github.com/Aitia-IIOT/ah5-common-java-spring</url>
+	<url>https://github.com/eclipse-arrowhead/ah5-common-java-spring</url>
 	
 	<properties>
 		<java.version>21</java.version>

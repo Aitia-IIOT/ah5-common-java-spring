@@ -30,8 +30,8 @@ public record TranslationQueryRequestDTO(
 		List<String> dataModelTranslators,
 		String creationFrom,
 		String creationTo,
-		String aliveFrom,
-		String aliveTo,
+		String alivesFrom,
+		String alivesTo,
 		Integer minUsage,
 		Integer maxUsage) {
 }
