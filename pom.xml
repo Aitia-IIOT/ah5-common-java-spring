@@ -14,7 +14,7 @@
 	<name>ah5-common-java-spring</name>
 	<description>Arrowhead 5Gen Core Common using Spring Boot</description>
 
-	<url>https://github.com/Aitia-IIOT/ah5-common-java-spring</url>
+	<url>https://github.com/eclipse-arrowhead/ah5-common-java-spring</url>
 	<licenses>
     	<license>
 	     	<name>Eclipse Public License - v 2.0</name>

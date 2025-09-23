@@ -24,5 +24,6 @@ import eu.arrowhead.dto.enums.DataModelTranslationTaskStatus;
 @JsonInclude(Include.NON_NULL)
 public record DataModelTranslationResultResponseDTO(
 		DataModelTranslationTaskStatus status,
-		String result) {
+		String result,
+		String mimeType) {
 }
