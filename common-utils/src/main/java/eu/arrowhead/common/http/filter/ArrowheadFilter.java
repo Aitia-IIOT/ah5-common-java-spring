@@ -33,7 +33,6 @@ import eu.arrowhead.common.http.HttpUtilities;
 import eu.arrowhead.dto.ErrorMessageDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -76,7 +75,7 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	protected void handleException(final ArrowheadException ex, final ServletResponse response) throws IOException {
+	protected void handleException(final ArrowheadException ex, final HttpServletResponse response) throws IOException {
 		final String origin = ex.getOrigin() == null ? Constants.UNKNOWN : ex.getOrigin();
 		log.debug("{} at {}: {}", ex.getClass().getName(), origin, ex.getMessage());
 		log.debug("Exception", ex);
@@ -84,7 +83,7 @@ public abstract class ArrowheadFilter extends OncePerRequestFilter {
 		final HttpStatus status = HttpUtilities.calculateHttpStatusFromArrowheadException(ex);
 		final ErrorMessageDTO dto = HttpUtilities.createErrorMessageDTO(ex);
 
-		sendError(status, dto, (HttpServletResponse) response);
+		sendError(status, dto, response);
 	}
 
 	//-------------------------------------------------------------------------------------------------

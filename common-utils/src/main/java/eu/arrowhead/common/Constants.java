@@ -27,7 +27,7 @@ public final class Constants {
 
 	// Framework version
 
-	public static final String AH_FRAMEWORK_VERSION = "5.0.0";
+	public static final String AH_FRAMEWORK_VERSION = "5.1.0";
 
 	// Global
 
@@ -56,6 +56,18 @@ public final class Constants {
 	public static final String KEY_IDENTITY_RENEWAL_THRESHOLD = "identity-renewal-threshold";
 	public static final String KEY_PREFIX_FOR_SERVICE_MODEL = "service-model$$";
 
+	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestrictedDiscovery";
+	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
+	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
+	public static final String METADATA_KEY_INTERFACE_BRIDGE = "interfaceBridge";
+	public static final String METADATA_KEY_FROM = "from";
+	public static final String METADATA_KEY_TO = "to";
+	public static final String METADATA_KEY_DATA_MODEL_IDS = "dataModelIds";
+
+	public static final String PROPERTY_KEY_DATA_MODELS = "dataModels";
+	public static final String PROPERTY_KEY_INPUT = "input";
+	public static final String PROPERTY_KEY_OUTPUT = "output";
+
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic_http";
 	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic_https";
 	public static final String GENERIC_MQTT_INTERFACE_TEMPLATE_NAME = "generic_mqtt";
@@ -75,9 +87,8 @@ public final class Constants {
 	public static final String NORMALIZATION_MODE = "normalization.mode";
 	public static final String $NORMALIZATION_MODE_WD = "${" + NORMALIZATION_MODE + ":" + Defaults.NORMALIZATION_MODE_DEFAULT + "}";
 
-	public static final String METADATA_KEY_UNRESTRICTED_DISCOVERY = "unrestrictedDiscovery";
-
 	public static final String COMMA = ",";
+	public static final String DOT = ".";
 	public static final String COMPOSITE_ID_DELIMITER = "|";
 	public static final String COMPOSITE_ID_DELIMITER_REGEXP = "\\|";
 
@@ -91,6 +102,7 @@ public final class Constants {
 	public static final String SYS_NAME_DYNAMIC_SERVICE_ORCHESTRATION = "DynamicServiceOrchestration";
 	public static final String SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION = "FlexibleServiceOrchestration";
 	public static final String SYS_NAME_BLACKLIST = "Blacklist";
+	public static final String SYS_NAME_TRANSLATION_MANAGER = "TranslationManager";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
@@ -145,9 +157,7 @@ public final class Constants {
 	public static final String AUTHENTICATION_PREFIX_IDENTITY_TOKEN = "IDENTITY-TOKEN";
 
 	public static final String AUTHORIZATION_TOKEN_VARIANT_SUFFIX = "TOKEN_AUTH";
-
-	public static final String METADATA_KEY_X509_PUBLIC_KEY = "x509PublicKey";
-	public static final String METADATA_KEY_ALLOW_EXCLUSIVITY = "allowExclusivity";
+	public static final String AUTHORIZATION_SCHEMA = "Bearer";
 
 	// SSL related
 
@@ -280,6 +290,13 @@ public final class Constants {
 	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN = "authorizationToken";
 	public static final String SERVICE_DEF_AUTHORIZATION_TOKEN_MANAGEMENT = "authorizationTokenManagement";
 
+	public static final String SERVICE_DEF_TRANSLATION_REPORT = "translationReport";
+	public static final String SERVICE_DEF_TRANSLATION_BRIDGE = "translationBridge";
+	public static final String SERVICE_DEF_TRANSLATION_BRIDGE_MANAGEMENT = "translationBridgeManagement";
+
+	public static final String SERVICE_DEF_INTERFACE_BRIDGE_MANAGEMENT = "interfaceBridgeManagement";
+	public static final String SERVICE_DEF_DATA_MODEL_TRANSLATION = "dataModelTranslation";
+
 	// Operation related
 
 	public static final String SERVICE_OP_GET_LOG = "get-log";
@@ -295,6 +312,11 @@ public final class Constants {
 	public static final String SERVICE_OP_VERIFY = "verify";
 	public static final String SERVICE_OP_GENERATE = "generate";
 	public static final String SERVICE_OP_GET_PUBLIC_KEY = "get-public-key";
+	public static final String SERVICE_OP_REPORT = "report";
+	public static final String SERVICE_OP_DISCOVERY = "discovery";
+	public static final String SERVICE_OP_NEGOTIATION = "negotiation";
+	public static final String SERVICE_OP_ABORT = "abort";
+	public static final String SERVICE_OP_QUERY = "query";
 
 	public static final String SERVICE_OP_DEVICE_QUERY = "device-query";
 	public static final String SERVICE_OP_DEVICE_CREATE = "device-create";
@@ -351,6 +373,10 @@ public final class Constants {
 	public static final String SERVICE_OP_AUTHORIZATION_TOKEN_REGISTER_ENCRYPTION_KEY = "register-encryption-key";
 	public static final String SERVICE_OP_AUTHORIZATION_TOKEN_UNREGISTER_ENCRYPTION_KEY = "unregister-encryption-key";
 
+	public static final String SERVICE_OP_INTERFACE_TRANSLATOR_CHECK_TARGETS = "check-targets";
+	public static final String SERVICE_OP_INTERFACE_TRANSLATOR_INIT_BRIDGE = "initialize-bridge";
+	public static final String SERVICE_OP_INTERFACE_TRANSLATOR_ABORT_BRIDGE = "abort-bridge";
+
 	public static final String HTTP_API_OP_ECHO_PATH = "/echo";
 	public static final String HTTP_API_OP_LOGS_PATH = "/logs";
 	public static final String HTTP_API_OP_GET_CONFIG_PATH = "/get-config";
@@ -371,6 +397,7 @@ public final class Constants {
 	public static final int EVENT_TYPE_NAME_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int SCOPE_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 	public static final int AUTHORIZATION_POLICY_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_LARGE;
+	public static final int DATA_MODEL_ID_MAX_LENGTH = ArrowheadEntity.VARCHAR_SMALL;
 
 	// Quartz related
 

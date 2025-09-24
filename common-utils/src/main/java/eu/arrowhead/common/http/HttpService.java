@@ -448,6 +448,11 @@ public class HttpService {
 		ErrorMessageDTO dto;
 		try {
 			dto = mapper.readValue(ex.getResponseBodyAsByteArray(), ErrorMessageDTO.class);
+
+			if (dto.exceptionType() == null) {
+				// it is not an ErrorMessageDTO
+				throw new IOException("Not an ErrorMessageDTO object");
+			}
 		} catch (final IOException iex) {
 			logger.debug("Unable to deserialize error message: {}", ex.getMessage());
 			logger.debug("Exception: ", ex);
