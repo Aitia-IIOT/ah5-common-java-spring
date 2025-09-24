@@ -23,6 +23,8 @@ public record TranslationBridgeInitializationRequestDTO(
 		String inputInterface,
 		TranslationDataModelTranslationDataDescriptorDTO inputDataModelTranslator,
 		TranslationDataModelTranslationDataDescriptorDTO resultDataModelTranslator,
+		String inputDataModelRequirement,
+		String resultDataModelRequirement,
 		String targetInterface,
 		Map<String, Object> targetInterfaceProperties,
 		String operation,
