@@ -17,5 +17,13 @@
 package eu.arrowhead.dto.enums;
 
 public enum ServiceInterfacePolicy {
-	NONE, CERT_AUTH, TIME_LIMITED_TOKEN_AUTH, USAGE_LIMITED_TOKEN_AUTH, BASE64_SELF_CONTAINED_TOKEN_AUTH, RSA_SHA256_JSON_WEB_TOKEN_AUTH, RSA_SHA512_JSON_WEB_TOKEN_AUTH;
+	NONE, CERT_AUTH, TIME_LIMITED_TOKEN_AUTH, USAGE_LIMITED_TOKEN_AUTH, BASE64_SELF_CONTAINED_TOKEN_AUTH, RSA_SHA256_JSON_WEB_TOKEN_AUTH, RSA_SHA512_JSON_WEB_TOKEN_AUTH, TRANSLATION_BRIDGE_TOKEN_AUTH;
+
+	//=================================================================================================
+	// methods
+
+	//-------------------------------------------------------------------------------------------------
+	public static boolean isOfferable(final ServiceInterfacePolicy policy) {
+		return policy != TRANSLATION_BRIDGE_TOKEN_AUTH;
+	}
 }
