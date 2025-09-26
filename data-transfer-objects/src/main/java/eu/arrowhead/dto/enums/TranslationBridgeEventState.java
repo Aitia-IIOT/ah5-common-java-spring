@@ -14,23 +14,21 @@
  *  	Arrowhead Consortia - conceptualization
  *
  *******************************************************************************/
-package eu.arrowhead.common.http.filter.authentication;
+package eu.arrowhead.dto.enums;
 
-import java.io.IOException;
-
-import eu.arrowhead.common.exception.ArrowheadException;
-import jakarta.servlet.http.HttpServletResponse;
-
-// we test this derived class instead of the original one
-public class OutsourcedFilterTestHelper extends OutsourcedFilter {
+public enum TranslationBridgeEventState {
+	USED, INTERNAL_CLOSED, INTERNAL_ERROR, EXTERNAL_ERROR;
 
 	//=================================================================================================
-	// assistant methods
+	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	// this method just re-throws the input exception which is easier to test than intercept the error response somehow
-	@Override
-	protected void handleException(final ArrowheadException ex, final HttpServletResponse response) throws IOException {
-		throw ex;
+	public static TranslationBridgeStatus transformToBridgeStatus(final TranslationBridgeEventState state) {
+		return switch (state) {
+		case USED -> TranslationBridgeStatus.USED;
+		case INTERNAL_CLOSED -> TranslationBridgeStatus.CLOSED;
+		case INTERNAL_ERROR, EXTERNAL_ERROR -> TranslationBridgeStatus.ERROR;
+		case null, default -> null;
+		};
 	}
 }

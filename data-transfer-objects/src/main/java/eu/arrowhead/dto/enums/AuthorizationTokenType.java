@@ -17,7 +17,7 @@
 package eu.arrowhead.dto.enums;
 
 public enum AuthorizationTokenType {
-	TIME_LIMITED_TOKEN, USAGE_LIMITED_TOKEN, SELF_CONTAINED_TOKEN;
+	TIME_LIMITED_TOKEN, USAGE_LIMITED_TOKEN, SELF_CONTAINED_TOKEN, TRANSLATION_BRIDGE_TOKEN;
 
 	//=================================================================================================
 	// methods
@@ -40,8 +40,15 @@ public enum AuthorizationTokenType {
 			return TIME_LIMITED_TOKEN;
 		case USAGE_LIMITED_TOKEN_AUTH:
 			return USAGE_LIMITED_TOKEN;
+		case TRANSLATION_BRIDGE_TOKEN_AUTH:
+			return TRANSLATION_BRIDGE_TOKEN;
 		default:
 			throw new IllegalArgumentException("Unknown service interface policy: " + policy.name());
 		}
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	public static boolean isOfferable(final AuthorizationTokenType type) {
+		return type != TRANSLATION_BRIDGE_TOKEN;
 	}
 }

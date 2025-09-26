@@ -14,23 +14,27 @@
  *  	Arrowhead Consortia - conceptualization
  *
  *******************************************************************************/
-package eu.arrowhead.common.http.filter.authentication;
+package eu.arrowhead.common.service.validation.meta.evaluator;
 
-import java.io.IOException;
+import java.util.List;
 
-import eu.arrowhead.common.exception.ArrowheadException;
-import jakarta.servlet.http.HttpServletResponse;
+import eu.arrowhead.common.service.validation.meta.IMetaEvaluator;
 
-// we test this derived class instead of the original one
-public class OutsourcedFilterTestHelper extends OutsourcedFilter {
+public class ListContainsAnyEvaluator implements IMetaEvaluator {
 
 	//=================================================================================================
-	// assistant methods
+	// methods
 
 	//-------------------------------------------------------------------------------------------------
-	// this method just re-throws the input exception which is easier to test than intercept the error response somehow
 	@Override
-	protected void handleException(final ArrowheadException ex, final HttpServletResponse response) throws IOException {
-		throw ex;
+	public boolean eval(final Object left, final Object right) {
+		if ((left instanceof final List<?> leftList)
+				&& (right instanceof final List<?> rightList)) {
+			return leftList.stream()
+					.distinct()
+					.anyMatch(rightList::contains);
+		}
+
+		return false;
 	}
 }
