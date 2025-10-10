@@ -103,6 +103,7 @@ public final class Constants {
 	public static final String SYS_NAME_FLEXIBLE_SERVICE_ORCHESTRATION = "FlexibleServiceOrchestration";
 	public static final String SYS_NAME_BLACKLIST = "Blacklist";
 	public static final String SYS_NAME_TRANSLATION_MANAGER = "TranslationManager";
+	public static final String SYS_NAME_DEVICE_QOS_EVALUATOR = "DeviceQoSEvaluator";
 
 	public static final String SECURITY_REQ_AUTHORIZATION = "Authorization";
 
