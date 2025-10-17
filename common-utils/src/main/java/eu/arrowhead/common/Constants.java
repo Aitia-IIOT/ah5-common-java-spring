@@ -67,6 +67,8 @@ public final class Constants {
 	public static final String PROPERTY_KEY_DATA_MODELS = "dataModels";
 	public static final String PROPERTY_KEY_INPUT = "input";
 	public static final String PROPERTY_KEY_OUTPUT = "output";
+	public static final String PROPERTY_KEY_QOS = "qos";
+	public static final String PROPERTY_KEY_DEVICE_AUGMENTED = "deviceAugmented";
 
 	public static final String GENERIC_HTTP_INTERFACE_TEMPLATE_NAME = "generic_http";
 	public static final String GENERIC_HTTPS_INTERFACE_TEMPLATE_NAME = "generic_https";
