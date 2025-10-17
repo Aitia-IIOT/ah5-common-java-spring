@@ -40,12 +40,30 @@ public class EnvironmentProps implements ApplicationContextAware {
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
 	public static Environment getEnvironment() {
+		while (context == null) {
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException ex) {
+				// intentionally blank
+			}
+		}
+
 		return context.getEnvironment();
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	@SuppressWarnings("checkstyle:MagicNumber")
 	public static String getProperty(final String key) {
+		while (context == null) {
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException ex) {
+				// intentionally blank
+			}
+		}
+
 		return context.getEnvironment().getProperty(key);
 	}
 }
